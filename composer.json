@@ -1,0 +1,28 @@
+{
+    "name": "bartosz/placki",
+    "description": "placki website backend",
+    "type": "project",
+    "authors": [
+        {
+            "name": "bartosz",
+            "email": "imejlbartek@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Framework\\": "framework/"
+        }
+    },
+    "require": {
+        "twig/twig": "v3.3.7",
+        "ext-json": "*",
+        "ext-yaml": "*",
+        "doctrine/orm": "^2.11.0",
+        "doctrine/dbal": "^3.2",
+        "doctrine/annotations": "1.13.2",
+        "symfony/yaml": "^5.4",
+        "symfony/cache": "^5.4",
+        "haydenpierce/class-finder": "^0.4.3"
+	}
+}

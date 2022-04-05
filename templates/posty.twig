@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+
+<body style="height: auto; max-height: 100%; overflow-y: auto;">
+{% for post in posts %}
+    <div class="text-start post" data-postid="{{ post.id }}">
+        <div class="d-flex align-items-xl-center"><img height="30" width="30" src="{{ post.author.pic }}" /><a href="/profil?uzytkownik={{ post.author.username }}">{{ post.author.username }}</a></div>
+        <p>{{ post.content }}</p>
+        <div class="d-flex flex-row justify-content-end">
+            <div class="d-flex justify-content-xl-end align-items-xl-center like-btns" data-liked="{{ post.liked }}" style="height: 100%;">
+                <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0px 0px 8px;"></i>
+            </div>
+            <label class="form-label post-like-count">{{ post.like_count }}</label><i class="far fa-comment-alt open-comments" style="font-size: 25px; color: var(--bs-gray-900); margin-left: 5px; margin-right: 5px;"></i>
+            <label class="form-label open-comments">{{ post.comment_count }}</label>
+        </div>
+    </div>
+{% endfor %}
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/js/bs-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/toast.js"></script>
+<script src="/assets/js/posty.js"></script>
+</body>
+</html>

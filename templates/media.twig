@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/Table-With-Search.css" />
+</head>
+
+<body>
+{% include "snippets/navbar.twig" %}
+<h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
+    <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icon-tabler-video"
+            style="top: -1px;"
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z"></path>
+        <rect x="3" y="6" width="12" height="12" rx="2"></rect>
+    </svg>
+    media
+</h1>
+<div class="d-flex flex-column align-items-center content">
+    <div class="tabs">
+                <span class="tab tab-active" data-tabid="video">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icon-tabler-video"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z"></path>
+                        <rect x="3" y="6" width="12" height="12" rx="2"></rect>
+                    </svg>
+                    wideo
+                </span>
+        <span class="tab" data-tabid="photos">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icon-tabler-photo"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="15" y1="8" x2="15.01" y2="8"></line>
+                        <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+                        <path d="M4 15l4 -4a3 5 0 0 1 3 0l5 5"></path>
+                        <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path>
+                    </svg>
+                    zdjęcia
+                </span>
+        <span class="tab" data-tabid="files">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icon-tabler-file"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                    </svg>
+                    pliki
+                </span>
+    </div>
+    <div id="video-tab" class="tab-content" style="width: 100%; height: 100%; overflow-y: auto;">
+        <div class="form-group pull-right col-lg-4" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
+            <input type="text" class="search form-control" placeholder="wyszukaj filmy" data-target-table="videos-table" />
+            <span class="press-enter-to-search-message" data-depends='.search[data-target-table="videos-table"]'>
+                        wciśnij&nbsp;<img src="/assets/img/enter%20key.png" />&nbsp;<span class="font-monospace">Enter</span> aby wyszukać
+                    </span>
+        </div>
+        <div class="table-responsive table table-hover results" data-tablename="videos-table">
+            <table class="table table-hover table-borderless" style="border: none; vertical-align: middle;">
+                <thead class="bill-header cs">
+                <tr style="background: var(--primary);">
+                    <th style="width: 65%;">tytuł</th>
+                    <th style="width: 15%;">autor</th>
+                    <th style="width: 20%;">wrzucone</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="warning no-result">
+                    <td colspan="12"><i class="fa fa-warning"></i>&nbsp; Brak wyników</td>
+                </tr>
+                {% for video in shared_videos %}
+                <tr>
+                    <td>
+                        <a href="/media/film?id={{ video.id }}"><img class="video-thumbnail" src="{{ video.thumbnail }}" />{{ video.name }}</a>
+                    </td>
+                    <td>
+                        <a href="/profil?uzytkownik={{ video.uploadedBy.username }}">
+                            <img width="20" height="20" style="border-radius: 20px;" src="{{ video.uploadedBy.profilePic }}" />
+                            {{ video.uploadedBy.username }}
+                        </a>
+                    </td>
+                    <td>{{ video.uploadedAt.format("j F Y (G:i)") }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="photos-tab" class="tab-content" style="width: 100%; height: 100%; margin-top: 5px; padding: 5px; overflow-y: auto; display: none;">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="album-chooser-btn" type="button" style="background: var(--primary);">Wszystko</button>
+            <div class="dropdown-menu" id="album-chooser-menu">
+                <h6 class="dropdown-header">Albumy systemowe</h6>
+                <a class="dropdown-item" href="#" data-special="all">Wszystko</a>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Albumy społeczeństwa</h6>
+                {% for album_name in shared_photos.albums %}
+                <a class="dropdown-item" href="#">{{ album_name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% for photo in shared_photos.photo_list %}
+        <div class="media-photo-item" data-album="{{ photo.album }}">
+            <div style='background: url("{{ photo.sourceUri|raw }}") center / cover no-repeat;'></div>
+            <div style="padding: 3px;">
+                <p>{{ photo.description }}</p>
+                <p><strong>{{ photo.uploadedBy.username }}</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="files-tab" class="tab-content" style="width: 100%; height: 100%; overflow-y: auto; display: none;">
+        <div class="form-group pull-right col-lg-4" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
+            <input type="text" class="search form-control" placeholder="wyszukaj pliki" data-target-table="files-table" />
+            <span class="press-enter-to-search-message" data-depends='.search[data-target-table="files-table"]'>wciśnij&nbsp;<img src="/assets/img/enter%20key.png" />&nbsp;Enter aby wyszukać</span>
+        </div>
+        <div class="table-responsive table table-hover results" data-tablename="files-table">
+            <table class="table table-hover table-borderless" style="border: none; vertical-align: middle;">
+                <thead class="bill-header cs">
+                <tr style="background: var(--primary);">
+                    <th>Nazwa pliku</th>
+                    <th style="width: 200px;">Wrzucone przez</th>
+                    <th style="width: 220px;">Data wrzucenia</th>
+                    <th style="width: 280px;">Akcje</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="warning no-result">
+                    <td colspan="12"><i class="fa fa-warning"></i>&nbsp; Brak wyników</td>
+                </tr>
+                {% for file in shared_files %}
+                <tr>
+                    <td>{{ file.name }}</td>
+                    <td>
+                        <a href="/profil?uzytkownik={{ file.uploadedBy.username }}">
+                            <img width="20" height="20" style="border-radius: 20px;" src="{{ file.uploadedBy.profilePic }}" />
+                            {{ file.uploadedBy.username }}
+                        </a>
+                    </td>
+                    <td>{{ file.uploadedAt }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm float-end file-actions" role="group">
+                            <button class="btn btn-danger float-end" type="button">
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="1em"
+                                        height="1em"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icon-tabler-trash"
+                                >
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                </svg>
+                                &nbsp;Usuń
+                            </button>
+                            <button class="btn btn-primary" type="button">
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="1em"
+                                        height="1em"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icon-tabler-download"
+                                >
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                                    <polyline points="7 11 12 16 17 11"></polyline>
+                                    <line x1="12" y1="4" x2="12" y2="16"></line>
+                                </svg>
+                                &nbsp;Pobierz
+                            </button>
+                            <button class="btn btn-light" type="button">
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="1em"
+                                        height="1em"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icon-tabler-share"
+                                >
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="6" r="3"></circle>
+                                    <circle cx="18" cy="18" r="3"></circle>
+                                    <line x1="8.7" y1="10.7" x2="15.3" y2="7.3"></line>
+                                    <line x1="8.7" y1="13.3" x2="15.3" y2="16.7"></line>
+                                </svg>
+                                &nbsp;Udostępnij
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/js/bs-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/table.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/tabs.js"></script>
+<script src="/assets/js/toast.js"></script>
+<script src="/assets/js/media.js"></script>
+</body>
+</html>

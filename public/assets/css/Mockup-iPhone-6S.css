@@ -1,0 +1,38 @@
+div.iphone-mockup {
+  position: relative;
+  max-width: 350px;
+  margin: 20px;
+}
+
+.iphone-mockup img.device {
+  width: 100%;
+  height: 300px;
+}
+
+.iphone-mockup .screen {
+  position: absolute;
+  width: 88%;
+  height: 77%;
+  top: 12%;
+  border-radius: 2px;
+  left: 6%;
+  background-color: #aaa;
+  overflow: hidden;
+  background: url(../../assets/img/screen-content-phone.gif);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.iphone-mockup .screen:before {
+  content: '';
+  background-color: #fff;
+  position: absolute;
+  width: 70%;
+  height: 140%;
+  top: -12%;
+  right: -60%;
+  transform: rotate(-19deg);
+  opacity: 0.2;
+}
+

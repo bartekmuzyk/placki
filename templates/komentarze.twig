@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pl" style="height: auto;">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+
+<body style="height: auto;">
+        <textarea
+                id="comment-content"
+                class="form-control"
+                rows="4"
+                placeholder="tu mozesz wrzucic swoj wpis do najrzetelniejszego zrodla wiedzy (komentarze XD)"
+                style="width: 100%; resize: none; margin-top: 5px;"
+        ></textarea>
+        <div class="text-end" style="margin-top: 5px;"><button class="btn btn-primary btn-sm" id="comment-btn" type="button" style="background: var(--primary);">skomentuj</button></div>
+        {% for comment in comments %}
+        <div class="text-start comment" data-commentid="{{ comment.id }}">
+            <div class="d-flex align-items-xl-center">
+                <img height="30" width="30" src="{{ comment.author.profilePic }}" />
+                <a href="/profil?uzytkownik={{ comment.author.username }}">{{ comment.author.username }}</a>
+            </div>
+            <p>{{ comment.content }}</p>
+        </div>
+        {% endfor %}
+        <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/assets/js/bs-init.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+        <script src="/assets/js/jquery.js"></script>
+        <script src="/assets/js/main.js"></script>
+        <script src="/assets/js/toast.js"></script>
+        <script src="/assets/js/komentarze.js"></script>
+</body>
+</html>

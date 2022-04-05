@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+
+<body>
+{% include "snippets/navbar.twig" %}
+<h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-circles">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+        <circle cx="6.5" cy="17" r="4"></circle>
+        <circle cx="17.5" cy="17" r="4"></circle>
+    </svg>
+    grupy
+</h1>
+<div class="content">
+    <div class="d-flex justify-content-center" style="width: 100%; margin-bottom: 3px;">
+        <div class="tabs">
+                    <span class="tab tab-active" data-tabid="all">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="1em"
+                                height="1em"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icon-tabler-globe"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <circle cx="12" cy="10" r="4"></circle>
+                            <path d="M6.75 16a8.015 8.015 0 1 0 9.25 -13"></path>
+                            <line x1="12" y1="18" x2="12" y2="22"></line>
+                            <line x1="8" y1="22" x2="16" y2="22"></line>
+                        </svg>
+                        wszystkie
+                    </span>
+            <span class="tab" data-tabid="mine">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="1em"
+                                height="1em"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icon-tabler-user"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+                        </svg>
+                        moje grupy
+                    </span>
+            <span class="tab" data-tabid="joined">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="1em"
+                                height="1em"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icon-tabler-login"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+                            <path d="M20 12h-13l3 -3m0 6l-3 -3"></path>
+                        </svg>
+                        dołączone
+                    </span>
+        </div>
+    </div>
+    <div style="position: relative; height: calc(100% - 40px);">
+        <div class="fade-top"></div>
+        <div class="fade-bottom"></div>
+        <div class="group-grid">
+            {% for group in groups %}
+            <div class="group">
+                <div class="d-flex flex-row align-items-center group-header"><img src="{{ group.pic }}" /><label class="form-label">{{ group.name }}</label></div>
+                <p class="group-description">{{ group.description }}<br /></p>
+                <div class="d-flex flex-row align-items-center group-footer">
+                    <label class="form-label flex-grow-1">{{ group.member_count }} członków</label>
+                    <a class="btn btn-primary btn-sm" role="button" style="background: var(--primary);" href="/grupy/panel?id={{ group.id }}">wejdź i się przekonaj</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/js/bs-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/tabs.js"></script>
+<script src="/assets/js/toast.js"></script>
+<script src="/assets/js/grupy.js"></script>
+</body>
+</html>

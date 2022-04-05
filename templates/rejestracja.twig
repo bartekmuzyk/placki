@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+
+<body>
+<div class="container-fluid" style="height: 100%;">
+    <div class="row mh-100vh" style="height: inherit;">
+        <div
+                class="col-10 col-sm-8 col-md-6 col-lg-6 offset-1 offset-sm-2 offset-md-3 offset-lg-0 align-self-center d-lg-flex align-items-lg-center align-self-lg-stretch bg-white p-5 rounded rounded-lg-0 my-5 my-lg-0"
+                id="login-block"
+                style="padding: 30px !important;"
+        >
+            <div class="m-auto w-lg-75 w-xl-50" data-aos="fade-right" data-aos-duration="500" data-aos-once="true" style="width: 100%;">
+                <h2 class="text-info fw-light mb-5" style="text-shadow: 0px 0px 20px; font-family: 'Racing Sans One', serif; color: var(--primary) !important;">placki</h2>
+                <form action="/rejestracja" method="post">
+                    <div class="form-group mb-3"><label class="form-label text-secondary">nazwa użytkownika</label><input class="form-control" type="text" required="" style="width: 80%;" name="username" /></div>
+                    <div class="form-group mb-3"><label class="form-label text-secondary">hasło</label><input class="form-control" type="password" required="" style="width: 80%;" name="password" /></div>
+                    <button class="btn btn-info mt-2" type="submit" style="color: #fff; background: var(--primary);">zarejestruj się</button>
+                </form>
+                {% if error %}
+                <label style="color: red; margin: 0;">{{ error }}</label>
+                {% endif %}
+                <p class="mt-3 mb-0"><a class="text-info small" href="/" style="color: var(--primary) !important;">mam już konto</a></p>
+            </div>
+        </div>
+        <div class="col-lg-6 d-flex align-items-end" id="bg-block" style="background: url('assets/img/freddy%20kill%20yourself.png') no-repeat; background-size: cover;">
+            <p class="ms-auto small text-dark mb-2">essa z pierdzeniem</p>
+        </div>
+    </div>
+</div>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/bs-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/toast.js"></script>
+</body>
+</html>
