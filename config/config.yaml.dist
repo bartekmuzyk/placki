@@ -1,0 +1,5 @@
+database:
+  host: localhost
+  dbname: placki
+  username: YOUR_USERNAME_HERE
+  password: YOUR_PASSWORD_HERE
