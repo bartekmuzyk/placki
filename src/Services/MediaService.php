@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Entities\Comment;
 use App\Entities\MediaElement;
 use App\Entities\User;
+use App\Entities\VideoComment;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -158,11 +158,11 @@ class MediaService extends Service
 	 * @param string $content
 	 * @param User $author
 	 * @param MediaElement $mediaElement
-	 * @return Comment
+	 * @return VideoComment
 	 */
-	private function createComment(string $content, User $author, MediaElement $mediaElement): Comment
+	private function createComment(string $content, User $author, MediaElement $mediaElement): VideoComment
 	{
-		$comment = new Comment();
+		$comment = new VideoComment();
 		$comment->content = $content;
 		$comment->author = $author;
 		$comment->mediaElement = $mediaElement;
@@ -188,12 +188,12 @@ class MediaService extends Service
 
 	/**
 	 * @param string $mediaIdentifier
-	 * @return Comment[]
+	 * @return VideoComment[]
 	 */
 	public function getComments(string $mediaIdentifier): array
 	{
 		$db = $this->getApp()->getDBManager();
-		$comments = $db->query('c', Comment::class)
+		$comments = $db->query('c', VideoComment::class)
 			->andWhere('c.mediaElement = :mediaIdentifier')
 			->setParameter('mediaIdentifier', $mediaIdentifier)
 			->getQuery()
@@ -201,5 +201,20 @@ class MediaService extends Service
 		$comments = array_reverse($comments);
 
 		return $comments;
+	}
+
+	/**
+	 * @param int $commentId
+	 * @return VideoComment|null
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 */
+	public function getVideoComment(int $commentId): ?VideoComment
+	{
+		/** @var ?VideoComment $comment */
+		$comment = $this->getApp()->getDBManager()->find(VideoComment::class, $commentId);
+
+		return $comment;
 	}
 }

@@ -17,22 +17,83 @@
     <link rel="stylesheet" href="/assets/css/File-Manager.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/audio_player/bundle.css" />
 </head>
 
 <body style="height: auto; max-height: 100%; overflow-y: auto;">
+{% set last_post = null %}
 {% for post in posts %}
     <div class="text-start post" data-postid="{{ post.id }}">
-        <div class="d-flex align-items-xl-center"><img height="30" width="30" src="{{ post.author.pic }}" /><a href="/profil?uzytkownik={{ post.author.username }}">{{ post.author.username }}</a></div>
-        <p>{{ post.content }}</p>
-        <div class="d-flex flex-row justify-content-end">
-            <div class="d-flex justify-content-xl-end align-items-xl-center like-btns" data-liked="{{ post.liked }}" style="height: 100%;">
+        <div class="d-flex align-items-center">
+            <img height="30" width="30" src="{{ post.author.profilePic }}" />
+            <div class="flex-grow-1">
+                <a
+                        onclick="parent.location.assign(this.getAttribute('data-href'))"
+                        data-href="/profil?uzytkownik={{ post.author.username }}"
+                        href="#"
+                >{{ post.author.username }}</a>
+                {% if not hide_group_labels and post.group %}
+                    <span style="color: gray;">
+                        w grupie
+                        <img
+                                src="/group_pics/{{ post.group.picFilename }}"
+                                width="30"
+                                height="30"
+                                style="border-radius: 30px;"
+                        />
+                        <b>{{ post.group.name }}</b>
+                    </span>
+                {% endif %}
+            </div>
+            {% if post.author == self %}
+                <div class="btn-group btn-group-sm" role="group" data-postid="{{ post.id }}">
+                    <button class="btn btn-danger delete-post-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <line x1="4" y1="7" x2="20" y2="7"></line>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                        </svg>
+                        usuń
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+        <p style="{{ post.content|length < 45 ? 'font-size: 35px;' : '' }}">{{ post.content|breakify }}</p>
+        {% for attachment in post.attachments %}
+            {% set src = attachmentSources[attachment.id] %}
+
+            {% if attachment.extension in ["jpeg", "jpg", "png", "bmp", "gif", "webp"] %}
+                <img src="{{ src }}" />
+            {% elseif attachment.extension in ["mp4", "webm", "ogg"] %}
+                <video src="{{ src }}" controls loop></video>
+            {% elseif attachment.extension in ["mp3"] %}
+                {% include "snippets/audio_player.twig" with {"audio_source": src, "title": attachment.originalFilename} only %}
+            {% endif %}
+        {% endfor %}
+        <div class="d-flex flex-row">
+            <div class="flex-grow-1">
+                <span style="color: gray;">{{ post.at.format("j F Y") }} o {{ post.at.format("G:i") }}</span>
+            </div>
+            <div class="d-flex justify-content-xl-end align-items-xl-center like-btns" data-liked="{{ self in post.likedBy }}" style="height: 100%;">
                 <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0px 0px 8px;"></i>
             </div>
-            <label class="form-label post-like-count">{{ post.like_count }}</label><i class="far fa-comment-alt open-comments" style="font-size: 25px; color: var(--bs-gray-900); margin-left: 5px; margin-right: 5px;"></i>
-            <label class="form-label open-comments">{{ post.comment_count }}</label>
+            <label class="form-label post-like-count">{{ post.likedBy|length }}</label>
+            <i class="far fa-comment-alt open-comments" style="font-size: 25px; color: var(--bs-gray-900); margin-left: 5px; margin-right: 5px;"></i>
+            <label class="form-label open-comments">{{ post.comments|length }}</label>
         </div>
     </div>
+    {% set last_post = post %}
 {% endfor %}
+{% if posts|length > 0 %}
+    <div style="width: 100%; text-align: center; margin-top: 5px;">
+        <button id="load-more-posts-btn" class="btn btn-lg btn-outline-primary" style="width: 50%" data-lastpostid="{{ last_post.id }}">
+            załaduj więcej postów
+        </button>
+    </div>
+{% endif %}
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/bs-init.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -43,5 +104,6 @@
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/posty.js"></script>
+{% include "snippets/audio_player_js.twig" %}
 </body>
 </html>

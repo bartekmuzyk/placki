@@ -29,7 +29,7 @@ class MediaElement
 
 	/**
 	 * @ORM\ManyToOne(targetEntity="User", inversedBy="uploadedMedia")
-	 * @ORM\JoinColumn(name="uploadedBy", referencedColumnName="username")
+	 * @ORM\JoinColumn(name="uploadedBy", referencedColumnName="username", onDelete="CASCADE")
 	 */
 	public User $uploadedBy;
 
@@ -59,10 +59,10 @@ class MediaElement
 	public string $sourceUri;
 
 	/**
-	 * @ORM\ManyToMany(targetEntity="User")
+	 * @ORM\ManyToMany(targetEntity="User", inversedBy="viewedMedia")
 	 * @ORM\JoinTable(name="user_viewed_media",
-	 *     joinColumns={@ORM\JoinColumn(name="media_id")},
-	 *     inverseJoinColumns={@ORM\JoinColumn(name="user_username", referencedColumnName="username")}
+	 *     joinColumns={@ORM\JoinColumn(name="media_id", onDelete="CASCADE")},
+	 *     inverseJoinColumns={@ORM\JoinColumn(name="user_username", referencedColumnName="username", onDelete="CASCADE")}
 	 * )
 	 */
 	public $viewedBy;
@@ -70,14 +70,14 @@ class MediaElement
 	/**
 	 * @ORM\ManyToMany(targetEntity="User", inversedBy="likedMedia")
 	 * @ORM\JoinTable(name="user_liked_media",
-	 *     joinColumns={@ORM\JoinColumn(name="media_id")},
-	 *     inverseJoinColumns={@ORM\JoinColumn(name="user_username", referencedColumnName="username")}
+	 *     joinColumns={@ORM\JoinColumn(name="media_id", onDelete="CASCADE")},
+	 *     inverseJoinColumns={@ORM\JoinColumn(name="user_username", referencedColumnName="username", onDelete="CASCADE")}
 	 * )
 	 */
 	public $likedBy;
 
 	/**
-	 * @ORM\OneToMany(targetEntity="Comment", mappedBy="mediaElement")
+	 * @ORM\OneToMany(targetEntity="VideoComment", mappedBy="mediaElement")
 	 */
 	public $comments;
 

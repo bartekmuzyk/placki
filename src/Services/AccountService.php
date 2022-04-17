@@ -48,7 +48,7 @@ class AccountService extends Service
 
 		$user->username = $username;
 		$user->password = $hashedPassword;
-		$user->profilePic = '/assets/img/no-pic.jpg';
+		$user->profilePic = '/assets/img/no-pic.png';
 
 		return $user;
 	}
@@ -68,7 +68,7 @@ class AccountService extends Service
 
 		try {
 			$db->persistAndFlush($user);
-		} catch (UniqueConstraintViolationException $ex) {
+		} /** @noinspection PhpRedundantCatchClauseInspection */ catch (UniqueConstraintViolationException $ex) {
 			return true;
 		}
 

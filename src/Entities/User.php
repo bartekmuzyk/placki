@@ -36,9 +36,51 @@ class User
 	 */
 	public $likedMedia;
 
+	/**
+	 * @ORM\ManyToMany(targetEntity="MediaElement", mappedBy="viewedBy")
+	 */
+	public $viewedMedia;
+
+	/**
+	 * @ORM\OneToMany(targetEntity="Post", mappedBy="author")
+	 */
+	public $posts;
+
+	/**
+	 * @ORM\ManyToMany(targetEntity="Post", mappedBy="likedBy")
+	 */
+	public $likedPosts;
+
+	/**
+	 * @ORM\ManyToMany(targetEntity="Group", mappedBy="members")
+	 */
+	public $joinedGroups;
+
+	/**
+	 * @ORM\OneToMany(targetEntity="Group", mappedBy="owner")
+	 */
+	public $ownedGroups;
+
+	/**
+	 * @ORM\ManyToMany(targetEntity="Group", mappedBy="bans")
+	 */
+	public $bannedInGroups;
+
+	/**
+	 * @ORM\ManyToMany(targetEntity="User", mappedBy="joinRequests")
+	 */
+	public $joinRequests;
+
 	public function __construct()
 	{
 		$this->uploadedMedia = new ArrayCollection();
 		$this->likedMedia = new ArrayCollection();
+		$this->viewedMedia = new ArrayCollection();
+		$this->posts = new ArrayCollection();
+		$this->likedPosts = new ArrayCollection();
+		$this->joinedGroups = new ArrayCollection();
+		$this->ownedGroups = new ArrayCollection();
+		$this->bannedInGroups = new ArrayCollection();
+		$this->joinRequests = new ArrayCollection();
 	}
 }

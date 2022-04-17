@@ -14,6 +14,8 @@ use Framework\Service\Service;
 use Framework\Session\SessionManager;
 use HaydenPierce\ClassFinder\ClassFinder;
 use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionProperty;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -79,6 +81,21 @@ abstract class BaseApp {
 
 		foreach ($serviceClasses as $serviceClass) {
 			$this->serviceMap[$serviceClass] = new $serviceClass($this);
+		}
+
+		foreach ($this->serviceMap as $parentServiceClass => $parentServiceInstance) {
+			/** @var class-string<Service> $parentServiceClass */
+
+			$reflectedServiceClass = new ReflectionClass($parentServiceClass);
+
+			foreach ($reflectedServiceClass->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+				$propertyType = $property->getType();
+
+				if ($propertyType instanceof ReflectionNamedType && !$propertyType->allowsNull() && !$propertyType->isBuiltin()) {
+					$propertyName = $property->getName();
+					$parentServiceInstance->$propertyName = $this->getService($propertyType->getName());
+				}
+			}
 		}
 	}
 
@@ -152,13 +169,10 @@ abstract class BaseApp {
 
 	public function template(string $template, array $variables = [], int $code = 200): Response
 	{
-		try {
-			$rendered = $this->twigRenderer->render($template, $variables);
+		/** @noinspection PhpUnhandledExceptionInspection */
+		$rendered = $this->twigRenderer->render($template, $variables);
 
-			return new Response($rendered, $code);
-		} catch (LoaderError|RuntimeError|SyntaxError $e) {
-			return new Response("<h1>Error while rendering template: $template</h1>{$e->getMessage()}");
-		}
+		return new Response($rendered, $code);
 	}
 
 	public function json(array $data, int $code = 200): Response

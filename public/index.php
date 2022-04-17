@@ -1,6 +1,7 @@
 <?php /** @noinspection PhpUndefinedVariableInspection */
 
-define('PROJECT_ROOT', dirname(__DIR__));
+const PUBLIC_DIR = __DIR__;
+define('PROJECT_ROOT', dirname(PUBLIC_DIR));
 
 require_once PROJECT_ROOT . '/vendor/autoload.php';
 

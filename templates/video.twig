@@ -20,9 +20,7 @@
 </head>
 
 <body>
-<div class="toast-message" data-show="0">
-    <div></div>
-</div>
+{% include "snippets/toast.twig" %}
 <script>
     const VIDEO_ID = "{{ video.id }}";
 </script>
@@ -142,10 +140,7 @@
                     </div>
                     {% if video.description|length > 0 %}
                         <p>
-                            {% for line in video.description|split("\n") %}
-                                {{ line }}
-                                <br/>
-                            {% endfor %}
+                            {{ video.description|breakify }}
                         </p>
                     {% else %}
                         <b>film nie ma opisu</b>

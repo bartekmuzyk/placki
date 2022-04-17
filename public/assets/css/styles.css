@@ -10,7 +10,7 @@ button, label, p, a, textarea, input, span, td, th, small, .modal-title {
 }
 
 .navbar {
-  background: linear-gradient(var(--primary) 25%, white);
+  background: linear-gradient(var(--primary) 25%, transparent);
 }
 
 .navbar .nav-link {
@@ -58,6 +58,11 @@ button, label, p, a, textarea, input, span, td, th, small, .modal-title {
 .content {
   height: calc(100% - 134px);
   max-height: calc(100% - 134px);
+}
+
+.content-no-heading {
+  height: calc(100% - 65px);
+  max-height: calc(100% - 65px);
 }
 
 .tabs {
@@ -199,14 +204,14 @@ a:hover {
 }
 
 .post > div:nth-child(1) {
-  height: 35px;
+  height: 30px;
 }
 
 .post > div:nth-child(1) > img {
   border-radius: 6px;
 }
 
-.post > div:nth-child(1) > a {
+.post > div:nth-child(1) a {
   margin-left: 5px;
 }
 
@@ -216,6 +221,22 @@ a:hover {
 
 .post .like-btns {
   margin-right: 5px;
+}
+
+.post > img {
+  max-width: 100%;
+  max-height: 85vh;
+  margin-bottom: 5px;
+}
+
+.post > video {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+#file-upload-error-message {
+  position: relative;
+  color: var(--bs-red);
 }
 
 .open-comments {
@@ -229,7 +250,7 @@ a:hover {
 
 #comments-modal-subtitle {
   margin-left: 10px;
-  color: var(--bs-gray-500);
+  color: var(--bs-gray-200);
 }
 
 #video-comments-iframe {
@@ -238,6 +259,59 @@ a:hover {
 
 #post-browser {
   width: 100%;
+}
+
+#post-attachment-list {
+  width: 100%;
+  margin: 5px 0;
+}
+
+#post-attachment-list[data-show="0"] {
+  display: none;
+}
+
+#post-attachment-list > div {
+  width: 60px;
+  height: 60px;
+  border-radius: 5px;
+  background-color: var(--bs-gray-200);
+  position: relative;
+  display: inline-block;
+  margin: 0 2px;
+}
+
+#post-attachment-list > div > div {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  border-radius: inherit;
+}
+
+#post-attachment-list > div > div:nth-child(1) {
+  background-position: center;
+  background-size: cover;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  font-family: "DM Sans", sans-serif;
+  padding: 10px 2px 0;
+}
+
+#post-attachment-list > div > div:nth-child(2) {
+  visibility: hidden;
+  text-align: center;
+  padding-top: 5px;
+  background-color: rgba(244, 67, 54, 0.83);
+  cursor: pointer;
+}
+
+#post-attachment-list > div > div:nth-child(2) * {
+  cursor: inherit;
+}
+
+#post-attachment-list > div:hover > div:nth-child(2) {
+  visibility: visible;
 }
 
 .group-grid {
@@ -253,6 +327,19 @@ a:hover {
   border-radius: 6px;
   background-color: var(--bs-gray-200);
   margin: 10px;
+}
+
+#create-group-btn {
+  background-color: transparent;
+  border: 2px dotted gray;
+  transition: background-color 250ms;
+  cursor: pointer;
+  font-size: 40px;
+  font-family: "Josefin Sans", sans-serif;
+}
+
+#create-group-btn:hover {
+  background-color: #ddd;
 }
 
 .group-header {
@@ -347,7 +434,7 @@ a:hover {
 .user-list-item {
   display: flex;
   flex-direction: row;
-  padding: 10px;
+  padding: 10px 30px 10px 10px;
   align-items: center;
 }
 
@@ -361,15 +448,49 @@ a:hover {
   flex-grow: 1;
 }
 
+.user-list-item[data-hidden="1"] {
+  display: none;
+}
+
+@keyframes user-list-item-icons-show {
+  from {
+    opacity: 0;
+    right: -20px;
+  }
+
+  to {
+    opacity: 1;
+    right: 0;
+  }
+}
+
+@keyframes user-list-item-icons-hide {
+  from {
+    opacity: 1;
+    right: 0;
+  }
+
+  to {
+    opacity: 0;
+    right: -20px;
+  }
+}
+
 .user-list-item > .icon {
   font-size: 20px;
   cursor: pointer;
-  color: var(--bs-gray-500);
-  visibility: hidden;
+  color: var(--bs-gray-900);
+  position: relative;
+  opacity: 0;
+  right: -50px;
+  animation: user-list-item-icons-hide 250ms cubic-bezier(1, 0, 1, 1) forwards;
+  margin-left: 16px;
 }
 
 .user-list-item:hover > .icon {
-  visibility: visible;
+  opacity: 1;
+  right: 0;
+  animation: user-list-item-icons-show 250ms cubic-bezier(0, 0, 0, 1) forwards;
 }
 
 #pin-input {
@@ -584,3 +705,100 @@ a:hover {
   font-family: "Josefin Sans", sans-serif;
 }
 
+.group-member-role {
+  display: inline;
+  background-color: var(--bs-gray-900);
+  border-radius: 100vw;
+  padding: 3px 5px;
+  color: white;
+  font-size: 13px;
+  font-weight: 900;
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.group-member-role > .icon {
+  position: relative;
+  top: -2px;
+}
+
+#manage-tab .tab-pane {
+  padding: 5px;
+}
+
+#manage-tab .tab-content {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+#group-description-edit {
+  width: 100%;
+  height: 100%;
+  resize: none;
+}
+
+.big-chooser {
+  display: flex;
+  flex-direction: row;
+}
+
+.big-chooser > div {
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin: 3px 5px 0 5px;
+  flex: 1 1 0;
+}
+
+.big-chooser > div > label {
+  font-family: "Josefin Sans", sans-serif !important;
+  font-weight: 900;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.big-chooser > div > p {
+  margin: 0;
+}
+
+.big-chooser > div > .icon {
+  position: relative;
+  top: -2px;
+}
+
+.big-chooser > div[data-chosen="0"] {
+  background-color: var(--bs-gray-100) !important;
+}
+
+.big-chooser > div[data-chosen="1"] {
+  color: black !important;
+}
+
+#delete-group-tab {
+  font-family: "DM Sans", sans-serif;
+  text-align: center;
+}
+
+#delete-group-tab h1 {
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: 900;
+}
+
+#delete-group-tab > div {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--bs-gray-300);
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 5px;
+  text-align: left;
+  width: 40%;
+}
+
+.nav-tabs {
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.nav-tabs .nav-link {
+  font-family: inherit !important;
+}

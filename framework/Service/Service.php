@@ -1,8 +1,9 @@
-<?php
+<?php /** @noinspection RedundantSuppression */
 
 namespace Framework\Service;
 
 use App\App;
+use Framework\Exception\NoSuchServiceException;
 
 abstract class Service
 {
@@ -16,5 +17,15 @@ abstract class Service
 	protected function getApp(): App
 	{
 		return $this->app;
+	}
+
+	/**
+	 * @param class-string<Service> $service
+	 * @return Service
+	 * @throws NoSuchServiceException
+	 */
+	protected function getService(string $service): Service
+	{
+		return $this->app->getService($service);
 	}
 }

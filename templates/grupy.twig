@@ -98,16 +98,51 @@
         <div class="fade-top"></div>
         <div class="fade-bottom"></div>
         <div class="group-grid">
-            {% for group in groups %}
-            <div class="group">
-                <div class="d-flex flex-row align-items-center group-header"><img src="{{ group.pic }}" /><label class="form-label">{{ group.name }}</label></div>
-                <p class="group-description">{{ group.description }}<br /></p>
-                <div class="d-flex flex-row align-items-center group-footer">
-                    <label class="form-label flex-grow-1">{{ group.member_count }} członków</label>
-                    <a class="btn btn-primary btn-sm" role="button" style="background: var(--primary);" href="/grupy/panel?id={{ group.id }}">wejdź i się przekonaj</a>
-                </div>
+            <div id="create-group-btn" class="group d-flex justify-content-center align-items-center flex-column" data-mine="1" data-joined="0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="80" height="80" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                utwórz grupę
             </div>
+            {% for group in groups %}
+                <div
+                        class="group"
+                        data-mine="{{ group.id in my_groups ? '1' : '0' }}"
+                        data-joined="{{ group.id in joined_groups ? '1' : '0' }}"
+                >
+                    <div class="d-flex flex-row align-items-center group-header">
+                        <img src="/group_pics/{{ group.picFilename }}" />
+                        <label class="form-label">{{ group.name }}</label>
+                    </div>
+                    <p class="group-description">
+                        {{ group.description ? group.description|breakify : '' }}
+                    </p>
+                    <div class="d-flex flex-row align-items-center group-footer">
+                        <label class="form-label flex-grow-1">{{ group.members|length }} członków</label>
+                        <a class="btn btn-primary btn-sm" role="button" style="background: var(--primary);" href="/grupy/panel?id={{ group.id }}">wejdź i się przekonaj</a>
+                    </div>
+                </div>
             {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="create-group-modal">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">utwórz grupę</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input id="new-group-name-input" class="form-control" type="text" placeholder="nazwa grupy" />
+                <label id="group-creation-error" style="color: red; display: none;"></label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" type="button" data-bs-dismiss="modal">anuluj</button>
+                <button id="confirm-group-creation-btn" class="btn btn-primary" type="button" style="background-color: var(--primary);">utwórz grupę</button>
+            </div>
         </div>
     </div>
 </div>

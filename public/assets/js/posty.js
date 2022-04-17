@@ -21,33 +21,67 @@ $(".like-btns").click(function() {
         default:
         case "0":
             makeReq(`/post/polub?id=${postId}`)
-                .then(() => {
+                .then(response => {
                     if (response.ok) {
                         self.attr("data-liked", "1");
                         likeCount++;
+                        $counterElement.text(likeCount);
                     } else {
                         throw new Error();
                     }
                 })
                 .catch(() => {
-                    alert("Nie udało się odlubić posta.");
+                    parent.Toast.show("nie udało się polubić posta", 2);
                 });
             break;
         case "1":
             makeReq(`/post/odlub?id=${postId}`)
-                .then(() => {
+                .then(response => {
                     if (response.ok) {
                         self.attr("data-liked", "0");
                         likeCount--;
+                        $counterElement.text(likeCount);
                     } else {
                         throw new Error();
                     }
                 })
                 .catch(() => {
-                    alert("Nie udało się odlubić posta.");
+                    parent.Toast.show("nie udało się odlubić posta", 2);
                 });
             break;
     }
-    
-    $counterElement.text(likeCount);
 });
+
+$(".delete-post-button").click(function() {
+    const self = $(this);
+    const postElement = self.parent().parent().parent();
+    const postId = postElement.data("postid");
+    const postsEndpointUrl = location.href.replace(location.search, "");
+
+    fetch(`${postsEndpointUrl}?id=${postId}`, {method: "DELETE"})
+        .then(response => {
+            if (response.ok) {
+                postElement.remove();
+                parent.Toast.show("usunięto post", 2);
+            } else {
+                parent.Toast.show("nie udało się usunąć posta", 2);
+            }
+        })
+        .catch(() => {
+            parent.Toast.show("nie udało się usunąć posta", 2);
+        });
+});
+
+$("#load-more-posts-btn").click(function() {
+    this.innerText = "wczytywanie...";
+    this.disabled = true;
+
+    parent.postBrowserNextPage(this.getAttribute("data-lastpostid"));
+});
+
+/**
+ * @param postId {number}
+ */
+function scrollToPostWithId(postId) {
+    $(`.post[data-postid="${postId}"]`).get(0).scrollIntoView();
+}

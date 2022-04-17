@@ -21,4 +21,52 @@ class Request {
 
 		return $instance;
 	}
+
+	public function getFile(string $key): ?UploadedFile
+	{
+		return array_key_exists($key, $this->files) ? new UploadedFile($this->files[$key]) : null;
+	}
+
+	public function getFileFromArray(string $key, int $index): ?UploadedFile
+	{
+		return array_key_exists($key, $this->files) ?
+			new UploadedFile([
+				'name' => $this->files[$key]['name'][$index],
+				'size' => $this->files[$key]['size'][$index],
+				'tmp_name' => $this->files[$key]['tmp_name'][$index],
+				'type' => $this->files[$key]['type'][$index],
+				'error' => $this->files[$key]['error'][$index]
+			])
+			:
+			null;
+	}
+
+	/**
+	 * @param string $key
+	 * @return UploadedFile[]
+	 */
+	public function getFilesArray(string $key): array
+	{
+		if (!array_key_exists($key, $this->files)) {
+			return [];
+		}
+
+		$files = [];
+
+		foreach ($this->files[$key]['tmp_name'] as $index => $tmp_name) {
+			$files[] = $this->getFileFromArray($key, $index);
+		}
+
+		return $files;
+	}
+
+	public function hasQuery(string $parameterName): bool
+	{
+		return array_key_exists($parameterName, $this->query);
+	}
+
+	public function hasPayload(string $parameterName): bool
+	{
+		return array_key_exists($parameterName, $this->payload);
+	}
 }

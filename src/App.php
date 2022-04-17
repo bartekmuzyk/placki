@@ -5,11 +5,17 @@ namespace App;
 use App\Controllers\GroupController;
 use App\Controllers\MediaController;
 use App\Controllers\PostController;
+use App\Entities\Post;
+use App\Exceptions\AttachmentTooLargeException;
+use App\Exceptions\CannotWriteAttachmentToDiskException;
 use App\Middleware\CheckAuth;
 use App\Services\AccountService;
+use App\Services\AttachmentService;
 use App\Services\PostService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\TransactionRequiredException;
+use DoctrineProxies\__CG__\App\Entities\Attachment;
 use Framework\BaseApp;
 use Framework\Http\Response;
 
@@ -26,17 +32,18 @@ class App extends BaseApp
 		$this->get('/wyloguj', 'logout');
 		$this->get('/glowna', 'homepage');
 		$this->get('/posty', 'posts');
+		$this->post('/posty', 'postPost');
+		$this->delete('/posty', 'deletePost');
 		$this->useController('/post', PostController::class);
 		$this->useController('/media', MediaController::class);
 		$this->useController('/grupy', GroupController::class);
 	}
 
-	public function index(): Response
+	public function index(AccountService $accountService): Response
 	{
-		$session = $this->getSessionManager();
 		$req = $this->getRequest();
 
-		return $session->has('user') ?
+		return $accountService->isLoggedIn() ?
 			$this->redirect('/glowna')
 			:
 			$this->template('index.twig', [
@@ -78,14 +85,11 @@ class App extends BaseApp
 	{
 		$req = $this->getRequest();
 
-		$username = $req->payload['username'];
-		$password = $req->payload['password'];
-
-		if (!$username || !$password) {
+		if (!$req->hasPayload('username') || !$req->hasPayload('password')) {
 			return Response::code(400);
 		}
 
-		$alreadyExists = $accountService->register($username, $password);
+		$alreadyExists = $accountService->register($req->payload['username'], $req->payload['password']);
 
 		return $alreadyExists ?
 			$this->redirect('/rejestracja', [
@@ -111,15 +115,91 @@ class App extends BaseApp
 		]);
 	}
 
-	public function posts(PostService $postService): Response
+	public function posts(PostService $postService, AccountService $accountService, AttachmentService $attachmentService): Response
 	{
 		$req = $this->getRequest();
 
-		$limit = array_key_exists('limit', $req->query) ? (int)$req->query['limit'] : 100;
-		$posts = $postService->getPosts($limit);
+		$limit = $req->hasQuery('limit') ? (int)$req->query['limit'] : 100;
+		$posts = $postService->getPosts($limit, $accountService->currentLoggedInUser);
+		$attachmentSources = [];
+
+		foreach ($posts as $post) {
+			foreach ($post->attachments as $attachment) {
+				$attachmentSources[$attachment->id] = $attachmentService->getAttachmentFilePath($attachment);
+			}
+		}
 
 		return $this->template('posty.twig', [
-			'posts' => $posts
+			'self' => $accountService->currentLoggedInUser,
+			'posts' => $posts,
+			'attachmentSources' => $attachmentSources
 		]);
+	}
+
+	/**
+	 * @param PostService $postService
+	 * @param AccountService $accountService
+	 * @return Response
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 */
+	public function postPost(PostService $postService, AccountService $accountService): Response
+	{
+		$req = $this->getRequest();
+		$attachments = $req->getFilesArray('attachments');
+
+		if (!$req->hasPayload('content') && count($attachments) === 0) {
+			return Response::code(400);
+		}
+
+		try {
+			$postService->createPost(
+				$req->payload['content'] ?? '',
+				null,
+				$accountService->currentLoggedInUser,
+				$attachments
+			);
+		} catch (CannotWriteAttachmentToDiskException $e) {
+			return $this->json([
+				'filename' => $e->defectiveFile->getBasename(),
+				'error' => 'cannot write to disk'
+			], 400);
+		} catch (AttachmentTooLargeException $e) {
+			return $this->json([
+				'filename' => $e->defectiveFile->getBasename(),
+				'error' => 'too large'
+			], 400);
+		}
+
+		return new Response();
+	}
+
+	/**
+	 * @param PostService $postService
+	 * @param AccountService $accountService
+	 * @return Response
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 */
+	public function deletePost(PostService $postService, AccountService $accountService): Response
+	{
+		$req = $this->getRequest();
+
+		if (!$req->hasQuery('id')) {
+			return Response::code(400);
+		}
+
+		$post = $postService->getPost((int)$req->query['id']);
+
+		if (!($post instanceof Post)) {
+			return Response::code(404);
+		} else if ($post->author !== $accountService->currentLoggedInUser) {
+			return Response::code(403);
+		}
+
+		$postService->deletePost($post);
+
+		return new Response();
 	}
 }

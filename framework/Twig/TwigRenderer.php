@@ -7,6 +7,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFilter;
 
 class TwigRenderer {
 	private Environment $environment;
@@ -17,6 +18,14 @@ class TwigRenderer {
 		$this->environment = new Environment($loader, [
 			'cache' => PROJECT_ROOT . '/cache/twig'
 		]);
+		$this->environment->addFilter(new TwigFilter(
+			'breakify',
+			fn(string $source) => str_replace("\n", '<br/>', $source),
+			[
+				'pre_escape' => 'html',
+				'is_safe' => ['html']
+			]
+		));
 	}
 
 	/**

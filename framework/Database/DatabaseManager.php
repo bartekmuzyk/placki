@@ -21,7 +21,7 @@ class DatabaseManager {
 		$config = Setup::createAnnotationMetadataConfiguration(
 			[PROJECT_ROOT . '/src/Entities'],
 			false,
-			null,
+			PROJECT_ROOT . '/cache/proxies',
 			null,
 			false
 		);
@@ -32,6 +32,14 @@ class DatabaseManager {
 			'password' => $password,
 			'dbname' => $dbname
 		], $config);
+
+		$this->generateProxies();
+	}
+
+	private function generateProxies()
+	{
+		$classes = $this->entityManager->getMetadataFactory()->getAllMetadata();
+		$this->entityManager->getProxyFactory()->generateProxyClasses($classes);
 	}
 
 	/**
@@ -109,10 +117,49 @@ class DatabaseManager {
 
 	/**
 	 * @param class-string $entityClassName
+	 * @param int $offset
+	 * @param int|null $limit
+	 * @param array{order_by: string, direction: string} $order
 	 * @return object[]
 	 */
-	public function getAll(string $entityClassName): array
+	public function getAll(string $entityClassName, int $offset = 0, ?int $limit = null, array $order = []): array
 	{
-		return $this->query('e', $entityClassName)->getQuery()->getResult();
+		$queryBuilder = $this->query('e', $entityClassName);
+
+		if ($offset > 0) {
+			$queryBuilder->setFirstResult($offset);
+		}
+
+		if (is_int($limit)) {
+			$queryBuilder->setMaxResults($offset + $limit);
+		}
+
+		if (array_key_exists('order_by', $order)) {
+			$queryBuilder->orderBy($order['order_by'], $order['direction'] ?? 'ASC');
+		}
+
+		return $queryBuilder->getQuery()->getResult();
+	}
+
+	/**
+	 * @param object $entity
+	 * @return void
+	 * @throws ORMException
+	 */
+	public function remove(object $entity)
+	{
+		$this->entityManager->remove($entity);
+	}
+
+	/**
+	 * @param object $entity
+	 * @return void
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 */
+	public function removeAndFlush(object $entity)
+	{
+		$this->remove($entity);
+		$this->flush();
 	}
 }

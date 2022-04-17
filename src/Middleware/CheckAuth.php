@@ -23,16 +23,15 @@ class CheckAuth implements MiddlewareInterface
 	 * @throws OptimisticLockException
 	 * @throws TransactionRequiredException
 	 * @throws NoSuchServiceException
-	 * @noinspection PhpUnhandledExceptionInspection
 	 */
 	public function run(App $app): ?Response
 	{
 		$req = $app->getRequest();
 		$session = $app->getSessionManager();
 
-		if (in_array($req->route, self::$blacklist)) {
-			return null;
-		} else if ($session->has('user')) {
+		$ignore = in_array($req->route, self::$blacklist);
+
+		if ($session->has('user')) {
 			$username = $session->get('user')['username'];
 
 			/** @var AccountService $accountService */
@@ -41,7 +40,7 @@ class CheckAuth implements MiddlewareInterface
 
 			if ($user instanceof User) {
 				$accountService->currentLoggedInUser = $user;
-			} else {
+			} else if (!$ignore) {
 				$session->remove('user');
 
 				return $app->redirect('/', [
@@ -52,6 +51,6 @@ class CheckAuth implements MiddlewareInterface
 			return null;
 		}
 
-		return $app->redirect('/');
+		return $ignore ? null : $app->redirect('/');
 	}
 }

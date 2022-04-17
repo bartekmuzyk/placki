@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class Comment
+class PostComment
 {
 	/**
 	 * @ORM\Id()
@@ -23,7 +23,7 @@ class Comment
 
 	/**
 	 * @ORM\ManyToOne(targetEntity="User")
-	 * @ORM\JoinColumn(name="author_username", referencedColumnName="username")
+	 * @ORM\JoinColumn(name="author_username", referencedColumnName="username", onDelete="CASCADE")
 	 */
 	public User $author;
 
@@ -31,8 +31,8 @@ class Comment
 //	can we just appreciate the effort he put into the writing
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="MediaElement", inversedBy="comments")
-	 * @ORM\JoinColumn(name="media_id")
+	 * @ORM\ManyToOne(targetEntity="Post", inversedBy="comments")
+	 * @ORM\JoinColumn(name="post_id", onDelete="CASCADE")
 	 */
-	public MediaElement $mediaElement;
+	public Post $post;
 }

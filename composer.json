@@ -23,6 +23,7 @@
         "doctrine/annotations": "1.13.2",
         "symfony/yaml": "^5.4",
         "symfony/cache": "^5.4",
-        "haydenpierce/class-finder": "^0.4.3"
+        "haydenpierce/class-finder": "^0.4.3",
+        "guzzlehttp/guzzle": "^7.4"
 	}
 }

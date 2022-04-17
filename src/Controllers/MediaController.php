@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Entities\MediaElement;
-use App\Entities\User;
+use App\Entities\VideoComment;
 use App\Services\AccountService;
 use App\Services\MediaService;
 use Doctrine\ORM\OptimisticLockException;
@@ -17,11 +17,15 @@ class MediaController extends Controller
 	public function configureRoutes()
 	{
 		$this->get('/', 'index');
+
 		$this->get('/film', 'video');
+
 		$this->post('/film/polub', 'like');
 		$this->post('/film/odlub', 'dislike');
+
 		$this->get('/film/komentarze', 'comments');
 		$this->post('/film/komentarze', 'postComment');
+		$this->delete('/film/komentarze', 'deleteComment');
 	}
 
 	public function index(MediaService $mediaService, AccountService $accountService): Response
@@ -115,8 +119,6 @@ class MediaController extends Controller
 
 		if (!array_key_exists('id', $req->query)) {
 			return Response::code(400);
-		} else if (!$accountService->isLoggedIn()) {
-			return Response::code(401);
 		}
 
 		$mediaExists = $mediaService->like($req->query['id'], $accountService->currentLoggedInUser);
@@ -138,8 +140,6 @@ class MediaController extends Controller
 
 		if (!array_key_exists('id', $req->query)) {
 			return Response::code(400);
-		} else if (!$accountService->isLoggedIn()) {
-			return Response::code(401);
 		}
 
 		$mediaExists = $mediaService->dislike($req->query['id'], $accountService->currentLoggedInUser);
@@ -147,7 +147,7 @@ class MediaController extends Controller
 		return Response::code($mediaExists ? 200 : 404);
 	}
 
-	public function comments(MediaService $mediaService): Response
+	public function comments(MediaService $mediaService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
 
@@ -156,6 +156,7 @@ class MediaController extends Controller
 		}
 
 		return $this->template('komentarze.twig', [
+			'self' => $accountService->currentLoggedInUser,
 			'comments' => $mediaService->getComments($req->query['id'])
 		]);
 	}
@@ -174,12 +175,38 @@ class MediaController extends Controller
 
 		if (!array_key_exists('id', $req->query) || !array_key_exists('content', $req->payload)) {
 			return Response::code(400);
-		} else if (!$accountService->isLoggedIn()) {
-			return Response::code(401);
 		}
 
 		$videoMediaElement = $mediaService->getMediaElement($req->query['id'], MediaService::MEDIATYPE_VIDEO);
 		$mediaService->postComment($videoMediaElement, $req->payload['content'], $accountService->currentLoggedInUser);
+
+		return new Response();
+	}
+
+	/**
+	 * @param MediaService $mediaService
+	 * @param AccountService $accountService
+	 * @return Response
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 */
+	public function deleteComment(MediaService $mediaService, AccountService $accountService): Response
+	{
+		$req = $this->getRequest();
+
+		if (!$req->hasQuery('id')) {
+			return Response::code(400);
+		}
+
+		$comment = $mediaService->getVideoComment((int)$req->query['id']);
+
+		if (!($comment instanceof VideoComment)) {
+			return Response::code(404);
+		} else if ($comment->author !== $accountService->currentLoggedInUser) {
+			return Response::code(403);
+		}
+
+		$this->getDBManager()->removeAndFlush($comment);
 
 		return new Response();
 	}

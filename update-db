@@ -1,0 +1,8 @@
+#!/bin/bash
+vendor/bin/doctrine orm:schema-tool:update --complete --dump-sql
+echo -n "Proceed? [Y/n]: "
+read -r
+
+if [[ $REPLY == "y" || $REPLY == "Y" ]]; then
+  vendor/bin/doctrine orm:schema-tool:update --complete --force
+fi
