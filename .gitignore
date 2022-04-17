@@ -2,3 +2,6 @@ vendor
 cache
 config/config.yaml
 .idea
+public/attachments
+public/group_pics
+public/media_sources
