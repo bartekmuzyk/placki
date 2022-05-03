@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnused */
 
 namespace App;
 
@@ -15,7 +16,6 @@ use App\Services\PostService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
-use DoctrineProxies\__CG__\App\Entities\Attachment;
 use Framework\BaseApp;
 use Framework\Http\Response;
 
@@ -26,14 +26,20 @@ class App extends BaseApp
 		$this->addMiddleware(new CheckAuth());
 
 		$this->get('/', 'index');
+
 		$this->post('/login', 'postLogin');
+
 		$this->get('/rejestracja', 'register');
 		$this->post('/rejestracja', 'postRegister');
+
 		$this->get('/wyloguj', 'logout');
+
 		$this->get('/glowna', 'homepage');
+
 		$this->get('/posty', 'posts');
 		$this->post('/posty', 'postPost');
 		$this->delete('/posty', 'deletePost');
+
 		$this->useController('/post', PostController::class);
 		$this->useController('/media', MediaController::class);
 		$this->useController('/grupy', GroupController::class);

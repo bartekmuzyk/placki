@@ -1,0 +1,220 @@
+.media-controls-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+    background: linear-gradient(0deg, rgba(0,0,0,0.8589635683374912) 0%, rgba(254,254,254,0) 100%);
+}
+
+vds-media[hide-ui] .media-controls-container,
+vds-media:not([can-play]) .media-controls-container,
+vds-media[user-idle] .media-controls-container {
+    background: transparent;
+}
+
+.media-controls {
+    display: flex;
+    width: 100%;
+    height: 24px;
+    opacity: 1;
+    transition: opacity 200ms ease;
+    pointer-events: auto;
+    color: white;
+    font-family: "Josefin Sans", sans-serif;
+}
+
+vds-media[hide-ui] .media-controls,
+vds-media:not([can-play]) .media-controls,
+vds-media[user-idle] .media-controls {
+    opacity: 0;
+}
+
+vds-media[autoplay-error] .media-controls {
+    opacity: 1;
+}
+
+vds-media, vds-video {
+    width: 100%;
+}
+
+vds-play-button {
+    position: relative;
+    width: 24px;
+    height: 24px;
+}
+
+vds-play-button > .icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 200ms;
+}
+
+vds-media[paused] .icon-tabler-player-pause {
+    opacity: 0;
+}
+
+vds-media:not([paused]) .icon-tabler-player-play {
+    opacity: 0;
+}
+
+vds-time-slider {
+    width: 100%;
+}
+
+vds-volume-slider {
+    width: 60px;
+}
+
+vds-slider, vds-time-slider {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: calc(100% - 10px);
+    height: var(--height);
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+vds-time-slider {
+    --height: 11px;
+    --thumb-width: 9px;
+    --track-height: 6px;
+    --track-bg: var(--primary);
+    --track-fill: var(--primary-light);
+}
+
+vds-volume-slider {
+    --height: 24px;
+    --thumb-width: 11px;
+    --track-height: 4px;
+    --track-bg: gray;
+    --track-fill: white;
+    position: relative;
+}
+
+.slider-track {
+    background-color: var(--track-bg);
+    width: 100%;
+    height: var(--track-height);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 0;
+    transform: translateY(-50%);
+}
+
+.slider-track.fill {
+    background-color: var(--track-fill);
+    transform-origin: left center;
+    /*noinspection CssUnresolvedCustomProperty*/
+    transform: translateY(-50%) scaleX(var(--vds-fill-rate));
+    will-change: transform;
+    z-index: 1; /** above track. */
+}
+
+ .slider-thumb-container {
+    position: absolute;
+    top: 0;
+    /*noinspection CssUnresolvedCustomProperty*/
+    left: calc(var(--vds-fill-percent) - var(--thumb-width) / 2);
+    width: var(--thumb-width);
+    height: 100%;
+    will-change: left;
+    z-index: 9;
+}
+
+[dragging] .slider-thumb-container {
+    /*noinspection CssUnresolvedCustomProperty*/
+    left: var(--vds-pointer-percent);
+}
+
+.slider-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: var(--thumb-width);
+    height: var(--thumb-width);
+    border-radius: 9999px;
+    background-color: #fff;
+    transform: translateY(-50%);
+    transition: width 100ms, height 100ms;
+}
+
+.slider-thumb:hover {
+    width: calc(var(--thumb-width) + 4px);
+    height: calc(var(--thumb-width) + 4px);
+}
+
+.volume-changer {
+    display: flex;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.volume-changer vds-volume-slider {
+    animation: slide-left 200ms cubic-bezier(1, 0, 1, 1) forwards;
+}
+
+.volume-changer:hover vds-volume-slider {
+    animation: slide-right 200ms cubic-bezier(0, 0, 0, 1) forwards;
+}
+
+.media-buffering-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    /* prevent blocking lower elements (e.g., gestures). */
+    pointer-events: none;
+    /** place above poster (optional). */
+    z-index: 1;
+}
+
+.media-buffering-icon {
+    width: 96px;
+    height: 96px;
+    color: white;
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+.media-buffering-track {
+    opacity: 0.25;
+}
+
+.media-buffering-track-fill {
+    opacity: 0.75;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 50;
+}
+
+/* Show buffering indicator while media is not ready, or buffering. */
+vds-media:not([can-play]) .media-buffering-icon,
+vds-media[waiting] .media-buffering-icon {
+    opacity: 1;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+vds-media[fullscreen] .media-enter-fs {
+    display: none;
+}
+
+vds-media:not([fullscreen]) .media-exit-fs {
+    display: none;
+}

@@ -87,11 +87,9 @@ function updateEvents() {
     $synchronizingMessage.attr("data-animatedshow", "1");
     fetch("/wydarzenia/json")
         .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error();
-            }
+            if (!response.ok) throw new Error();
+
+            return response.json();
         })
         .then(data => {
             events = data;

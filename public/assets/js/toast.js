@@ -11,8 +11,12 @@ class Toast {
         this.$root.attr("data-show", "1");
         
         if (typeof timeout === "number") {
-            setTimeout(() => this.$root.attr("data-show", "0"), timeout * 1000);
+            setTimeout(() => this.dismiss(), timeout * 1000);
         }
+    }
+
+    static dismiss() {
+        this.$root.attr("data-show", "0")
     }
 }
 

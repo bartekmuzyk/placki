@@ -1,5 +1,5 @@
 .bill-header {
-  font-size: 12px;
+  font-size: 16px;
   text-align: center;
 }
 
@@ -14,9 +14,17 @@
   text-align: center;
 }
 
-.bill-header.cs {
-  background-color: rgba(37,71,106,0.56);
-  color: #fff;
+.bill-header.cs > tr {
+  background-color: white;
+  color: var(--primary);
+  text-align: left;
+}
+
+.bill-header.cs > tr > th {
+  padding: 0 8px;
+  font-weight: 900;
+  font-family: "Josefin Sans", sans-serif;
+  font-size: 20px;
 }
 
 .counter {
@@ -43,7 +51,7 @@
 }
 
 .search.form-control {
-  border-radius: 0px !important;
+  border-radius: 0 !important;
 }
 
 .search-table-col {

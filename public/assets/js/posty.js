@@ -22,13 +22,11 @@ $(".like-btns").click(function() {
         case "0":
             makeReq(`/post/polub?id=${postId}`)
                 .then(response => {
-                    if (response.ok) {
-                        self.attr("data-liked", "1");
-                        likeCount++;
-                        $counterElement.text(likeCount);
-                    } else {
-                        throw new Error();
-                    }
+                    if (!response.ok) throw new Error();
+
+                    self.attr("data-liked", "1");
+                    likeCount++;
+                    $counterElement.text(likeCount);
                 })
                 .catch(() => {
                     parent.Toast.show("nie udało się polubić posta", 2);
@@ -37,13 +35,11 @@ $(".like-btns").click(function() {
         case "1":
             makeReq(`/post/odlub?id=${postId}`)
                 .then(response => {
-                    if (response.ok) {
-                        self.attr("data-liked", "0");
-                        likeCount--;
-                        $counterElement.text(likeCount);
-                    } else {
-                        throw new Error();
-                    }
+                    if (!response.ok) throw new Error();
+
+                    self.attr("data-liked", "0");
+                    likeCount--;
+                    $counterElement.text(likeCount);
                 })
                 .catch(() => {
                     parent.Toast.show("nie udało się odlubić posta", 2);

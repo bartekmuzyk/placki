@@ -43,11 +43,11 @@ class GroupsService extends Service
 		return $group;
 	}
 
-	/**
-	 * @param Group $group
-	 * @return string path of the generated picture file
-	 * @throws GuzzleException
-	 */
+    /**
+     * @param Group $group
+     * @return string|null path of the generated picture file
+     * @throws GuzzleException
+     */
 	private function generatePicture(Group $group): ?string
 	{
 		$client = new Client();
@@ -101,8 +101,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function deleteGroup(Group $group)
-	{
+	public function deleteGroup(Group $group): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		unlink(self::GROUP_PICS_DIR . $group->picFilename);
@@ -118,8 +118,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function ban(Group $group, User $user)
-	{
+	public function ban(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		if (!$group->bans->contains($user) && $user !== $group->owner) {
@@ -137,8 +137,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function unban(Group $group, User $user)
-	{
+	public function unban(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		if (!$group->members->contains($user) && $user !== $group->owner) {
@@ -156,8 +156,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function kick(Group $group, User $user)
-	{
+	public function kick(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		if ($user !== $group->owner) {
@@ -173,8 +173,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function setNewAdmin(Group $group, User $user)
-	{
+	public function setNewAdmin(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		if ($group->owner !== $user) {
@@ -201,8 +201,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function joinGroup(Group $group, User $user)
-	{
+	public function joinGroup(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$group->members[] = $user;
@@ -217,8 +217,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function requestJoin(Group $group, User $user)
-	{
+	public function requestJoin(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$group->joinRequests->add($user);
@@ -244,8 +244,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function approveJoinRequest(Group $group, User $user, bool $flush = true)
-	{
+	public function approveJoinRequest(Group $group, User $user, bool $flush = true): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$group->joinRequests->removeElement($user);
@@ -262,8 +262,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function rejectJoinRequest(Group $group, User $user, bool $flush = true)
-	{
+	public function rejectJoinRequest(Group $group, User $user, bool $flush = true): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$group->joinRequests->removeElement($user);
@@ -280,8 +280,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function updateLook(Group $group, string $name, string $description, UploadedFile $picFile)
-	{
+	public function updateLook(Group $group, string $name, string $description, UploadedFile $picFile): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$picFile->move(self::GROUP_PICS_DIR . $group->picFilename);
@@ -298,8 +298,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function leave(Group $group, User $user)
-	{
+	public function leave(Group $group, User $user): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		if ($group->members->contains($user)) {
@@ -316,8 +316,8 @@ class GroupsService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function updateJoinPolicy(Group $group, int $accessLevel)
-	{
+	public function updateJoinPolicy(Group $group, int $accessLevel): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$group->accessLevel = $accessLevel;

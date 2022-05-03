@@ -5,23 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>placki</title>
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/css/fonts/fonts.css" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
     <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
     <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
     <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
     <link rel="stylesheet" href="/assets/css/File-Manager.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
-    <link rel="stylesheet" href="/assets/css/styles.css" />
     <link rel="stylesheet" href="/assets/css/Table-With-Search.css" />
+    <link rel="stylesheet" href="/assets/css/aos/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/media.css" />
+    <link rel="stylesheet" href="/assets/css/file-icons/file-icons.css" />
+    {% include "snippets/video_player_deps.twig" %}
 </head>
 
 <body>
 {% include "snippets/navbar.twig" %}
+{% include "snippets/toast.twig" %}
 <h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
     <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -105,113 +106,95 @@
                 </span>
     </div>
     <div id="video-tab" class="tab-content" style="width: 100%; height: 100%; overflow-y: auto;">
-        <div class="form-group pull-right col-lg-4" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
-            <input type="text" class="search form-control" placeholder="wyszukaj filmy" data-target-table="videos-table" />
-            <span class="press-enter-to-search-message" data-depends='.search[data-target-table="videos-table"]'>
-                        wciśnij&nbsp;<img src="/assets/img/enter%20key.png" />&nbsp;<span class="font-monospace">Enter</span> aby wyszukać
-                    </span>
+        <button class="btn btn-primary" style="margin: 10px;" onclick="$videoUploadInput.click();">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-video-plus" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z"></path>
+                <rect x="3" y="6" width="12" height="12" rx="2"></rect>
+                <line x1="7" y1="12" x2="11" y2="12"></line>
+                <line x1="9" y1="10" x2="9" y2="14"></line>
+            </svg>
+            wrzuć wideo
+        </button>
+        <input id="video-upload-input" type="file" hidden accept="video/*" />
+        <div style="width: 100%;">
+            <div class="form-group pull-right col-lg-4" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
+                <input type="text" class="search form-control" placeholder="wyszukaj filmy" data-target-table="videos-table" />
+                <span class="press-enter-to-search-message" data-depends='.search[data-target-table="videos-table"]'>
+                    wciśnij&nbsp;<img src="/assets/img/enter%20key.png" />&nbsp;<span class="font-monospace">Enter</span> aby wyszukać
+                </span>
+            </div>
         </div>
         <div class="table-responsive table table-hover results" data-tablename="videos-table">
             <table class="table table-hover table-borderless" style="border: none; vertical-align: middle;">
                 <thead class="bill-header cs">
-                <tr style="background: var(--primary);">
-                    <th style="width: 65%;">tytuł</th>
-                    <th style="width: 15%;">autor</th>
-                    <th style="width: 20%;">wrzucone</th>
-                </tr>
+                    <tr>
+                        <th style="width: 65%;">tytuł</th>
+                        <th style="width: 15%;">autor</th>
+                        <th style="width: 20%;">data wrzucenia</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr class="warning no-result">
-                    <td colspan="12"><i class="fa fa-warning"></i>&nbsp; Brak wyników</td>
-                </tr>
-                {% for video in shared_videos %}
-                    <tr>
-                        <td>
-                            <a href="/media/film?id={{ video.id }}">
-                                <img class="video-thumbnail" src="{{ video.thumbnail }}" />
-                                {{ video.name }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="/profil?uzytkownik={{ video.uploadedBy.username }}">
-                                <img width="20" height="20" style="border-radius: 20px;" src="{{ video.uploadedBy.profilePic }}" />
-                                {{ video.uploadedBy.username }}
-                            </a>
-                        </td>
-                        <td>{{ video.uploadedAt.format("j F Y (G:i)") }}</td>
+                    <tr class="warning no-result">
+                        <td colspan="12"><i class="fa fa-warning"></i>&nbsp; Brak wyników</td>
                     </tr>
-                {% endfor %}
+                    {% for video in shared_videos %}
+                        <tr>
+                            <td>
+                                <a href="/media/film?id={{ video.id }}">
+                                    <img class="video-thumbnail" src="{{ video.thumbnail }}" />
+                                    {% if video.visibility == 2 %} {# if video is private #}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                                            <circle cx="12" cy="16" r="1"></circle>
+                                            <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+                                        </svg>
+                                    {% endif %}
+                                    {{ video.name }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/profil?uzytkownik={{ video.uploadedBy.username }}">
+                                    <img width="20" height="20" style="border-radius: 20px;" src="{{ video.uploadedBy.profilePic }}" />
+                                    {{ video.uploadedBy.username }}
+                                </a>
+                            </td>
+                            <td>{{ video.uploadedAt.format("j F Y (G:i)") }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
     <div id="photos-tab" class="tab-content" style="width: 100%; height: 100%; margin-top: 5px; padding: 5px; overflow-y: auto; display: none;">
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="album-chooser-btn" type="button" style="background: var(--primary);">Wszystko</button>
-            <div class="dropdown-menu" id="album-chooser-menu">
-                <h6 class="dropdown-header">Albumy systemowe</h6>
-                <a class="dropdown-item" href="#" data-special="all">Wszystko</a>
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Albumy społeczeństwa</h6>
-                {% for album_name in shared_photos.albums %}
-                <a class="dropdown-item" href="#">{{ album_name }}</a>
-                {% endfor %}
+        <div style="width: 100%;">
+            <div class="btn-group" role="group">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="album-chooser-btn" type="button">wszystko</button>
+                    <div class="dropdown-menu" id="album-chooser-menu">
+                        <h6 class="dropdown-header">albumy systemowe</h6>
+                        <a class="dropdown-item" href="#" data-special="all">wszystko</a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">albumy społeczeństwa</h6>
+                        {% for album_name in shared_photos.albums %}
+                            <a class="dropdown-item" href="#" data-albumref="{{ album_name }}">{{ album_name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button id="upload-photos-btn" class="btn btn-primary" style="font-weight: 900;">+ wrzuć zdjęcie</button>
             </div>
         </div>
+        <input id="photos-upload-input" type="file" multiple hidden accept="image/png, image/jpeg, image/gif, image/webp" />
         {% for photo in shared_photos.photo_list %}
-        <div class="media-photo-item" data-album="{{ photo.album }}">
-            <div style='background: url("{{ photo.sourceUri|raw }}") center / cover no-repeat;'></div>
-            <div style="padding: 3px;">
-                <p>{{ photo.description }}</p>
-                <p><strong>{{ photo.uploadedBy.username }}</strong></p>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <div id="files-tab" class="tab-content" style="width: 100%; height: 100%; overflow-y: auto; display: none;">
-        <div class="form-group pull-right col-lg-4" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
-            <input type="text" class="search form-control" placeholder="wyszukaj pliki" data-target-table="files-table" />
-            <span class="press-enter-to-search-message" data-depends='.search[data-target-table="files-table"]'>wciśnij&nbsp;<img src="/assets/img/enter%20key.png" />&nbsp;Enter aby wyszukać</span>
-        </div>
-        <div class="table-responsive table table-hover results" data-tablename="files-table">
-            <table class="table table-hover table-borderless" style="border: none; vertical-align: middle;">
-                <thead class="bill-header cs">
-                <tr style="background: var(--primary);">
-                    <th>Nazwa pliku</th>
-                    <th style="width: 200px;">Wrzucone przez</th>
-                    <th style="width: 220px;">Data wrzucenia</th>
-                    <th style="width: 280px;">Akcje</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="warning no-result">
-                    <td colspan="12"><i class="fa fa-warning"></i>&nbsp; Brak wyników</td>
-                </tr>
-                {% for file in shared_files %}
-                <tr>
-                    <td>{{ file.name }}</td>
-                    <td>
-                        <a href="/profil?uzytkownik={{ file.uploadedBy.username }}">
-                            <img width="20" height="20" style="border-radius: 20px;" src="{{ file.uploadedBy.profilePic }}" />
-                            {{ file.uploadedBy.username }}
-                        </a>
-                    </td>
-                    <td>{{ file.uploadedAt }}</td>
-                    <td>
-                        <div class="btn-group btn-group-sm float-end file-actions" role="group">
-                            <button class="btn btn-danger float-end" type="button">
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="1em"
-                                        height="1em"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="2"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icon-tabler-trash"
-                                >
+            <div class="media-photo-item" data-album="{{ photo.album }}" data-photoid="{{ photo.id }}">
+                <div style='background: url("/media_sources/{{ photo.id }}") center / cover no-repeat;'></div>
+                <div style="padding: 3px;">
+                    <p><strong>{{ photo.uploadedBy.username }}</strong></p>
+                    <div class="btn-group btn-group-sm" role="group">
+                        {% if photo.uploadedBy == self %}
+                            <button class="btn btn-danger delete-photo-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="13" height="13" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <line x1="4" y1="7" x2="20" y2="7"></line>
                                     <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -219,70 +202,381 @@
                                     <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                 </svg>
-                                &nbsp;Usuń
                             </button>
-                            <button class="btn btn-primary" type="button">
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="1em"
-                                        height="1em"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="2"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icon-tabler-download"
-                                >
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                                    <polyline points="7 11 12 16 17 11"></polyline>
-                                    <line x1="12" y1="4" x2="12" y2="16"></line>
-                                </svg>
-                                &nbsp;Pobierz
-                            </button>
-                            <button class="btn btn-light" type="button">
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="1em"
-                                        height="1em"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="2"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icon-tabler-share"
-                                >
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <circle cx="6" cy="12" r="3"></circle>
-                                    <circle cx="18" cy="6" r="3"></circle>
-                                    <circle cx="18" cy="18" r="3"></circle>
-                                    <line x1="8.7" y1="10.7" x2="15.3" y2="7.3"></line>
-                                    <line x1="8.7" y1="13.3" x2="15.3" y2="16.7"></line>
-                                </svg>
-                                &nbsp;Udostępnij
-                            </button>
-                        </div>
-                    </td>
+                        {% endif %}
+                        <button class="btn btn-primary view-photo-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo" width="13" height="13" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <line x1="15" y1="8" x2="15.01" y2="8"></line>
+                                <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+                                <path d="M4 15l4 -4a3 5 0 0 1 3 0l5 5"></path>
+                                <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path>
+                            </svg>
+                            zobacz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="files-tab" class="tab-content" style="width: 100%; height: 100%; overflow-y: auto; display: none;">
+        <div style="width: 100%;">
+            <button class="btn btn-primary" style="margin: 10px;" onclick="$fileUploadInput.click();">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-upload" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                    <path d="M12 11v6"></path>
+                    <path d="M9.5 13.5l2.5 -2.5l2.5 2.5"></path>
+                </svg>
+                wrzuć plik
+            </button>
+            <input id="file-upload-input" type="file" hidden />
+            <div class="form-group pull-right col-lg-4" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
+                <input type="text" class="search form-control" placeholder="wyszukaj pliki" data-target-table="files-table" />
+                <span class="press-enter-to-search-message" data-depends='.search[data-target-table="files-table"]'>
+                    wciśnij&nbsp;<img src="/assets/img/enter%20key.png" />&nbsp;Enter aby wyszukać
+                </span>
+            </div>
+        </div>
+        <div class="table-responsive table table-hover results" data-tablename="files-table">
+            <table class="table table-hover table-borderless" style="border: none; vertical-align: middle;">
+                <thead class="bill-header cs">
+                <tr>
+                    <th>nazwa pliku</th>
+                    <th style="width: 200px;">wrzucone przez</th>
+                    <th style="width: 220px;">data wrzucenia</th>
+                    <th style="width: 280px;">akcje</th>
                 </tr>
+                </thead>
+                <tbody>
+                <tr class="warning no-result">
+                    <td colspan="12"><i class="fa fa-warning"></i>&nbsp; brak wyników</td>
+                </tr>
+                {% for file in shared_files %}
+                    <tr>
+                        <td>
+                            <div class="file-icon" data-file="{{ file.name|split('.')|last }}"></div>
+                            {{ file.name }}
+                            <span class="float-end" style="color: var(--bs-gray-500);">{{ file.sizeText }}</span>
+                        </td>
+                        <td>
+                            <a href="/profil?uzytkownik={{ file.uploadedBy.username }}">
+                                <img width="20" height="20" style="border-radius: 20px;" src="{{ file.uploadedBy.profilePic }}" />
+                                {{ file.uploadedBy.username }}
+                            </a>
+                        </td>
+                        <td>{{ file.uploadedAt.format("j F Y (G:i)") }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm float-end file-actions" role="group" data-fileid="{{ file.id }}">
+                                {% if file.uploadedBy == self %}
+                                    <button class="btn btn-danger float-end" type="button" data-action="delete">
+                                        <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="1em"
+                                                height="1em"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="2"
+                                                stroke="currentColor"
+                                                fill="none"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="icon icon-tabler icon-tabler-trash"
+                                        >
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <line x1="4" y1="7" x2="20" y2="7"></line>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                        </svg>
+                                        &nbsp;usuń
+                                    </button>
+                                {% endif %}
+                                <button class="btn btn-primary" type="button" data-action="download" data-filename="{{ file.name }}">
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="1em"
+                                            height="1em"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="2"
+                                            stroke="currentColor"
+                                            fill="none"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="icon icon-tabler icon-tabler-download"
+                                    >
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                                        <polyline points="7 11 12 16 17 11"></polyline>
+                                        <line x1="12" y1="4" x2="12" y2="16"></line>
+                                    </svg>
+                                    &nbsp;pobierz
+                                </button>
+                                {% if file.shared %}
+                                    <button class="btn btn-success" type="button" data-action="share">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
+                                            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
+                                        </svg>
+                                        &nbsp;kopiuj link
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-light" type="button" data-action="share">
+                                        <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="1em"
+                                                height="1em"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="2"
+                                                stroke="currentColor"
+                                                fill="none"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="icon icon-tabler icon-tabler-share"
+                                        >
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <circle cx="6" cy="12" r="3"></circle>
+                                            <circle cx="18" cy="6" r="3"></circle>
+                                            <circle cx="18" cy="18" r="3"></circle>
+                                            <line x1="8.7" y1="10.7" x2="15.3" y2="7.3"></line>
+                                            <line x1="8.7" y1="13.3" x2="15.3" y2="16.7"></line>
+                                        </svg>
+                                        &nbsp;udostępnij
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<div class="modal fade" role="dialog" tabindex="-1" id="upload-photos-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">wrzuć zdjęcia</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label>następujące pliki zostaną wrzucone do albumu:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            nazwa albumu
+                        </div>
+                    </div>
+                    <input id="album-name-input" class="form-control" type="text" />
+                </div>
+                <label id="automatic-album-creation-note" style="font-size: 13px;">jeżeli podany album nie istnieje, zostanie utworzony automatycznie</label>
+                <ul id="photos-upload-progress-list" class="progress-list">
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" type="button" data-bs-dismiss="modal">anuluj</button>
+                <button id="confirm-photos-upload-btn" class="btn btn-primary" type="button">wrzuć</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="file-upload-critical-error">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">anulowanie transferu</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    podczas transferu wystąpił błąd serwera, którego nie da się zidentyfikować.
+                    może on spowodować, że nie będziesz w stanie wrzucać innych plików, dopóki się nie wylogujesz.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" data-bs-dismiss="modal">rozumiem</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal show" role="dialog" tabindex="-1" id="video-upload-modal">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">wrzucanie wideo</h4>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="display: flex;">
+                <div class="mb-3" style="flex: 1 1 auto; padding-right: 10px;">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-id" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+                            <circle cx="9" cy="10" r="2"></circle>
+                            <line x1="15" y1="8" x2="17" y2="8"></line>
+                            <line x1="15" y1="12" x2="17" y2="12"></line>
+                            <line x1="7" y1="16" x2="17" y2="16"></line>
+                        </svg>
+                        szczegóły
+                    </h2>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">nazwa filmu</span>
+                        <input id="video-upload-name-input" type="text" class="form-control" />
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea id="video-upload-description-input" class="form-control" placeholder="opis" style="height: 10em;"></textarea>
+                        <label for="video-upload-description-input">opis</label>
+                    </div>
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-polaroid" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                            <line x1="4" y1="16" x2="20" y2="16"></line>
+                            <path d="M4 12l3 -3c.928 -.893 2.072 -.893 3 0l4 4"></path>
+                            <path d="M13 12l2 -2c.928 -.893 2.072 -.893 3 0l2 2"></path>
+                            <line x1="14" y1="7" x2="14.01" y2="7"></line>
+                        </svg>
+                        miniaturka
+                    </h2>
+                    <div class="d-flex align-items-center mb-3" style="width: 100%;">
+                        <img id="video-upload-thumbnail-preview" alt="nieprawidłowy plik" />
+                        <form>
+                            <input class="form-control" id="video-upload-thumbnail-input" type="file" accept="image/png, image/jpeg, image/webp" />
+                        </form>
+                    </div>
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <circle cx="12" cy="12" r="2"></circle>
+                            <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"></path>
+                        </svg>
+                        widoczność
+                    </h2>
+                    <div class="big-chooser" data-chooserid="video-visibility">
+                        <div data-color="#4CAF50" data-optionid="public" data-chooser="video-visibility">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-world" width="2em" height="2em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <line x1="3.6" y1="9" x2="20.4" y2="9"></line>
+                                <line x1="3.6" y1="15" x2="20.4" y2="15"></line>
+                                <path d="M11.5 3a17 17 0 0 0 0 18"></path>
+                                <path d="M12.5 3a17 17 0 0 1 0 18"></path>
+                            </svg>
+                            <label>publiczny</label>
+                            <p>
+                                film będzie widoczny dla każdej osoby na platformie
+                            </p>
+                        </div>
+                        <div data-color="#F44336" data-optionid="unlisted" data-chooser="video-visibility">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-playlist-x" width="2em" height="2em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M19 8h-14"></path>
+                                <path d="M5 12h7"></path>
+                                <path d="M12 16h-7"></path>
+                                <path d="M16 14l4 4"></path>
+                                <path d="M20 14l-4 4"></path>
+                            </svg>
+                            <label>niepubliczny</label>
+                            <p>
+                                filmu nie będzie można znaleźć w publicznej liście na platformie, ale bezpośredni link pozwoli na dostęp
+                            </p>
+                        </div>
+                        <div data-color="#212121" data-optionid="private" data-chooser="video-visibility">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock" width="2em" height="2em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                                <circle cx="12" cy="16" r="1"></circle>
+                                <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+                            </svg>
+                            <label>prywatny</label>
+                            <p>
+                                film będzie dostępny jedynie z twojego konta
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 0 0 30vw;">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eyeglass" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M8 4h-2l-3 10"></path>
+                            <path d="M16 4h2l3 10"></path>
+                            <line x1="10" y1="16" x2="14" y2="16"></line>
+                            <path d="M21 16.5a3.5 3.5 0 0 1 -7 0v-2.5h7v2.5"></path>
+                            <path d="M10 16.5a3.5 3.5 0 0 1 -7 0v-2.5h7v2.5"></path>
+                        </svg>
+                        podgląd
+                    </h2>
+                    {% include "snippets/video_player.twig" with {"id": "upload-video-preview"} %}
+                    <button class="btn btn-sm btn-outline-primary" type="button" onclick="setCurrentVideoPreviewFrameAsThumbnail();">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-polaroid" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                            <line x1="4" y1="16" x2="20" y2="16"></line>
+                            <path d="M4 12l3 -3c.928 -.893 2.072 -.893 3 0l4 4"></path>
+                            <path d="M13 12l2 -2c.928 -.893 2.072 -.893 3 0l2 2"></path>
+                            <line x1="14" y1="7" x2="14.01" y2="7"></line>
+                        </svg>
+                        ustaw ten moment filmu jako miniatrukę
+                    </button>
+                </div>
+            </div>
+            <div id="video-upload-progress-overlay" class="position-absolute d-none justify-content-center align-items-center">
+                <lottie-player
+                        src="/assets/anim/video_upload.json"
+                        background="transparent"
+                        speed="0.75"
+                        style="width: 300px; height: 300px;"
+                        loop
+                        autoplay
+                ></lottie-player>
+                <div style="color: white;">
+                    <h1 style="font-family: 'Josefin Sans', sans-serif;">twój film jest wysyłany</h1>
+                    <div class="progress">
+                        <div id="video-upload-progress-bar" class="progress-bar" role="progressbar" style="width: 0;">0%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" onclick="startVideoUpload();">zapisz i rozpocznij</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="file-upload-popup" data-show="0">
+    <div>
+        <h2>proces wrzucania pliku</h2>
+    </div>
+    <label></label>
+    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <div class="progress">
+            <div id="file-upload-progress-bar" class="progress-bar" role="progressbar" style="width: 0;">0%</div>
+        </div>
+        <button id="cancel-file-upload-btn" class="btn btn-sm btn-outline-danger">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            anuluj
+        </button>
+    </div>
+</div>
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/bs-init.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/aos/aos.js"></script>
+<script src="/assets/js/lottie/lottie-player.js"></script>
+<script src="/assets/js/moment/moment.min.js"></script>
+<script src="/assets/js/moment/locale-pl.min.js"></script>
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/table.js"></script>
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/tabs.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/media.js"></script>
+<script src="/assets/js/common/big_chooser.js"></script>
 </body>
 </html>

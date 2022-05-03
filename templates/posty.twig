@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>placki</title>
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/css/fonts/fonts.css" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
     <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
     <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
     <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
     <link rel="stylesheet" href="/assets/css/File-Manager.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/aos/aos.css" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/posts_and_comments.css" />
     <link rel="stylesheet" href="/assets/css/audio_player/bundle.css" />
 </head>
 
@@ -71,6 +69,14 @@
                 <video src="{{ src }}" controls loop></video>
             {% elseif attachment.extension in ["mp3"] %}
                 {% include "snippets/audio_player.twig" with {"audio_source": src, "title": attachment.originalFilename} only %}
+            {% else %}
+                <a href="{{ src }}" download="{{ attachment.originalFilename }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paperclip" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5"></path>
+                    </svg>
+                    {{ attachment.originalFilename }}
+                </a>
             {% endif %}
         {% endfor %}
         <div class="d-flex flex-row">
@@ -78,7 +84,7 @@
                 <span style="color: gray;">{{ post.at.format("j F Y") }} o {{ post.at.format("G:i") }}</span>
             </div>
             <div class="d-flex justify-content-xl-end align-items-xl-center like-btns" data-liked="{{ self in post.likedBy }}" style="height: 100%;">
-                <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0px 0px 8px;"></i>
+                <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0 0 8px;"></i>
             </div>
             <label class="form-label post-like-count">{{ post.likedBy|length }}</label>
             <i class="far fa-comment-alt open-comments" style="font-size: 25px; color: var(--bs-gray-900); margin-left: 5px; margin-right: 5px;"></i>
@@ -96,10 +102,10 @@
 {% endif %}
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/bs-init.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/aos/aos.js"></script>
+<script src="/assets/js/lottie/lottie-player.js"></script>
+<script src="/assets/js/moment/moment.min.js"></script>
+<script src="/assets/js/moment/locale-pl.min.js"></script>
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/toast.js"></script>

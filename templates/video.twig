@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>placki</title>
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/css/fonts/fonts.css" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
     <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
     <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
     <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
     <link rel="stylesheet" href="/assets/css/File-Manager.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/aos/aos.css" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/media.css" />
+    {% include "snippets/video_player_deps.twig" %}
 </head>
-
 <body>
 {% include "snippets/toast.twig" %}
 <script>
@@ -54,7 +52,24 @@
 <div class="content" style="overflow-y: auto;">
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-xl-8 offset-xl-0"><video width="560" height="315" style="width: 100%; height: 410px;" poster="{{ video.thumbnail }}" src="{{ src }}" autoplay="" controls=""></video></div>
+            {% if video.uploadedBy == self %}
+                <div class="col-md-6 col-xl-12 pb-2 pt-2">
+                    <button id="delete-video-btn" class="btn btn-sm btn-outline-danger float-end">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <line x1="4" y1="7" x2="20" y2="7"></line>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                        </svg>
+                        usuń film
+                    </button>
+                </div>
+            {% endif %}
+            <div class="col-md-6 col-xl-8 offset-xl-0">
+                {% include "snippets/video_player.twig" with {"src": src, "thumbnail": video.thumbnail} only %}
+            </div>
             <div class="col-md-6 col-xl-4">
                 <div class="card" style="margin-top: 10px;">
                     <div class="card-header" style="background: var(--primary);">
@@ -94,7 +109,6 @@
                                 data-filename="{{ additional.filename }}"
                                 class="btn btn-primary"
                                 role="button"
-                                style="background: var(--primary);"
                         >
                             <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -129,13 +143,13 @@
                         {{ video.uploadedBy.username }}
                     </a>
                     <div class="d-flex flex-grow-1 justify-content-xl-end align-items-xl-center like-btns" data-liked="{{ like_info.liked_by_me }}" style="height: 100%;">
-                        <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0px 0px 8px;"></i>
+                        <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0 0 8px;"></i>
                     </div>
                     <span class="d-xl-flex" id="like-count" style="margin-left: 5px;">{{ like_info.count }}</span>
                 </div>
                 <div style="margin-top: 10px;">
                     <div style="width: 100%; border-bottom: 1px solid #ccc;">
-                        <b>opis</b>
+                        <b style="font-family: 'Josefin Sans', sans-serif;">opis</b>
                         <span style="float: right;">wrzucone {{ video.uploadedAt.format("j F Y") }} o {{ video.uploadedAt.format("G:i") }}</span>
                     </div>
                     {% if video.description|length > 0 %}
@@ -178,10 +192,10 @@
 </div>
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/bs-init.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/aos/aos.js"></script>
+<script src="/assets/js/lottie/lottie-player.js"></script>
+<script src="/assets/js/moment/moment.min.js"></script>
+<script src="/assets/js/moment/locale-pl.min.js"></script>
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/toast.js"></script>

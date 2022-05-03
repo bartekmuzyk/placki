@@ -13,13 +13,13 @@ class SessionManager {
 		return $_SESSION[$key];
 	}
 
-	public function set(string $key, $value)
-	{
+	public function set(string $key, $value): void
+    {
 		$_SESSION[$key] = $value;
 	}
 
-	public function remove(string $key)
-	{
+	public function remove(string $key): void
+    {
 		$this->set($key, null);
 	}
 }

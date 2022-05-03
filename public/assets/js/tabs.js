@@ -8,6 +8,10 @@ $(".tabs > .tab").click(function() {
     _tabs_callback(tabId);
 });
 
+function activateTab(tabId) {
+    $(`.tabs > .tab[data-tabid="${tabId}"]`).click();
+}
+
 function setTabCallback(cb) {
     _tabs_callback = cb;
 }

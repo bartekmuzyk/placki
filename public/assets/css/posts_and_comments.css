@@ -1,0 +1,44 @@
+@import url("common/like_btns.css");
+
+.post, .comment {
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid var(--bs-gray-300);
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.post > div:nth-child(1) {
+    height: 30px;
+}
+
+.post > div:nth-child(1) > img {
+    border-radius: 6px;
+}
+
+.post > div:nth-child(1) a {
+    margin-left: 5px;
+}
+
+.post > div:nth-child(2) {
+    float: right;
+}
+
+.post .like-btns {
+    margin-right: 5px;
+}
+
+.post > img {
+    max-width: 100%;
+    max-height: 85vh;
+    margin-bottom: 5px;
+}
+
+.post > video {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.open-comments {
+    cursor: pointer;
+}

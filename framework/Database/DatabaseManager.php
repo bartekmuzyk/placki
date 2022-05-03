@@ -2,28 +2,29 @@
 
 namespace Framework\Database;
 
-use App\Entities\User;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\TransactionRequiredException;
+use Ramsey\Uuid\Doctrine\UuidType;
 
 class DatabaseManager {
 	private EntityManager $entityManager;
 
 	/**
 	 * @throws ORMException
+	 * @throws Exception
 	 */
 	public function __construct(string $host, string $dbname, string $username, string $password)
 	{
-		$config = Setup::createAnnotationMetadataConfiguration(
+		$config = ORMSetup::createAnnotationMetadataConfiguration(
 			[PROJECT_ROOT . '/src/Entities'],
 			false,
-			PROJECT_ROOT . '/cache/proxies',
-			null,
-			false
+			PROJECT_ROOT . '/cache/proxies'
 		);
 		$this->entityManager = EntityManager::create([
 			'driver' => 'pdo_mysql',
@@ -34,15 +35,20 @@ class DatabaseManager {
 		], $config);
 
 		$this->generateProxies();
+
+		Type::addType('uuid', UuidType::class);
 	}
 
-	private function generateProxies()
-	{
+	private function generateProxies(): void
+    {
 		$classes = $this->entityManager->getMetadataFactory()->getAllMetadata();
 		$this->entityManager->getProxyFactory()->generateProxyClasses($classes);
 	}
 
 	/**
+	 * @param array $config
+	 * @return DatabaseManager
+	 * @throws Exception
 	 * @throws ORMException
 	 */
 	public static function fromConfig(array $config): self
@@ -60,8 +66,8 @@ class DatabaseManager {
 	 * @return void
 	 * @throws ORMException
 	 */
-	public function persist(object $entity)
-	{
+	public function persist(object $entity): void
+    {
 		$this->entityManager->persist($entity);
 	}
 
@@ -70,8 +76,8 @@ class DatabaseManager {
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function flush()
-	{
+	public function flush(): void
+    {
 		$this->entityManager->flush();
 	}
 
@@ -81,8 +87,8 @@ class DatabaseManager {
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function persistAndFlush(object $entity)
-	{
+	public function persistAndFlush(object $entity): void
+    {
 		$this->persist($entity);
 		$this->flush();
 	}
@@ -95,7 +101,7 @@ class DatabaseManager {
 	 * @throws OptimisticLockException
 	 * @throws TransactionRequiredException
 	 */
-	public function find(string $entityClassName, $id): ?object
+	public function find(string $entityClassName, int|string $id): ?object
 	{
 		return $this->entityManager->find($entityClassName, $id);
 	}
@@ -135,7 +141,7 @@ class DatabaseManager {
 		}
 
 		if (array_key_exists('order_by', $order)) {
-			$queryBuilder->orderBy($order['order_by'], $order['direction'] ?? 'ASC');
+			$queryBuilder->orderBy('e.' . $order['order_by'], $order['direction'] ?? 'ASC');
 		}
 
 		return $queryBuilder->getQuery()->getResult();
@@ -146,8 +152,8 @@ class DatabaseManager {
 	 * @return void
 	 * @throws ORMException
 	 */
-	public function remove(object $entity)
-	{
+	public function remove(object $entity): void
+    {
 		$this->entityManager->remove($entity);
 	}
 
@@ -157,8 +163,8 @@ class DatabaseManager {
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function removeAndFlush(object $entity)
-	{
+	public function removeAndFlush(object $entity): void
+    {
 		$this->remove($entity);
 		$this->flush();
 	}

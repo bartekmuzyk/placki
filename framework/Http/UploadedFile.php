@@ -37,4 +37,9 @@ class UploadedFile
 	{
 		return $this->data['error'];
 	}
+
+	public function read(): string
+	{
+		return file_get_contents($this->data['tmp_name']);
+	}
 }

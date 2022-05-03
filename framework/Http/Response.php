@@ -7,10 +7,13 @@ class Response {
 
 	public int $code;
 
-	public function __construct(string $content = '', int $code = 200)
+	public array $headers;
+
+	public function __construct(string $content = '', int $code = 200, array $headers = [])
 	{
 		$this->content = $content;
 		$this->code = $code;
+		$this->headers = $headers;
 	}
 
 	public static function code(int $code): self

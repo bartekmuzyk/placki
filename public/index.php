@@ -11,6 +11,9 @@ use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
 use Framework\Http\Response;
 
+/**
+ * @internal
+ */
 function sendResponse(string $content, int $code)
 {
 	http_response_code($code);
@@ -19,6 +22,7 @@ function sendResponse(string $content, int $code)
 }
 
 /**
+ * @internal
  * @param object|Exception|Error $exceptionOrError
  * @return string
  */
@@ -28,6 +32,7 @@ function getTraceAsHTML(object $exceptionOrError): string
 }
 
 /**
+ * @internal
  * @param object|Exception|Error $exceptionOrError
  * @return void
  */
@@ -48,6 +53,7 @@ function renderExceptionOrError(object $exceptionOrError)
 }
 
 /**
+ * @internal
  * @param ReflectionMethod $controllerMethod
  * @return object[]
  * @throws InvalidInjectionParameter|NoSuchServiceException
@@ -135,6 +141,10 @@ try {
 	if ($response === null) {
 		$args = getArgumentsForDependencyInjection($controllerMethod);
 		$response = $controllerMethod->invoke($controllerInstance, ...$args);
+	}
+
+	foreach ($response->headers as $name => $value) {
+		header("$name: $value");
 	}
 
 	sendResponse($response->content, $response->code);

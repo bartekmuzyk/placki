@@ -1,0 +1,52 @@
+#post-attachment-list {
+    width: 100%;
+    margin: 5px 0;
+}
+
+#post-attachment-list[data-show="0"] {
+    display: none;
+}
+
+#post-attachment-list > div {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    background-color: var(--bs-gray-200);
+    position: relative;
+    display: inline-block;
+    margin: 0 2px;
+}
+
+#post-attachment-list > div > div {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    border-radius: inherit;
+}
+
+#post-attachment-list > div > div:nth-child(1) {
+    background-position: center;
+    background-size: cover;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    font-family: "DM Sans", sans-serif;
+    padding: 10px 2px 0;
+}
+
+#post-attachment-list > div > div:nth-child(2) {
+    visibility: hidden;
+    text-align: center;
+    padding-top: 5px;
+    background-color: rgba(244, 67, 54, 0.83);
+    cursor: pointer;
+}
+
+#post-attachment-list > div > div:nth-child(2) * {
+    cursor: inherit;
+}
+
+#post-attachment-list > div:hover > div:nth-child(2) {
+    visibility: visible;
+}

@@ -2,7 +2,6 @@
 
 namespace Framework;
 
-use Doctrine\ORM\ORMException;
 use Exception;
 use Framework\Controller\Controller;
 use Framework\Database\DatabaseManager;
@@ -12,13 +11,11 @@ use Framework\Http\Response;
 use Framework\Middleware\MiddlewareInterface;
 use Framework\Service\Service;
 use Framework\Session\SessionManager;
+use Framework\TempFileUtil\TempFileUtil;
 use HaydenPierce\ClassFinder\ClassFinder;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 use Framework\Twig\TwigRenderer;
 
 abstract class BaseApp {
@@ -33,6 +30,8 @@ abstract class BaseApp {
 	private SessionManager $sessionManager;
 
 	private ?DatabaseManager $databaseManager = null;
+
+	private TempFileUtil $tempFileUtil;
 
 	private array $config;
 
@@ -52,6 +51,7 @@ abstract class BaseApp {
 			$this->request = $request;
 			$this->twigRenderer = new TwigRenderer();
 			$this->sessionManager = new SessionManager();
+			$this->tempFileUtil = new TempFileUtil(PROJECT_ROOT . '/cache/temp_files/');
 
 			$this->autoRegisterServices();
 			$this->setup();
@@ -68,8 +68,8 @@ abstract class BaseApp {
 	/**
 	 * @noinspection PhpUnhandledExceptionInspection
 	 */
-	private function autoRegisterServices()
-	{
+	private function autoRegisterServices(): void
+    {
 		$serviceClasses = array_filter(
 			ClassFinder::getClassesInNamespace('App\\Services'),
 			function (string $serviceClass) {
@@ -156,14 +156,14 @@ abstract class BaseApp {
 	 * @param class-string<Controller> $controllerClass
 	 * @return void
 	 */
-	protected function useController(string $routePrefix, string $controllerClass)
-	{
+	protected function useController(string $routePrefix, string $controllerClass): void
+    {
 		$controllerInstance = new $controllerClass($this, $routePrefix);
 		$controllerInstance->configureRoutes();
 	}
 
-	protected function addMiddleware(MiddlewareInterface $middleware)
-	{
+	protected function addMiddleware(MiddlewareInterface $middleware): void
+    {
 		$this->middleware[] = $middleware;
 	}
 
@@ -186,9 +186,25 @@ abstract class BaseApp {
 			$path .= '?' . http_build_query($queryParams);
 		}
 
-		header("Location: $path");
+		return new Response('', 302, [
+			'Location' => $path
+		]);
+	}
 
-		return new Response('', 302);
+	public function file(string $path, ?string $customFilename = null): Response
+	{
+		if (file_exists($path)) {
+			$filename = is_string($customFilename) ? $customFilename : basename($path);
+
+			return new Response(file_get_contents($path), 200, [
+				'Content-Type' => 'application/octet-stream',
+				'Content-Transfer-Encoding' => 'Binary',
+				'Content-Length' => (string)filesize($path),
+				'Content-Disposition' => "attachment; filename=\"$filename\""
+			]);
+		} else {
+			return Response::code(404);
+		}
 	}
 
 	public function getRequest(): Request
@@ -204,5 +220,10 @@ abstract class BaseApp {
 	public function getDBManager(): DatabaseManager
 	{
 		return $this->databaseManager;
+	}
+
+	public function getTempFileUtil(): TempFileUtil
+	{
+		return $this->tempFileUtil;
 	}
 }

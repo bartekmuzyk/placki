@@ -69,11 +69,9 @@ $confirmGroupCreationBtn.click(function() {
         body: formData
     })
         .then(response => {
-            if (response.ok) {
-                response.text().then(groupId => location.assign(`/grupy/panel?id=${groupId}`));
-            } else {
-                throw new Error();
-            }
+            if (!response.ok) throw new Error();
+
+            response.text().then(groupId => location.assign(`/grupy/panel?id=${groupId}`));
         })
         .catch(() => {
             showGroupCreationError("nie udało się utworzyć grupy");

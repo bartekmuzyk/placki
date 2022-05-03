@@ -1,0 +1,20 @@
+@import url("common/post_attachment_list.css");
+
+#file-upload-error-message {
+    position: relative;
+    color: var(--bs-red);
+}
+
+#post-comments-iframe {
+    width: 100%;
+    height: calc(100vh - 200px);
+}
+
+#comments-modal-subtitle {
+    margin-left: 10px;
+    color: var(--bs-gray-200);
+}
+
+#post-browser {
+    width: 100%;
+}

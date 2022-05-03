@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpUnused */
+/** @noinspection PhpUnhandledExceptionInspection */
 
 namespace App\Controllers;
 
@@ -11,13 +13,9 @@ use App\Services\AccountService;
 use App\Services\AttachmentService;
 use App\Services\GroupsService;
 use App\Services\PostService;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\TransactionRequiredException;
 use Framework\Controller\Controller;
 use Framework\Http\Response;
 use Framework\Http\UploadedFile;
-use GuzzleHttp\Exception\GuzzleException;
 
 class GroupController extends Controller
 {
@@ -74,14 +72,6 @@ class GroupController extends Controller
 		]);
 	}
 
-	/**
-	 * @param AccountService $accountService
-	 * @param GroupsService $groupsService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws GuzzleException
-	 */
 	public function createGroup(AccountService $accountService, GroupsService $groupsService): Response
 	{
 		$req = $this->getRequest();
@@ -95,14 +85,6 @@ class GroupController extends Controller
 		return new Response((string)$groupId);
 	}
 
-	/**
-	 * @param AccountService $accountService
-	 * @param GroupsService $groupsService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function panel(AccountService $accountService, GroupsService $groupsService): Response
 	{
 		$req = $this->getRequest();
@@ -149,14 +131,6 @@ class GroupController extends Controller
 		]);
 	}
 
-	/**
-	 * @param AccountService $accountService
-	 * @param GroupsService $groupsService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function joinGroup(AccountService $accountService, GroupsService $groupsService): Response
 	{
 		$req = $this->getRequest();
@@ -187,14 +161,6 @@ class GroupController extends Controller
 		return $this->redirect('/grupy/panel', ['id' => (string)$group->id]);
 	}
 
-	/**
-	 * @param AccountService $accountService
-	 * @param GroupsService $groupsService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function deleteGroup(AccountService $accountService, GroupsService $groupsService): Response
 	{
 		$req = $this->getRequest();
@@ -216,16 +182,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param GroupsService $groupsService
-	 * @param AttachmentService $attachmentService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function wall(PostService $postService,
 						 GroupsService $groupsService,
 						 AttachmentService $attachmentService,
@@ -260,15 +216,6 @@ class GroupController extends Controller
 		]);
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @param GroupsService $groupsService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function postWallPost(PostService $postService, AccountService $accountService, GroupsService $groupsService): Response
 	{
 		$req = $this->getRequest();
@@ -308,14 +255,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function deleteWallPost(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -338,14 +277,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function makeAdmin(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -373,14 +304,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function ban(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -408,14 +331,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function unban(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -443,14 +358,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function kick(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -478,14 +385,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function leaveGroup(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -503,14 +402,6 @@ class GroupController extends Controller
 		return $this->redirect('/grupy');
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function setLook(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -546,14 +437,6 @@ class GroupController extends Controller
 		]);
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function setJoinPolicy(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -587,14 +470,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function approveJoinRequest(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -622,14 +497,6 @@ class GroupController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param GroupsService $groupsService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function rejectJoinRequest(GroupsService $groupsService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();

@@ -7,14 +7,17 @@ use Framework\Database\DatabaseManager;
 use Framework\Http\Request;
 use Framework\Http\Response;
 use Framework\Session\SessionManager;
+use Framework\TempFileUtil\TempFileUtil;
 
 /**
  * @method Response template(string $template, array $variables = [], int $code = 200)
  * @method Response json(array $data, int $code = 200)
  * @method Response redirect(string $path, array $queryParams = [])
+ * @method Response file(string $path, ?string $customFilename = null)
  * @method Request getRequest()
  * @method SessionManager getSessionManager()
  * @method DatabaseManager getDBManager()
+ * @method TempFileUtil getTempFileUtil()
  */
 abstract class Controller
 {

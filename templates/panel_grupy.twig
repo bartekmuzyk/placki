@@ -3,12 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-    <title>placki</title>
+    <title>placki | {{ group.name }}</title>
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Racing+Sans+One&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&amp;display=swap" />
+    <link rel="stylesheet" href="/assets/css/fonts/fonts.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" integrity="sha512-zxBiDORGDEAYDdKLuYU9X/JaJo/DPzE42UubfBw9yg8Qvb2YRRIQ8v4KsGHOx2H1/+sdSXyXxLXv5r7tHc9ygg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
     <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
@@ -16,9 +13,9 @@
     <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
     <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
     <link rel="stylesheet" href="/assets/css/File-Manager.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <link rel="stylesheet" href="/assets/css/aos/aos.css" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
-    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/groups.css" />
 </head>
 
 <body>
@@ -195,7 +192,6 @@
                 <button
                         class="btn btn-primary btn-sm float-end"
                         type="button"
-                        style="background: var(--primary);"
                         onclick="post();"
                 >zapostuj</button>
             </div>
@@ -327,7 +323,7 @@
                         </div>
                         <h5>polityka przyjmowania członków</h5>
                         <div class="big-chooser" data-chooserid="join-policy">
-                            <div data-bg="#A5D6A7" data-fg="#43A047" data-optionid="public" data-chooser="join-policy">
+                            <div data-color="#4CAF50" data-optionid="public" data-chooser="join-policy">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-world" width="2em" height="2em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <circle cx="12" cy="12" r="9"></circle>
@@ -342,7 +338,7 @@
                                     <b>jeżeli istnieją aktywne prośby o dołączenie, zostaną one automatycznie zatwierdzone.</b>
                                 </p>
                             </div>
-                            <div data-bg="#FFE082" data-fg="#F9A825" data-optionid="needs-permission" data-chooser="join-policy">
+                            <div data-color="#FFB300" data-optionid="needs-permission" data-chooser="join-policy">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-exclamation" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <circle cx="9" cy="7" r="4"></circle>
@@ -353,7 +349,7 @@
                                 <label>wymaga zatwierdzenia</label>
                                 <p>każdy kto zobaczy tę grupę, może poprosić jej administratora o zatwierdzenie przyjęcia</p>
                             </div>
-                            <div data-bg="#FF8A80" data-fg="#F44336" data-optionid="invite-only" data-chooser="join-policy">
+                            <div data-color="#F44336" data-optionid="invite-only" data-chooser="join-policy">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <rect x="3" y="5" width="18" height="14" rx="2"></rect>
@@ -475,14 +471,13 @@
 </div>
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/bs-init.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pl.min.js" integrity="sha512-4Hra0ugHwC1jKVrS6cwYQu47pRQxNoZZNT/KKLraGJb4csT6rxfba0jpIxKE1O7N5ImwPKqbYv875hXN5h0tqA==" crossorigin="anonymous"></script>
+<script src="/assets/js/aos/aos.js"></script>
+<script src="/assets/js/lottie/lottie-player.js"></script>
+<script src="/assets/js/moment/moment.min.js"></script>
+<script src="/assets/js/moment/locale-pl.min.js"></script>
 <script src="/assets/js/jquery.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js" integrity="sha512-Gs+PsXsGkmr+15rqObPJbenQ2wB3qYvTHuJO6YJzPe/dTLvhy0fmae2BcnaozxDo5iaF8emzmCZWbQ1XXiX2Ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
-<script src="/assets/js/big_chooser.js"></script>
+<script src="/assets/js/croppie/croppie.min.js"></script>
+<script src="/assets/js/common/big_chooser.js"></script>
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/side_menu.js"></script>
 <script src="/assets/js/toast.js"></script>

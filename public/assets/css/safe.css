@@ -1,0 +1,17 @@
+#pin-input {
+    width: 300px;
+    display: flex;
+    justify-content: space-around;
+}
+
+#pin-input > div {
+    width: 10px;
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 10px;
+    transition: 90ms;
+}
+
+#pin-input > div[data-entered="1"] {
+    background-color: #888;
+}

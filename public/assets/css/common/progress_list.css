@@ -1,0 +1,41 @@
+ul.progress-list {
+    overflow-wrap: break-word;
+}
+
+ul.progress-list > li > p {
+    margin: 0;
+    position: relative;
+    top: -7px;
+    display: inline;
+}
+
+ul.progress-list > li[data-error]::after {
+    content: attr(data-error);
+    position: relative;
+    top: -7px;
+    margin-left: 10px;
+    font-family: "Josefin Sans", sans-serif;
+    background-color: #F44336;
+    color: white;
+    padding: 4px;
+    border-radius: 7px;
+}
+
+ul.progress-list > li[data-state="idle"] {
+    list-style-image: url("/assets/img/photo.svg");
+}
+
+ul.progress-list > li[data-state="waiting"] {
+    color: #616161;
+    list-style-image: url("/assets/img/clock.svg");
+}
+
+ul.progress-list > li[data-state="done"] {
+    color: #4CAF50;
+    list-style-image: url("/assets/img/circle-check.svg");
+}
+
+ul.progress-list > li[data-state="error"] {
+    color: #F44336;
+    list-style-image: url("/assets/img/circle-x.svg");
+}

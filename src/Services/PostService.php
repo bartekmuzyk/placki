@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Entities\Attachment;
 use App\Entities\Group;
 use App\Entities\Post;
 use App\Entities\PostComment;
@@ -99,8 +98,8 @@ class PostService extends Service
 	 * @throws CannotWriteAttachmentToDiskException
 	 * @throws Exception
 	 */
-	public function createPost(string $content, ?Group $group, User $author, array $attachmentsFiles)
-	{
+	public function createPost(string $content, ?Group $group, User $author, array $attachmentsFiles): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		$post = new Post();
@@ -135,8 +134,8 @@ class PostService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function deletePost(Post $post)
-	{
+	public function deletePost(Post $post): void
+    {
 		$db = $this->getApp()->getDBManager();
 
 		foreach ($post->attachments as $attachment) {
@@ -219,8 +218,8 @@ class PostService extends Service
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function postComment(Post $post, string $content, User $as)
-	{
+	public function postComment(Post $post, string $content, User $as): void
+    {
 		$db = $this->getApp()->getDBManager();
 		$comment = $this->createComment($content, $as, $post);
 

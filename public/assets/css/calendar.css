@@ -1,0 +1,68 @@
+.day[data-hasevents="1"] span::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #e04c40;
+    width: 9px;
+    border-radius: 10px;
+    height: 9px;
+}
+
+.day span {
+    position: relative;
+}
+
+@keyframes background-fade {
+    from { background: transparent; }
+    to { background: var(--primary); }
+}
+
+.day.selected span {
+    animation: background-fade 500ms;
+}
+
+.event-list > li {
+    margin-bottom: 5px;
+    border-radius: 6px;
+    transition: background-color 250ms;
+    padding: 0 5px;
+    cursor: pointer;
+    position: relative;
+    animation: slide-right 250ms forwards;
+}
+
+.event-list > li:hover {
+    background-color: var(--bs-gray-200);
+}
+
+.event-list > li > div:nth-child(1) > img {
+    width: 32px;
+    height: 32px;
+    border-radius: 32px;
+    vertical-align: top;
+}
+
+.event-list > li > div:nth-child(2) {
+    margin-left: 5px;
+}
+
+.event-list > li > div:nth-child(2) > p {
+    margin-bottom: 0;
+}
+
+.event-list > li > div:nth-child(2) > p:nth-child(1) {
+    font-weight: bolder;
+}
+
+.event-list > li > div:nth-child(2) > p:nth-child(2) {
+    color: var(--bs-gray-600);
+    font-size: 11px;
+}
+
+.event-list > li > div:nth-child(3) > label {
+    margin-bottom: 0;
+    line-height: normal;
+    font-size: 13px;
+    font-family: 'Josefin Sans', sans-serif;
+}

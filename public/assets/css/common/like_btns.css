@@ -1,0 +1,11 @@
+.like-btns > i {
+    cursor: pointer;
+}
+
+.like-btns > i:nth-child(1), .like-btns[data-liked="1"] > i:nth-child(2) {
+    display: block;
+}
+
+.like-btns > i:nth-child(2), .like-btns[data-liked="1"] > i:nth-child(1) {
+    display: none;
+}

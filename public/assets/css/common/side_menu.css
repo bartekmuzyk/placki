@@ -1,0 +1,33 @@
+.side-menu {
+    flex: 0 0 260px;
+    background-color: var(--primary-lighter);
+    border-radius: 0 20px 20px 0;
+    padding: 3px;
+}
+
+.side-menu > .menu-option {
+    height: 40px;
+    border-radius: 5px 20px 20px 5px;
+    cursor: pointer;
+    margin-bottom: 3px;
+    padding: 0 5px;
+    font-weight: bolder;
+    display: flex;
+    align-items: center;
+    transition: background-color 250ms, color 250ms;
+}
+
+.side-menu > .menu-option-active {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+.side-menu > .menu-option:not(.menu-option-active):hover {
+    background-color: var(--primary-light);
+}
+
+.side-menu > .menu-option > span > .icon {
+    position: relative;
+    top: -1px;
+    margin-right: 5px;
+}

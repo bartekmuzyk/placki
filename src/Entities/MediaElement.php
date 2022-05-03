@@ -28,6 +28,11 @@ class MediaElement
 	public string $name;
 
 	/**
+	 * @ORM\Column(length=10)
+	 */
+	public string $sizeText;
+
+	/**
 	 * @ORM\ManyToOne(targetEntity="User", inversedBy="uploadedMedia")
 	 * @ORM\JoinColumn(name="uploadedBy", referencedColumnName="username", onDelete="CASCADE")
 	 */
@@ -49,14 +54,14 @@ class MediaElement
 	public string $thumbnail;
 
 	/**
+	 * @ORM\Column(type="smallint", nullable=true)
+	 */
+	public int $visibility;
+
+	/**
 	 * @ORM\Column(type="datetime")
 	 */
 	public DateTimeInterface $uploadedAt;
-
-	/**
-	 * @ORM\Column(type="text")
-	 */
-	public string $sourceUri;
 
 	/**
 	 * @ORM\ManyToMany(targetEntity="User", inversedBy="viewedMedia")
@@ -80,6 +85,12 @@ class MediaElement
 	 * @ORM\OneToMany(targetEntity="VideoComment", mappedBy="mediaElement")
 	 */
 	public $comments;
+
+	/**
+	 * @ORM\OneToOne(targetEntity="SharedMedia", inversedBy="mediaElement")
+	 * @ORM\JoinColumn(name="shared", onDelete="SET NULL")
+	 */
+	public ?SharedMedia $shared;
 
 	public function __construct()
 	{

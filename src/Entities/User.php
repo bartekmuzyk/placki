@@ -71,6 +71,18 @@ class User
 	 */
 	public $joinRequests;
 
+	/**
+	 * @ORM\OneToOne(targetEntity="FileUploadToken", mappedBy="for")
+	 * @ORM\JoinColumn(name="current_file_upload", referencedColumnName="token", onDelete="SET NULL")
+	 */
+	public ?FileUploadToken $fileUploadToken;
+
+	/**
+	 * @ORM\OneToOne(targetEntity="VideoUploadToken", mappedBy="for")
+	 * @ORM\JoinColumn(name="current_video_upload", referencedColumnName="token", onDelete="SET NULL")
+	 */
+	public ?VideoUploadToken $videoUploadToken;
+
 	public function __construct()
 	{
 		$this->uploadedMedia = new ArrayCollection();

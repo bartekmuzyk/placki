@@ -75,13 +75,13 @@ class AccountService extends Service
 		return false;
 	}
 
-	/**
-	 * @param string $username
-	 * @return void
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
+    /**
+     * @param string $username
+     * @return User|null
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws TransactionRequiredException
+     */
 	public function getUser(string $username): ?User
 	{
 		$db = $this->getApp()->getDBManager();

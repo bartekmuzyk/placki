@@ -83,19 +83,3 @@
   height: 65px;
 }
 
-.btn {
-  /*border-radius: 0;*/
-}
-
-.btn.focus, .btn:focus, .btn:hover {
-  /*color: #ffffff;*/
-  text-decoration: none;
-  /*background-color: #1485ee;*/
-  border: none;
-}
-
-.btn {
-  font-family: 'Roboto';
-  font-weight: 400;
-}
-

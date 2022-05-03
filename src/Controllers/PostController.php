@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpUnused */
+/** @noinspection PhpUnhandledExceptionInspection */
 
 namespace App\Controllers;
 
@@ -6,9 +8,6 @@ use App\Entities\Post;
 use App\Entities\PostComment;
 use App\Services\AccountService;
 use App\Services\PostService;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\TransactionRequiredException;
 use Framework\Controller\Controller;
 use Framework\Http\Response;
 
@@ -24,14 +23,6 @@ class PostController extends Controller
 		$this->delete('/komentarze', 'deleteComment');
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function like(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -45,14 +36,6 @@ class PostController extends Controller
 		return Response::code($authorized ? 200 : 403);
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function dislike(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -66,14 +49,6 @@ class PostController extends Controller
 		return Response::code($authorized ? 200 : 403);
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function comments(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -97,14 +72,6 @@ class PostController extends Controller
 		]);
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function postComment(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -124,14 +91,6 @@ class PostController extends Controller
 		return new Response();
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function deleteComment(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
