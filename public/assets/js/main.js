@@ -11,13 +11,57 @@ $(".press-enter-to-search-message[data-depends]").each((index, el) => {
     if (depends) {
         const dependencies = $(depends);
         
-        dependencies.focus(() => {
+        dependencies.on("focus", () => {
             $el.attr("data-animationenabled", "1");
             $el.attr("data-animatedshow", "1");
         });
         
-        dependencies.blur(() => {
+        dependencies.on("blur", () => {
             $el.attr("data-animatedshow", "0");
         });
     }
 });
+
+const __Base64_toUtf8 = function (text) {
+    const surrogate = encodeURIComponent(text);
+    let result = '';
+    for (let i = 0; i < surrogate.length;) {
+        const character = surrogate[i];
+        i += 1;
+        if (character === '%') {
+            const hex = surrogate.substring(i, i += 2);
+            if (hex) {
+                result += String.fromCharCode(parseInt(hex, 16));
+            }
+        } else {
+            result += character;
+        }
+    }
+    return result;
+};
+
+const __Base64_fromUtf8 = function (text) {
+    let result = '';
+    for (let i = 0; i < text.length; ++i) {
+        const code = text.charCodeAt(i);
+        result += '%';
+        if (code < 16) {
+            result += '0';
+        }
+        result += code.toString(16);
+    }
+    return decodeURIComponent(result);
+};
+
+const Base64 = {
+    /**
+     * @param text {string}
+     * @returns {string}
+     */
+    encode: text => btoa(__Base64_toUtf8(text)),
+    /**
+     * @param base64 {string}
+     * @returns {string}
+     */
+    decode: base64 => __Base64_fromUtf8(atob(base64))
+};

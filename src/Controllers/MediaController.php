@@ -255,9 +255,9 @@ class MediaController extends Controller
 				$photoFile,
 				$req->payload['album']
 			);
-		} catch (CannotWriteMediaToDiskException $e) {
+		} catch (CannotWriteMediaToDiskException) {
 			return $this->json(['error' => 'cannot write to disk']);
-		} catch (MediaTooLargeException $e) {
+		} catch (MediaTooLargeException) {
 			return $this->json(['error' => 'too large']);
 		}
 

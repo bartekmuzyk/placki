@@ -23,7 +23,7 @@ setTabCallback(tabId => {
     }
 });
 
-$createGroupBtn.click(() => $createGroupModal.modal("show"));
+$createGroupBtn.on("click", () => $createGroupModal.modal("show"));
 
 /**
  * @param message {string}
@@ -37,7 +37,7 @@ function hideGroupCreationError() {
     $groupCreationError.css("display", "none");
 }
 
-$confirmGroupCreationBtn.click(function() {
+$confirmGroupCreationBtn.on("click", function() {
     const self = $(this);
     const restoreControls = () => {
         self.prop("disabled", false);

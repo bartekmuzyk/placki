@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/fonts/fonts.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="/assets/css/aos/aos.css" />
+    <link rel="stylesheet" href="/assets/css/Powerful-Calendar.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/calendar.css" />
+    <link rel="stylesheet" href="/assets/css/common/user_list_item.css" />
+</head>
+
+<body>
+{% include "snippets/navbar.twig" %}
+{% include "snippets/toast.twig" %}
+<h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
+    <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icon-tabler-calendar-event"
+            style="top: -4px;"
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <rect x="4" y="5" width="16" height="16" rx="2"></rect>
+        <line x1="16" y1="3" x2="16" y2="7"></line>
+        <line x1="8" y1="3" x2="8" y2="7"></line>
+        <line x1="4" y1="11" x2="20" y2="11"></line>
+        <rect x="8" y="15" width="2" height="2"></rect>
+    </svg>
+    wydarzenia
+</h1>
+<section class="mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="d-inline-block" id="synchronizing-message" data-animatedshow="1" style="position: relative;">
+                    <div class="d-inline-block" style="position: relative; width: 22px; height: 22px;">
+                        <i class="icon ion-load-c" style="position: absolute; animation: rotate-infinite 1s infinite linear; font-size: 25px;"></i>
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="1em"
+                                height="1em"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icon-tabler-cloud"
+                                style="font-size: 17px; position: absolute; left: 2px; top: 9px;"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-12"></path>
+                        </svg>
+                    </div>
+                    <span style="font-weight: bold; margin-left: 5px;">synchronizowanie kalendarza...</span>
+                </div>
+                <button class="btn btn-primary float-end" type="button" onclick="updateEvents();">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icon-tabler-refresh"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
+                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
+                    </svg>
+                    &nbsp;synchronizuj teraz
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-4">
+                <style
+                        id="day-markings"
+                        data-template='
+content: "";
+position: absolute;
+top: 2px;
+right: 2px;
+background-color: #e04c40;
+padding: 0 5px;
+border-radius: 10px;
+height: 12px;
+line-height: 12px;
+font-size: 12px;
+color: white;
+'
+                ></style>
+                <div class="calendar-wrapper"></div>
+            </div>
+            <div class="col">
+                <h1 id="events-heading" style="font-family: 'Josefin Sans', sans-serif;">ładowanie kalendarza...</h1>
+                <div id="no-events-message" style="display: none; position: relative;">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icon-tabler-bell-off"
+                            style="font-size: 22px; position: relative; top: -4px; color: var(--bs-gray-600);"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="3" y1="3" x2="21" y2="21"></line>
+                        <path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
+                        <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
+                    </svg>
+                    <h4 class="d-inline-block" style="font-family: 'DM Sans', sans-serif; font-weight: bold; color: var(--bs-gray-600);">
+                        brak wydarzeń w tym dniu,&nbsp;<a href="#" data-bs-target="#event-creation-modal" data-bs-toggle="modal">możesz dodać pierwsze!</a>
+                    </h4>
+                </div>
+                <ul class="list-unstyled event-list" style="display: none;">
+                    <li
+                            class="d-flex"
+                            data-eventid="%id%"
+                            data-json="%_data%"
+                            onclick="viewEvent(JSON.parse(Base64.decode(this.getAttribute('data-json'))));"
+                    >
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <img src="%icon%" />
+                        </div>
+                        <div class="flex-grow-1">
+                            <p>%title%</p>
+                            <p>%description%</p>
+                        </div>
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <label class="form-label">%at%</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" role="dialog" tabindex="-1" id="fail-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">błąd kalendarza</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>nie udało się załadować zawartości kalendarza, sprawdź połączenie z internetem i spróbuj ponownie później.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="event-creation-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">tworzenie wydarzenia</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-row align-items-center" style="margin-bottom: 10px;">
+                    <img class="border rounded-circle flex-grow-0" id="new-event-icon" width="48" height="48" src="/assets/img/image-remove.png" />
+                    <div style="margin-left: 10px;">
+                        <label class="form-label" style="margin-bottom: 0;"><strong>ikona wydarzenia</strong></label>
+                        <input id="new-event-icon-picker" class="form-control" type="file" />
+                    </div>
+                </div>
+                <input id="new-event-title-input" class="form-control flex-grow-1 form-control" type="text" placeholder="nazwa wydarzenia" />
+                <input id="new-event-at-input" class="form-control form-control" id="new-event-date" type="datetime-local" style="margin-bottom: 10px; margin-top: 10px;" />
+                <textarea id="new-event-description-input" class="form-control form-control" rows="4" placeholder="opis wydarzenia"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" type="button" data-bs-dismiss="modal">anuluj</button>
+                <button class="btn btn-primary" type="button" onclick="createEventAction();">utwórz</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="event-view-modal">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="d-flex flex-column align-items-center">
+                    <img class="rounded-circle mb-1" id="event-view-icon" width="70" height="70" />
+                    <h2 id="event-view-title" style="font-family: 'Josefin Sans', sans-serif;"></h2>
+                    <label style="font-family: 'DM Sans', sans-serif;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <polyline points="12 7 12 12 15 15"></polyline>
+                        </svg>
+                        <span id="event-view-at"></span>
+                    </label>
+                </div>
+                <p id="event-view-description"></p>
+                <hr />
+                <div class="big-chooser" data-chooserid="event-partake">
+                    <div data-color="#4CAF50" data-optionid="yes" data-chooser="event-partake">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="2em" height="2em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l5 5l10 -10"></path>
+                        </svg>
+                        <label>biorę udział</label>
+                    </div>
+                    <div data-color="#F44336" data-optionid="no" data-chooser="event-partake">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="2em" height="2em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        <label>nie biorę udziału</label>
+                    </div>
+                </div>
+                <label>te osoby potwierdziły swój udział:</label>
+                <div id="event-view-partaking-users-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-event-btn" class="btn btn-danger" type="button" onclick="deleteViewedEvent();">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="4" y1="7" x2="20" y2="7"></line>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                    </svg>
+                    usuń
+                </button>
+                <button class="btn btn-light" type="button" data-bs-dismiss="modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    zamknij
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/js/bs-init.js"></script>
+<script src="/assets/js/aos/aos.js"></script>
+<script src="/assets/js/lottie/lottie-player.js"></script>
+<script src="/assets/js/moment/moment.min.js"></script>
+<script src="/assets/js/moment/locale-pl.min.js"></script>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/toast.js"></script>
+<script src="/assets/js/common/big_chooser.js"></script>
+<script src="/assets/js/Powerful-Calendar.js"></script>
+<script src="/assets/js/dompurify/purify.min.js"></script>
+<script src="/assets/js/wydarzenia.js"></script>
+</body>
+</html>

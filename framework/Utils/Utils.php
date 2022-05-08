@@ -10,6 +10,10 @@ class Utils
 	 */
 	public static function getHumanReadableSize(int $bytes): string
 	{
+        if ($bytes === 0) {
+            return '0B';
+        }
+
 		$i = floor(log($bytes) / log(1024));
 		$sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 

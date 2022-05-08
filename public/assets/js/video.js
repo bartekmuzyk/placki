@@ -9,7 +9,7 @@ if (isNaN(likeCount)) {
     likeCount = 0;
 }
 
-$(".like-btns").click(function() {
+$(".like-btns").on("click", function() {
     const self = $(this);
     const likeStatus = self.attr("data-liked");
     
@@ -25,10 +25,10 @@ $(".like-btns").click(function() {
                     self.attr("data-liked", "1");
                     likeCount++;
                     $likeCount.text(likeCount);
-                    Toast.show("dodano film do ulubionych.", 2);
+                    Toast.show("dodano film do ulubionych.", "heart", 2);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się polubić filmu.", 4);
+                    Toast.show("nie udało się polubić filmu.", "alert", 4);
                 });
             break;
         case "1":
@@ -39,10 +39,10 @@ $(".like-btns").click(function() {
                     self.attr("data-liked", "0");
                     likeCount--;
                     $likeCount.text(likeCount);
-                    Toast.show("usunięto film z ulubionych.", 2);
+                    Toast.show("usunięto film z ulubionych.", "heart_crossed", 2);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się odlubić filmu.", 4);
+                    Toast.show("nie udało się odlubić filmu.", "alert", 4);
                 });
             break;
     }
@@ -83,21 +83,21 @@ fetch($videoPlayer.attr("src"))
         );
     });
 
-$("#delete-video-btn").click(() => {
+$("#delete-video-btn").on("click", () => {
     const sure = confirm("na pewno chcesz usunąć ten film? ta akcja jest nieodwracalna.");
 
     if (!sure) return;
 
-    Toast.show("usuwanie filmu...");
+    Toast.show("usuwanie filmu...", "bin");
 
     fetch(`/media/film?id=${VIDEO_ID}`, { method: "DELETE" })
         .then(response => {
             if (!response.ok) throw new Error();
 
-            Toast.show("film usunięty, proszę czekać");
+            Toast.show("film usunięty, proszę czekać", "bin");
             location.assign("/media");
         })
         .catch(() => {
-            Toast.show("nie udało się usunąć filmu", 2);
+            Toast.show("nie udało się usunąć filmu", "alert", 2);
         });
 });

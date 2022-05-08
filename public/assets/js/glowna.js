@@ -15,6 +15,7 @@ function openComments(postId) {
 }
 
 class PostBrowser {
+    /** @type {JQuery<HTMLIFrameElement>} */
     static $postsFrame = $("#post-browser");
     static currentLimit = 100;
     
@@ -35,9 +36,7 @@ class PostBrowser {
      * @param postId {number}
      */
     static scrollToPostWithId(postId) {
-        /** @type {HTMLIFrameElement} */
-        const iframe = this.$postsFrame.get(0);
-        iframe.contentWindow.scrollToPostWithId(postId);
+        this.$postsFrame.get(0).contentWindow.scrollToPostWithId(postId);
     }
 }
 
@@ -61,7 +60,7 @@ function post() {
             PostBrowser.refresh();
         },
         () => {
-            Toast.show("nie udało się wstawić posta", 2);
+            Toast.show("nie udało się wstawić posta", "alert", 2);
         }
     );
 }

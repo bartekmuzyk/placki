@@ -208,7 +208,7 @@ function reloadAttachmentsPreview() {
     $postAttachmentList.html("");
     $postAttachmentList.append(...previewElements);
 
-    $("#post-attachment-list > div > div:nth-child(2)").click(function() {
+    $("#post-attachment-list > div > div:nth-child(2)").on("click", function() {
         /** @type {HTMLDivElement} */
         const attachmentRootElement = this.parentElement;
         const fileIndex = Number(attachmentRootElement.getAttribute("data-fileindex"));
@@ -227,7 +227,7 @@ $postAttachmentInput.change(() => {
 });
 
 function pickPostAttachments() {
-    $postAttachmentInput.click();
+    $postAttachmentInput.on("click", );
 }
 
 function clearAttachments() {

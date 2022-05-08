@@ -1,9 +1,9 @@
-$(document).ready(() => {
-    $(".search").keypress(function(ev) {
+$(document).on("ready", () => {
+    $(".search").on("keypress", function(ev) {
         if (ev.key === "Enter") {
             const self = $(this);
             
-            self.blur();
+            self.trigger("blur");
             const targetTable = self.data("target-table");
             const rowsToSearch = $(`.table[data-tablename="${targetTable}"] > table > tbody > tr:not(.warning.no-result)`);
             const warning = $(`.table[data-tablename="${targetTable}"] .warning.no-result`);

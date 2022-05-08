@@ -1,4 +1,4 @@
-@import url("common/like_btns.css");
+@import "common/like_btns.css";
 
 .video-thumbnail {
     width: 60px;

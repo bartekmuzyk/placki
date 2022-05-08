@@ -149,9 +149,13 @@
                     </svg>
                     prośby o dołączenie
                     {% set join_requests_count = group.joinRequests|length %}
-                    {% if join_requests_count > 0 %}
-                        <span id="join-requests-count-badge" class="badge" style="background-color: var(--bs-red);">{{ join_requests_count }}</span>
-                    {% endif %}
+                    <span
+                            id="join-requests-count-badge"
+                            class="badge"
+                            data-count="{{ join_requests_count }}"
+                    >
+                        {{ join_requests_count }}
+                    </span>
                 </span>
             </div>
         {% endif %}

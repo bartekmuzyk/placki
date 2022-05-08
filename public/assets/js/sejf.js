@@ -3,11 +3,11 @@ const $folderGrid = $("#folder-grid");
 const $uploadModal = $("#upload-modal");
 const $uploadingFileMessage = $("#uploading-file-message");
 /** @type {HTMLInputElement} */
-const $fileUploadInput = $('#upload-modal input[type="file"]').get(0);
+const fileUploadInputElement = $('#upload-modal input[type="file"]').get(0);
 const $uploadFileButton = $("#upload-file-button");
 
 function refresh() {
-    Toast.show("odświeżanie listy plików...");
+    Toast.show("odświeżanie listy plików...", "refresh");
     setTimeout(() => location.reload(), 1000);
 }
 
@@ -15,10 +15,10 @@ function refresh() {
  * @param {HTMLButtonElement} button 
  */
 function uploadFile(button) {
-    const files = $fileUploadInput.files;
+    const files = fileUploadInputElement.files;
     
     if (files.length > 0) {
-        $fileUploadInput.style.display = "none";
+        fileUploadInputElement.style.display = "none";
         $uploadingFileMessage.css("display", "block");
         
         const formData = new FormData();
@@ -34,13 +34,13 @@ function uploadFile(button) {
                 else throw new Error();
             })
             .catch(() => {
-                Toast.show("nie udało się wrzucić pliku", 3);
+                Toast.show("nie udało się wrzucić pliku", "alert", 3);
             })
             .finally(() => {
-                $fileUploadInput.style.display = "block";
+                fileUploadInputElement.style.display = "block";
                 $uploadingFileMessage.css("display", "none");
                 setUploadButtonEnabledState(true);
-                $fileUploadInput.parentElement.reset();
+                fileUploadInputElement.parentElement.reset();
                 $uploadModal.modal("hide");
             });
     }
@@ -56,5 +56,5 @@ function setUploadButtonEnabledState(state) {
     else $uploadFileButton.addClass("disabled");
 }
 
-$fileUploadInput.onchange = () => setUploadButtonEnabledState($fileUploadInput.files.length > 0);
-$fileUploadInput.onchange();
+fileUploadInputElement.onchange = () => setUploadButtonEnabledState(fileUploadInputElement.files.length > 0);
+fileUploadInputElement.onchange();

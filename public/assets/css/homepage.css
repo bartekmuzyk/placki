@@ -1,4 +1,4 @@
-@import url("common/post_attachment_list.css");
+@import "common/post_attachment_list.css";
 
 #file-upload-error-message {
     position: relative;

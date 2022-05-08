@@ -14,7 +14,7 @@ const $fileUploadCriticalError = $("#file-upload-critical-error");
 const $fileUploadProgressBar = $("#file-upload-progress-bar");
 const $videoUploadInput = $("#video-upload-input");
 const $videoUploadModal = $("#video-upload-modal");
-const $uploadVideoPreview = $("#upload-video-preview");
+/** @type {JQuery<HTMLVideoElement>} */ const $uploadVideoPreview = $("#upload-video-preview");
 const $videoUploadNameInput = $("#video-upload-name-input");
 const $videoUploadDescriptionInput = $("#video-upload-description-input");
 const $videoUploadThumbnailPreview = $("#video-upload-thumbnail-preview");
@@ -45,12 +45,15 @@ function showAllAlbums() {
     $(".media-photo-item").css({ display: "" });
 }
 
+/**
+ * @param albumName {string}
+ */
 function showAlbum(albumName) {
     $(".media-photo-item").css("display", "none");
     $(`.media-photo-item[data-album="${albumName}"]`).css({ display: "" } );
 }
 
-$("#album-chooser-menu > .dropdown-item").click(function() {
+$("#album-chooser-menu > .dropdown-item").on("click", function() {
     const self = $(this);
     /** @type {string} */
     const special = self.data("special");
@@ -80,7 +83,7 @@ $("#album-chooser-menu > .dropdown-item").click(function() {
 
 const lastSelectedAlbumName = localStorage.getItem("lastSelectedAlbumName");
 if (lastSelectedAlbumName) {
-    $(`#album-chooser-menu > .dropdown-item[data-albumref="${lastSelectedAlbumName}"]`).click();
+    $(`#album-chooser-menu > .dropdown-item[data-albumref="${lastSelectedAlbumName}"]`).trigger("click");
 }
 
 /**
@@ -102,7 +105,7 @@ function generateFileProgressListItem(fileName, fileIndex) {
 
 }
 
-$photosUploadInput.change(() => {
+$photosUploadInput.on("change", () => {
     $photosUploadProgressList.html("");
 
     /** @type {File[]} */
@@ -127,15 +130,15 @@ $photosUploadInput.change(() => {
     $uploadPhotosModal.modal("show");
 });
 
-$uploadPhotosBtn.click(() => {
-    $photosUploadInput.click();
+$uploadPhotosBtn.on("click", () => {
+    $photosUploadInput.trigger("click");
 });
 
-$confirmPhotosUploadBtn.click(async () => {
+$confirmPhotosUploadBtn.on("click", async () => {
     const albumName = $albumNameInput.val().trim();
 
     if (albumName.length === 0) {
-        Toast.show("podaj nazwę albumu", 2);
+        Toast.show("podaj nazwę albumu", "alert", 2);
         return;
     }
 
@@ -145,6 +148,7 @@ $confirmPhotosUploadBtn.click(async () => {
 
     /** @type {File[]} */
     const filesToSend = $photosUploadInput.prop("files");
+    let error = false;
 
     for (const [ fileIndex, file ] of Object.entries(filesToSend)) {
         /** @param errorMessage {string} */
@@ -172,6 +176,8 @@ $confirmPhotosUploadBtn.click(async () => {
             if (response.ok) {
                 markDone();
             } else {
+                error = true;
+
                 /** @type {{error: "cannot write to disk"|"too large"}} */
                 const data = await response.json();
 
@@ -194,11 +200,14 @@ $confirmPhotosUploadBtn.click(async () => {
 
     $confirmPhotosUploadBtn.prop("disabled", false);
     $confirmPhotosUploadBtn.text("wrzuć");
-    $uploadPhotosModal.modal("hide");
+    if (!error) {
+        $uploadPhotosModal.modal("hide");
+        location.reload();
+    }
 });
 
-$(".delete-photo-btn").click(function() {
-    Toast.show("usuwanie zdjęcia...");
+$(".delete-photo-btn").on("click", function() {
+    Toast.show("usuwanie zdjęcia...", "bin");
 
     /** @type {HTMLDivElement} */
     const photoElement = this.parentElement.parentElement.parentElement;
@@ -209,10 +218,10 @@ $(".delete-photo-btn").click(function() {
             if (!response.ok) throw new Error();
 
             photoElement.remove();
-            Toast.show("usunięto zdjęcie", 1);
+            Toast.show("usunięto zdjęcie", "bin", 1);
         })
         .catch(() => {
-            Toast.show("nie udało się usunąć zdjęcia", 2);
+            Toast.show("nie udało się usunąć zdjęcia", "alert", 2);
         });
 });
 
@@ -318,7 +327,7 @@ function stopUploadInParts() {
     uploadStopRequested = true;
 }
 
-$fileUploadInput.change(async () => {
+$fileUploadInput.on("change", async () => {
     uploadStopRequested = false;
     /** @type {File} */
     const file = $fileUploadInput.prop("files")[0];
@@ -349,11 +358,11 @@ $fileUploadInput.change(async () => {
             break;
         case "error":
             hideFileUploadPopup();
-            Toast.show("transfer nieudany", 2);
+            Toast.show("transfer nieudany", "alert", 2);
             break;
         case "cancelled":
             hideFileUploadPopup();
-            Toast.show("anulowano transfer", 2);
+            Toast.show("anulowano transfer", "info", 2);
             break;
         case "failed to start":
         case "cancelled with error":
@@ -362,9 +371,9 @@ $fileUploadInput.change(async () => {
     }
 });
 
-$cancelFileUploadBtn.click(() => {
+$cancelFileUploadBtn.on("click", () => {
     stopUploadInParts();
-    Toast.show("zatrzymywanie transferu...");
+    Toast.show("zatrzymywanie transferu...", "info");
 });
 
 /**
@@ -380,7 +389,7 @@ function downloadBlob(blob, filename) {
     a.click();
 }
 
-$(".file-actions > button").click(function() {
+$(".file-actions > button").on("click", function() {
     const fileId = this.parentElement.getAttribute("data-fileid");
     /** @type {"delete"|"download"|"share"} */
     const action = this.getAttribute("data-action");
@@ -391,25 +400,25 @@ $(".file-actions > button").click(function() {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show("usunięto plik", 1);
+                    Toast.show("usunięto plik", "bin", 1);
                     this.parentElement.parentElement.parentElement.remove();
                 })
                 .catch(() => {
-                    Toast.show("nie udało się usunąć pliku", 2);
+                    Toast.show("nie udało się usunąć pliku", "alert", 2);
                 });
             break;
         case "download":
-            Toast.show("rozpoczynanie pobierania...");
+            Toast.show("rozpoczynanie pobierania...", "download");
 
             fetch(`/media_sources/${fileId}`)
                 .then(response => response.blob())
                 .then(blob => {
                     downloadBlob(blob, this.getAttribute("data-filename"));
-                    Toast.show("pobieranie rozpoczęte", 1);
+                    Toast.show("pobieranie rozpoczęte", "download", 1);
                 });
             break;
         case "share":
-            Toast.show("generowanie linku...");
+            Toast.show("generowanie linku...", "link");
 
             fetch(`/media/plik/udostepnij?id=${fileId}`)
                 .then(response => {
@@ -423,10 +432,10 @@ $(".file-actions > button").click(function() {
                     return navigator.clipboard.writeText(url);
                 })
                 .then(() => {
-                    Toast.show("skopiowano link do schowka", 2);
+                    Toast.show("skopiowano link do schowka", "link", 2);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się udostępnić", 2);
+                    Toast.show("nie udało się udostępnić", "alert", 2);
                 });
             break;
     }
@@ -471,10 +480,9 @@ async function setCurrentVideoPreviewFrameAsThumbnail() {
     updateThumbnail(thumbnail);
 }
 
-$videoUploadInput.change(async () => {
+$videoUploadInput.on("change", async () => {
     /** @type {File} */
     const videoFile = $videoUploadInput.prop("files")[0];
-    /** @type {HTMLVideoElement} */
     const previewElement = $uploadVideoPreview.get(0);
 
     updateThumbnail(null);
@@ -485,7 +493,7 @@ $videoUploadInput.change(async () => {
     previewElement.muted = true;
     await previewElement.play();
 
-    Toast.show("przygotowywanie miniaturki...");
+    Toast.show("przygotowywanie miniaturki...", "thumbnail");
 
     setTimeout(() => {
         setCurrentVideoPreviewFrameAsThumbnail();
@@ -499,11 +507,11 @@ $videoUploadInput.change(async () => {
     }, 1000);
 });
 
-$videoUploadModal.find(".btn-close").click(() => {
+$videoUploadModal.find(".btn-close").on("click", () => {
     $uploadVideoPreview.get(0).pause();
 });
 
-$videoUploadThumbnailInput.change(() => {
+$videoUploadThumbnailInput.on("change", () => {
     /** @type {File} */
     const thumbnailFile = $videoUploadThumbnailInput.prop("files")[0];
 
@@ -517,7 +525,7 @@ async function startVideoUpload() {
     const name = $videoUploadNameInput.val().trim();
 
     if (name.length === 0) {
-        Toast.show("nazwa filmu nie może być pusta", 2);
+        Toast.show("nazwa filmu nie może być pusta", "alert", 2);
     }
 
     const description = $videoUploadDescriptionInput.val().trim();
@@ -551,7 +559,7 @@ async function startVideoUpload() {
             $videoUploadProgressOverlay.removeClass("d-flex").addClass("d-none");
             break;
         default:
-            Toast.show("nie udało się przesłać filmu", 2);
+            Toast.show("nie udało się przesłać filmu", "alert", 2);
             $videoUploadProgressOverlay.removeClass("d-flex").addClass("d-none");
             break;
     }

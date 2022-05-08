@@ -1,13 +1,13 @@
 const $commentContent = $("#comment-content");
 
-$("#comment-btn").click(function() {
+$("#comment-btn").on("click", function() {
     const self = $(this);
     
     self.prop("disabled", true);
     self.text("postowanie komentarza...");
     
     const formData = new FormData();
-    formData.append("content", $commentContent.val());
+    formData.append("content", String($commentContent.val()));
     
     fetch(location.href, {
         method: "POST",
@@ -17,11 +17,11 @@ $("#comment-btn").click(function() {
             if (response.ok) {
                 location.reload();
             } else {
-                parent.Toast.show("nie udało się wysłać komentarza.", 2);
+                parent.Toast.show("nie udało się wysłać komentarza.", "alert", 2);
             }
         })
         .catch(() => {
-            parent.Toast.show("nie udało się wysłać komentarza.", 2);
+            parent.Toast.show("nie udało się wysłać komentarza.", "alert", 2);
         })
         .finally(() => {
             self.prop("disabled", false);
@@ -29,7 +29,7 @@ $("#comment-btn").click(function() {
         });
 });
 
-$(".delete-comment-button").click(function() {
+$(".delete-comment-button").on("click", function() {
     const self = $(this);
     const commentElement = self.parent().parent().parent();
     const commentId = commentElement.data("commentid");
@@ -39,12 +39,12 @@ $(".delete-comment-button").click(function() {
         .then(response => {
             if (response.ok) {
                 commentElement.remove();
-                parent.Toast.show("usunięto komentarz", 2);
+                parent.Toast.show("usunięto komentarz", "bin", 2);
             } else {
-                parent.Toast.show("nie udało się usunąć komentarza", 2);
+                parent.Toast.show("nie udało się usunąć komentarza", "alert", 2);
             }
         })
         .catch(() => {
-            parent.Toast.show("nie udało się usunąć komentarza", 2);
+            parent.Toast.show("nie udało się usunąć komentarza", "alert", 2);
         });
 });

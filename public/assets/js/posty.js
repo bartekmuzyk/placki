@@ -1,10 +1,10 @@
-$(".post .open-comments").click(function() {
+$(".post .open-comments").on("click", function() {
     const self = $(this);
     const postId = self.parent().parent().data("postid");
     parent.openComments(postId);
 });
 
-$(".like-btns").click(function() {
+$(".like-btns").on("click", function() {
     const self = $(this);
     const likeStatus = self.attr("data-liked");
     const postId = self.parent().parent().data("postid");
@@ -29,7 +29,7 @@ $(".like-btns").click(function() {
                     $counterElement.text(likeCount);
                 })
                 .catch(() => {
-                    parent.Toast.show("nie udało się polubić posta", 2);
+                    parent.Toast.show("nie udało się polubić posta", "alert", 2);
                 });
             break;
         case "1":
@@ -42,13 +42,13 @@ $(".like-btns").click(function() {
                     $counterElement.text(likeCount);
                 })
                 .catch(() => {
-                    parent.Toast.show("nie udało się odlubić posta", 2);
+                    parent.Toast.show("nie udało się odlubić posta", "alert", 2);
                 });
             break;
     }
 });
 
-$(".delete-post-button").click(function() {
+$(".delete-post-button").on("click", function() {
     const self = $(this);
     const postElement = self.parent().parent().parent();
     const postId = postElement.data("postid");
@@ -58,17 +58,17 @@ $(".delete-post-button").click(function() {
         .then(response => {
             if (response.ok) {
                 postElement.remove();
-                parent.Toast.show("usunięto post", 2);
+                parent.Toast.show("usunięto post", "bin", 2);
             } else {
-                parent.Toast.show("nie udało się usunąć posta", 2);
+                parent.Toast.show("nie udało się usunąć posta", "alert", 2);
             }
         })
         .catch(() => {
-            parent.Toast.show("nie udało się usunąć posta", 2);
+            parent.Toast.show("nie udało się usunąć posta", "alert", 2);
         });
 });
 
-$("#load-more-posts-btn").click(function() {
+$("#load-more-posts-btn").on("click", function() {
     this.innerText = "wczytywanie...";
     this.disabled = true;
 

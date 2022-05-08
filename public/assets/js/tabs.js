@@ -1,6 +1,6 @@
 let _tabs_callback = () => undefined;
 
-$(".tabs > .tab").click(function() {
+$(".tabs > .tab").on("click", function() {
     const self = $(this);
     $(".tabs > .tab.tab-active").removeClass("tab-active");
     self.addClass("tab-active");
@@ -9,7 +9,7 @@ $(".tabs > .tab").click(function() {
 });
 
 function activateTab(tabId) {
-    $(`.tabs > .tab[data-tabid="${tabId}"]`).click();
+    $(`.tabs > .tab[data-tabid="${tabId}"]`).trigger("click");
 }
 
 function setTabCallback(cb) {

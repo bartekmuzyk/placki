@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
 	/**
-	 * @ORM\Id()
+	 * @ORM\Id()@var User
 	 * @ORM\Column(length=40)
 	 */
 	public string $username;
@@ -83,6 +83,16 @@ class User
 	 */
 	public ?VideoUploadToken $videoUploadToken;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Event", mappedBy="organiser")
+     */
+    public $organisedEvents;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Event", mappedBy="partakingUsers")
+     */
+    public $partakingInEvents;
+
 	public function __construct()
 	{
 		$this->uploadedMedia = new ArrayCollection();
@@ -94,5 +104,6 @@ class User
 		$this->ownedGroups = new ArrayCollection();
 		$this->bannedInGroups = new ArrayCollection();
 		$this->joinRequests = new ArrayCollection();
+        $this->partakingInEvents = new ArrayCollection();
 	}
 }

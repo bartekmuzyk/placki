@@ -18,7 +18,7 @@ $bigChooserOptions.each((i, el) => {
     }
 });
 
-$bigChooserOptions.click(function() {
+$bigChooserOptions.on("click", function() {
     const self = $(this);
     const optionChooserId = self.data("chooser");
     const optionId = self.data("optionid");

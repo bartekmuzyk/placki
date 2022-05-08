@@ -96,7 +96,7 @@ function onSuccessfulSafeLogin() {
     SafeBrowser.onSuccessfulLogin();
 }
 
-SafeBrowser.$loggedIntoSafeAlert.find("button").click(function() {
+SafeBrowser.$loggedIntoSafeAlert.find("button").on("click", function() {
     SafeBrowser.$loggedIntoSafeAlert.css("display", "none");
 });
 
@@ -109,7 +109,7 @@ function post() {
             WallPostsBrowser.refresh();
         },
         () => {
-            Toast.show("nie udało się wstawić posta", 2);
+            Toast.show("nie udało się wstawić posta", "alert", 2);
         }
     );
 }
@@ -120,7 +120,7 @@ class UserList {
     /**
      * @param containerSelector {string}
      * @param username {string}
-     * @returns {jQuery}
+     * @returns {JQuery<HTMLElement>}
      */
     static selectUserElement(containerSelector, username) {
         return $(`${containerSelector} > .user-list-item[data-username="${username}"]`);
@@ -128,6 +128,7 @@ class UserList {
 
     /**
      * @param containerSelector {string}
+     * @returns {JQuery<HTMLElement>}
      */
     static selectAllUserElements(containerSelector) {
         return $(`${containerSelector} > .user-list-item`);
@@ -161,7 +162,7 @@ class UserList {
      */
     static * iterateUsers(containerSelector) {
         for (const userListItem of this.selectAllUserElements(containerSelector)) {
-            if (userListItem.getAttribute("data-hidden" === "1")) continue;
+            if (userListItem.getAttribute("data-hidden") === "1") continue;
 
             yield userListItem.getAttribute("data-username");
         }
@@ -172,14 +173,11 @@ class UserList {
  * @param count {number}
  */
 function updateJoinRequestsCount(count) {
+    $joinRequestsCountBadge.attr("data-count", count.toString());
     $joinRequestsCountBadge.text(count.toString());
-
-    if (count === 0) {
-        $joinRequestsCountBadge.remove();
-    }
 }
 
-$(".user-list-item-menu-btn").click(function () {
+$(".user-list-item-menu-btn").on("click", function () {
     const self = $(this);
     const btnName = self.data("btnname");
     const targetUsername = self.parent().data("username");
@@ -189,7 +187,7 @@ $(".user-list-item-menu-btn").click(function () {
             const sure = confirm(`uprawnienia administratorskie zostaną przekazane użytkownikowi: ${targetUsername}`);
             if (!sure) return;
 
-            Toast.show("przekazywanie uprawnień...");
+            Toast.show("przekazywanie uprawnień...", "crown");
 
             const formData = new FormData();
             formData.append("username", targetUsername);
@@ -201,11 +199,11 @@ $(".user-list-item-menu-btn").click(function () {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show("odświeżanie...");
+                    Toast.show("odświeżanie...", "refresh");
                     location.reload();
                 })
                 .catch(() => {
-                    Toast.show("nie udało się przekazać uprawnień", 2);
+                    Toast.show("nie udało się przekazać uprawnień", "alert", 2);
                 });
             break;
         }
@@ -217,7 +215,7 @@ $(".user-list-item-menu-btn").click(function () {
             const sure = confirm(`zbanowany zostanie użytkownik: ${targetUsername}`);
             if (!sure) return;
 
-            Toast.show(`banowanie ${targetUsername}...`);
+            Toast.show(`banowanie ${targetUsername}...`, "hourglass");
 
             const formData = new FormData();
             formData.append("username", targetUsername);
@@ -229,12 +227,12 @@ $(".user-list-item-menu-btn").click(function () {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show(`zbanowano ${targetUsername}`, 1);
+                    Toast.show(`zbanowano ${targetUsername}`, "check", 1);
                     UserList.hideUser("#members-tab", targetUsername);
                     UserList.showUser("#bans-tab", targetUsername);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się zbanować użytkownika", 2);
+                    Toast.show("nie udało się zbanować użytkownika", "alert", 2);
                 });
             break;
         }
@@ -242,7 +240,7 @@ $(".user-list-item-menu-btn").click(function () {
             const sure = confirm(`wyrzucony zostanie użytkownik: ${targetUsername}`);
             if (!sure) return;
 
-            Toast.show(`wyrzucanie ${targetUsername}...`);
+            Toast.show(`wyrzucanie ${targetUsername}...`, "hourglass");
 
             const formData = new FormData();
             formData.append("username", targetUsername);
@@ -254,11 +252,11 @@ $(".user-list-item-menu-btn").click(function () {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show(`wyrzucono ${targetUsername}`, 1);
+                    Toast.show(`wyrzucono ${targetUsername}`, "check", 1);
                     UserList.hideUser("#members-tab", targetUsername);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się wyrzucić użytkownika", 2);
+                    Toast.show("nie udało się wyrzucić użytkownika", "alert", 2);
                 });
             break;
         }
@@ -266,7 +264,7 @@ $(".user-list-item-menu-btn").click(function () {
             const sure = confirm(`odbanowany zostanie użytkownik: ${targetUsername}`);
             if (!sure) return;
 
-            Toast.show(`odbanowywanie ${targetUsername}...`);
+            Toast.show(`odbanowywanie ${targetUsername}...`, "hourglass");
 
             const formData = new FormData();
             formData.append("username", targetUsername);
@@ -278,12 +276,12 @@ $(".user-list-item-menu-btn").click(function () {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show(`odbanowano ${targetUsername}`, 1);
+                    Toast.show(`odbanowano ${targetUsername}`, "check", 1);
                     UserList.hideUser("#bans-tab", targetUsername);
                     UserList.showUser("#members-tab", targetUsername);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się odbanować użytkownika", 2);
+                    Toast.show("nie udało się odbanować użytkownika", "alert", 2);
                 });
             break;
         }
@@ -291,7 +289,7 @@ $(".user-list-item-menu-btn").click(function () {
             const sure = confirm(`odrzucony zostanie użytkownik: ${targetUsername}`);
             if (!sure) return;
 
-            Toast.show("odrzucanie prośby...");
+            Toast.show("odrzucanie prośby...", "hourglass");
 
             const formData = new FormData();
             formData.append("username", targetUsername);
@@ -303,11 +301,11 @@ $(".user-list-item-menu-btn").click(function () {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show(`odrzucono prośbę ${targetUsername}`, 1);
+                    Toast.show(`odrzucono prośbę ${targetUsername}`, "check", 1);
                     UserList.hideUser("#join-requests-tab", targetUsername);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się odrzucić prośby", 2);
+                    Toast.show("nie udało się odrzucić prośby", "alert", 2);
                 });
             break;
         }
@@ -315,7 +313,7 @@ $(".user-list-item-menu-btn").click(function () {
             const sure = confirm(`zatwierdzony zostanie użytkownik: ${targetUsername}`);
             if (!sure) return;
 
-            Toast.show("zatwierdzanie prośby...");
+            Toast.show("zatwierdzanie prośby...", "hourglass");
 
             const formData = new FormData();
             formData.append("username", targetUsername);
@@ -327,20 +325,20 @@ $(".user-list-item-menu-btn").click(function () {
                 .then(response => {
                     if (!response.ok) throw new Error();
 
-                    Toast.show(`zatwierdzono prośbę ${targetUsername}`, 1);
+                    Toast.show(`zatwierdzono prośbę ${targetUsername}`, "check", 1);
                     UserList.hideUser("#join-requests-tab", targetUsername);
                     UserList.showUser("#members-tab", targetUsername);
                     updateJoinRequestsCount(--joinRequestsCount);
                 })
                 .catch(() => {
-                    Toast.show("nie udało się zatwierdzić prośby", 2);
+                    Toast.show("nie udało się zatwierdzić prośby", "alert", 2);
                 });
             break;
         }
     }
 });
 
-$groupPicChooser.change(ev => {
+$groupPicChooser.on("change", ev => {
     /** @type {HTMLInputElement} */
     const input = ev.target;
     const pictureFile = input.files[0];
@@ -355,19 +353,19 @@ $groupPicChooser.change(ev => {
     reader.readAsDataURL(pictureFile);
 });
 
-$changePicBtn.click(() => {
-    $groupPicChooser.click();
+$changePicBtn.on("click", () => {
+    $groupPicChooser.trigger("click");
 });
 
-$saveGroupLookSettingsBtn.click(() => {
+$saveGroupLookSettingsBtn.on("click", () => {
     const groupName = $groupNameEdit.val().trim();
 
     if (groupName.length === 0) {
-        Toast.show("nazwa grupy nie może być pusta", 2);
+        Toast.show("nazwa grupy nie może być pusta", "alert", 2);
         return;
     }
 
-    Toast.show("aktualizowanie ustawień...");
+    Toast.show("aktualizowanie ustawień...", "hourglass");
 
     /** @type {Promise<Blob>} */
     const resultPromise = $picPreview.croppie("result", {
@@ -391,7 +389,7 @@ $saveGroupLookSettingsBtn.click(() => {
         })
         .then(response => {
             if (response.ok) {
-                Toast.show("zaktualizowano ustawienia", 1);
+                Toast.show("zaktualizowano ustawienia", "check", 1);
 
                 /** @type {Promise<{picSrc: string, name: string}>} */
                 const newGroupLookDataPromise = response.json();
@@ -402,11 +400,11 @@ $saveGroupLookSettingsBtn.click(() => {
                     $headingName.text(newGroupLookData.name);
                 });
             } else {
-                Toast.show("nie udało się zaktualizować ustawień", 2);
+                Toast.show("nie udało się zaktualizować ustawień", "alert", 2);
             }
         })
         .catch(() => {
-            Toast.show("nie udało się zaktualizować ustawień", 2);
+            Toast.show("nie udało się zaktualizować ustawień", "alert", 2);
         });
 });
 
@@ -422,7 +420,7 @@ $picPreview.find(".cr-boundary").on("wheel", () => {
     setTimeout(() => $scrollZoomTip.remove(), 1000);
 });
 
-$('.menu-option[data-optionid="manage"]').click(() => {
+$('.menu-option[data-optionid="manage"]').on("click", () => {
     $picPreview.croppie("bind", { url: groupPicSrc });
 });
 
@@ -441,7 +439,7 @@ if (GROUP_ACCESS_LEVEL !== 1) {  // checks if the group join policy is public or
 }
 
 BigChooser.setOnSwitch("join-policy", joinPolicy => {
-    Toast.show("aktualizowanie polityki...");
+    Toast.show("aktualizowanie polityki...", "info");
 
     const formData = new FormData();
     formData.append("policy", joinPolicy);
@@ -464,32 +462,32 @@ BigChooser.setOnSwitch("join-policy", joinPolicy => {
 
                 UserList.hideAllUsers("#join-requests-tab");
                 updateJoinRequestsCount(0);
-                Toast.show("polityka zaktualizowana", 1);
+                Toast.show("polityka zaktualizowana", "info", 1);
             } else {
-                Toast.show("nie udało się zaktualizować polityki", 2);
+                Toast.show("nie udało się zaktualizować polityki", "alert", 2);
             }
         })
         .catch(() => {
-            Toast.show("nie udało się zaktualizować polityki", 2);
+            Toast.show("nie udało się zaktualizować polityki", "alert", 2);
         })
         .finally(showGroupAccessLevelInChooser);
 });
 
-$deleteGroupBtn.click(function() {
+$deleteGroupBtn.on("click", function() {
     const self = $(this);
 
     self.prop("disabled", true);
     self.text("usuwanie grupy...");
 
-    fetch(location.href, {method: "DELETE"})
+    fetch(location.href, { method: "DELETE" })
         .then(response => {
             if (!response.ok) throw new Error();
 
-            Toast.show("grupa została usunięta. proszę czekać...");
+            Toast.show("grupa została usunięta. proszę czekać...", "bin");
             location.assign("/grupy");
         })
         .catch(() => {
-            Toast.show("nie udało się usunąć grupy", 2);
+            Toast.show("nie udało się usunąć grupy", "alert", 2);
             self.prop("disabled", false);
             self.text("jestem pewien");
         });

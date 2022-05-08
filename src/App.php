@@ -3,6 +3,7 @@
 
 namespace App;
 
+use App\Controllers\EventController;
 use App\Controllers\GroupController;
 use App\Controllers\MediaController;
 use App\Controllers\PostController;
@@ -43,6 +44,7 @@ class App extends BaseApp
 		$this->useController('/post', PostController::class);
 		$this->useController('/media', MediaController::class);
 		$this->useController('/grupy', GroupController::class);
+        $this->useController('/wydarzenia', EventController::class);
 	}
 
 	public function index(AccountService $accountService): Response

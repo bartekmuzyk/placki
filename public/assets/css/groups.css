@@ -1,4 +1,5 @@
-@import url("common/post_attachment_list.css");
+@import "common/post_attachment_list.css";
+@import "common/user_list_item.css";
 
 .group-grid {
     display: grid;
@@ -71,54 +72,6 @@
     flex: 1 0 auto;
 }
 
-.user-list-item {
-    display: flex;
-    flex-direction: row;
-    padding: 10px 30px 10px 10px;
-    align-items: center;
-}
-
-.user-list-item > img {
-    border-radius: 6px;
-}
-
-.user-list-item > label {
-    margin-bottom: 0;
-    margin-left: 10px;
-    flex-grow: 1;
-}
-
-.user-list-item[data-hidden="1"] {
-    display: none;
-}
-
-@keyframes user-list-item-icons-show {
-    from { opacity: 0; right: -20px; }
-    to { opacity: 1; right: 0; }
-}
-
-@keyframes user-list-item-icons-hide {
-    from { opacity: 1; right: 0; }
-    to { opacity: 0; right: -20px; }
-}
-
-.user-list-item > .icon {
-    font-size: 20px;
-    cursor: pointer;
-    color: var(--bs-gray-900);
-    position: relative;
-    opacity: 0;
-    right: -50px;
-    animation: user-list-item-icons-hide 250ms cubic-bezier(1, 0, 1, 1) forwards;
-    margin-left: 16px;
-}
-
-.user-list-item:hover > .icon {
-    opacity: 1;
-    right: 0;
-    animation: user-list-item-icons-show 250ms cubic-bezier(0, 0, 0, 1) forwards;
-}
-
 /* a fading effect which appears when scrolling through groups list */
 .fade-top, .fade-bottom {
     position: absolute;
@@ -183,4 +136,12 @@
     margin-bottom: 5px;
     text-align: left;
     width: 40%;
+}
+
+#join-requests-count-badge {
+    background-color: var(--bs-red);
+}
+
+#join-requests-count-badge[data-count="0"] {
+    visibility: hidden;
 }

@@ -413,7 +413,7 @@ class MediaService extends Service
 
 		try {
 			$tempFile->delete();
-		} catch (TempFileDeleteException $e) {
+		} catch (TempFileDeleteException) {
 			throw new MediaUploadCancellationFailureException();
 		}
 
