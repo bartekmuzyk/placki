@@ -94,6 +94,7 @@
         </div>
         <div class="row">
             <div class="col-xl-4">
+                <!--suppress HtmlUnknownTag -->
                 <style
                         id="day-markings"
                         data-template='
@@ -114,48 +115,7 @@ color: white;
             </div>
             <div class="col">
                 <h1 id="events-heading" style="font-family: 'Josefin Sans', sans-serif;">ładowanie kalendarza...</h1>
-                <div id="no-events-message" style="display: none; position: relative;">
-                    <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="1em"
-                            height="1em"
-                            viewBox="0 0 24 24"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="icon icon-tabler icon-tabler-bell-off"
-                            style="font-size: 22px; position: relative; top: -4px; color: var(--bs-gray-600);"
-                    >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <line x1="3" y1="3" x2="21" y2="21"></line>
-                        <path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
-                        <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
-                    </svg>
-                    <h4 class="d-inline-block" style="font-family: 'DM Sans', sans-serif; font-weight: bold; color: var(--bs-gray-600);">
-                        brak wydarzeń w tym dniu,&nbsp;<a href="#" data-bs-target="#event-creation-modal" data-bs-toggle="modal">możesz dodać pierwsze!</a>
-                    </h4>
-                </div>
-                <ul class="list-unstyled event-list" style="display: none;">
-                    <li
-                            class="d-flex"
-                            data-eventid="%id%"
-                            data-json="%_data%"
-                            onclick="viewEvent(JSON.parse(Base64.decode(this.getAttribute('data-json'))));"
-                    >
-                        <div class="d-flex flex-grow-0 align-items-center">
-                            <img src="%icon%" />
-                        </div>
-                        <div class="flex-grow-1">
-                            <p>%title%</p>
-                            <p>%description%</p>
-                        </div>
-                        <div class="d-flex flex-grow-0 align-items-center">
-                            <label class="form-label">%at%</label>
-                        </div>
-                    </li>
-                </ul>
+                <placeholder id="event-list-placeholder"></placeholder>
             </div>
         </div>
     </div>
@@ -189,7 +149,7 @@ color: white;
                     </div>
                 </div>
                 <input id="new-event-title-input" class="form-control flex-grow-1 form-control" type="text" placeholder="nazwa wydarzenia" />
-                <input id="new-event-at-input" class="form-control form-control" id="new-event-date" type="datetime-local" style="margin-bottom: 10px; margin-top: 10px;" />
+                <input id="new-event-at-input" class="form-control form-control" type="datetime-local" style="margin-bottom: 10px; margin-top: 10px;" />
                 <textarea id="new-event-description-input" class="form-control form-control" rows="4" placeholder="opis wydarzenia"></textarea>
             </div>
             <div class="modal-footer">
@@ -273,6 +233,7 @@ color: white;
 <script src="/assets/js/common/big_chooser.js"></script>
 <script src="/assets/js/Powerful-Calendar.js"></script>
 <script src="/assets/js/dompurify/purify.min.js"></script>
+<script src="/assets/js/stateful_components/main.js"></script>
 <script src="/assets/js/wydarzenia.js"></script>
 </body>
 </html>

@@ -19,8 +19,87 @@ const $eventViewDescription = $("#event-view-description");
 const $eventViewPartakingUsersList = $("#event-view-partaking-users-list");
 const $deleteEventBtn = $("#delete-event-btn");
 
+class EventListComponent extends StatefulComponent {
+    render() {
+        /** @type {PlackiEvent[]} */
+        const events = this.state;
+
+        if (events.length === 0) {
+            return `
+                <div id="no-events-message" style="position: relative; animation: slide-right 250ms forwards">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icon-tabler-bell-off"
+                            style="font-size: 22px; position: relative; top: -4px; color: var(--bs-gray-600);"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="3" y1="3" x2="21" y2="21"></line>
+                        <path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
+                        <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
+                    </svg>
+                    <h4 class="d-inline-block" style="font-family: 'DM Sans', sans-serif; font-weight: bold; color: var(--bs-gray-600);">
+                        brak wydarzeń w tym dniu,&nbsp;<a href="#" data-bs-target="#event-creation-modal" data-bs-toggle="modal">możesz dodać pierwsze!</a>
+                    </h4>
+                </div>
+            `;
+        } else {
+            return [
+                `<ul class="list-unstyled event-list">`,
+                events.map(event => `
+                    <li
+                            class="d-flex"
+                            data-eventid="${event.id}"
+                            data-json="${Base64.encode(JSON.stringify(event))}"
+                            onclick="viewEvent(JSON.parse(Base64.decode(this.getAttribute('data-json'))));"
+                    >
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <img src="/event_icons/${event.id}" />
+                        </div>
+                        <div class="flex-grow-1">
+                            <p>${escapeHtml(event.title)}</p>
+                            <p>${escapeHtml(event.description)}</p>
+                        </div>
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <label class="form-label">${event.at}</label>
+                        </div>
+                    </li>
+                `),
+                `
+                    <li class="d-flex" data-bs-target="#event-creation-modal" data-bs-toggle="modal">
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-plus" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                               <rect x="4" y="5" width="16" height="16" rx="2"></rect>
+                               <line x1="16" y1="3" x2="16" y2="7"></line>
+                               <line x1="8" y1="3" x2="8" y2="7"></line>
+                               <line x1="4" y1="11" x2="20" y2="11"></line>
+                               <line x1="10" y1="16" x2="14" y2="16"></line>
+                               <line x1="12" y1="14" x2="12" y2="18"></line>
+                            </svg>
+                        </div> 
+                        <div class="flex-grow-1">
+                            <p>dodaj</p>
+                            <p>stwórz nowe wydarzenie i dodaj je do kalendarze</p>
+                        </div>
+                    </li>
+                </ul>
+                `
+            ];
+        }
+    }
+}
+
+const eventListComponent = new EventListComponent("event-list-placeholder", {}, []);
+
 const dayMarkingsStylesTemplate = $dayMarkingsStyles.data("template").replaceAll("\n", "");
-const eventListItemTemplate = $eventList.find("li").get(0).outerHTML;
 
 const params = new URLSearchParams(location.search);
 const initDate = params.get("date");
@@ -28,7 +107,6 @@ const initDate = params.get("date");
 /**
  * @typedef {Object} PlackiEvent
  * @property {number} id
- * @property {string} icon
  * @property {string} title
  * @property {string} description
  * @property {string} at
@@ -43,52 +121,10 @@ let currentViewEvent;
 let syncedOnce = false;
 
 /**
- * @param eventData {PlackiEvent}
- * @returns {string}
- */
-function renderEventListItemTemplate(eventData) {
-    let rendered = eventListItemTemplate;
-
-    for (let [ name, value ] of Object.entries({
-        ...eventData,
-        "_data": Base64.encode(JSON.stringify(eventData))
-    })) {
-        rendered = rendered.replaceAll(`%${name}%`, value);
-    }
-    
-    return rendered;
-}
-
-/**
  * @param eventList {PlackiEvent[]}
  */
 function renderEvents(eventList) {
-    $eventList.html("");
-    
-    for (const event of eventList) {
-        const html = renderEventListItemTemplate(event);
-        $eventList.append(html);
-    }
-
-    $eventList.append(`
-<li class="d-flex" data-bs-target="#event-creation-modal" data-bs-toggle="modal">
-    <div class="d-flex flex-grow-0 align-items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-plus" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-           <rect x="4" y="5" width="16" height="16" rx="2"></rect>
-           <line x1="16" y1="3" x2="16" y2="7"></line>
-           <line x1="8" y1="3" x2="8" y2="7"></line>
-           <line x1="4" y1="11" x2="20" y2="11"></line>
-           <line x1="10" y1="16" x2="14" y2="16"></line>
-           <line x1="12" y1="14" x2="12" y2="18"></line>
-        </svg>
-    </div> 
-    <div class="flex-grow-1">
-        <p>dodaj</p>
-        <p>stwórz nowe wydarzenie i dodaj je do kalendarze</p>
-    </div>
-</li>
-    `);
+    eventListComponent.state = eventList;
 }
 
 /** @type {?Object<string, PlackiEvent[]>} */
@@ -119,23 +155,7 @@ function generateDayMarkings() {
 function onDateSelected(momentDate, rawDate) {
     const formatted = momentDate.format("dddd, D MMMM YYYY");
     $eventsHeading.text(formatted);
-    
-    if (events && rawDate in events) {
-        $noEventsMessage.css({
-            display: "none",
-            animation: null
-        });
-        renderEvents(events[rawDate]);
-        $eventList.css("display", "block");
-    } else {
-        $eventList.css("display", "none");
-        $eventList.html("");
-        $noEventsMessage.css({
-            display: "block",
-            animation: "slide-right 250ms forwards"
-        });
-    }
-
+    renderEvents(events[rawDate] ?? []);
     $newEventAtInput.val(momentDate.format("YYYY-MM-DD[T12:00]"))
 }
 
@@ -321,7 +341,7 @@ function viewEvent(data) {
 
     currentViewEvent = data;
 
-    $eventViewIcon.attr("src", currentViewEvent.icon);
+    $eventViewIcon.attr("src", `/event_icons/${currentViewEvent.id}`);
     $eventViewTitle.text(currentViewEvent.title);
     $eventViewAt.html(currentViewEvent.at);
 

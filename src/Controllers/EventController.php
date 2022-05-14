@@ -52,7 +52,6 @@ class EventController extends Controller
                 'title' => $event->title,
                 'description' => $event->description,
                 'at' => $event->at->format(EventsService::FRONTEND_DATE_FORMAT),
-                'icon' => $eventsService->getIconPublicPath($event),
                 'organiser' => $event->organiser->username,
                 'partaking' => array_map(
                     fn (User $user) => ['username' => $user->username, 'pic' => $user->profilePic],

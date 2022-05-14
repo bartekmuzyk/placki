@@ -65,3 +65,11 @@ const Base64 = {
      */
     decode: base64 => __Base64_fromUtf8(atob(base64))
 };
+
+/**
+ * @param unsafe {string}
+ * @returns {string}
+ */
+const escapeHtml = unsafe => {
+    return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+}

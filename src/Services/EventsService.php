@@ -48,11 +48,6 @@ class EventsService extends Service
         return $event;
     }
 
-    public function getIconPublicPath(Event $event): string
-    {
-        return "/event_icons/$event->id";
-    }
-
     /**
      * @param User $organiser
      * @param string $title
