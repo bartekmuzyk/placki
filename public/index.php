@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUndefinedVariableInspection */
+<?php
+/** @noinspection PhpNoReturnAttributeCanBeAddedInspection */
+/** @noinspection PhpUndefinedVariableInspection */
 
 const PUBLIC_DIR = __DIR__;
 define('PROJECT_ROOT', dirname(PUBLIC_DIR));
@@ -10,11 +12,12 @@ use Framework\Exception\InvalidInjectionParameter;
 use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
 use Framework\Http\Response;
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * @internal
  */
-function sendResponse(string $content, int $code)
+function sendResponse(string $content, int $code): void
 {
 	http_response_code($code);
 	echo $content;
@@ -36,11 +39,16 @@ function getTraceAsHTML(object $exceptionOrError): string
  * @param object|Exception|Error $exceptionOrError
  * @return void
  */
-function renderExceptionOrError(object $exceptionOrError)
+function renderExceptionOrError(object $exceptionOrError): void
 {
-	$className = get_class($exceptionOrError);
-	$trace = getTraceAsHTML($exceptionOrError);
-	sendResponse("
+    global $app;
+
+    $showErrors = (bool)$app->getRuntimeConfig()['show_errors'];
+
+    if ($showErrors) {
+        $className = get_class($exceptionOrError);
+        $trace = getTraceAsHTML($exceptionOrError);
+        sendResponse("
 <body style='background-color: #EF5350; color: white; font-family: sans-serif;'>
 	<h1>Unhandled $className</h1>
 	<p>{$exceptionOrError->getMessage()}</p>
@@ -50,6 +58,9 @@ function renderExceptionOrError(object $exceptionOrError)
 	</div>
 </body>
 ", 500);
+    } else {
+        sendResponse('<h1>Internal server error</h1>', 500);
+    }
 }
 
 /**
@@ -106,7 +117,6 @@ if (!array_key_exists($route, $routes)) {
 	sendResponse('Route not found', 404);
 }
 
-/** @var string $controller */
 [$controllerInstance, $controllerMethodName] = $routes[$route];
 $reflectedController = new ReflectionObject($controllerInstance);
 

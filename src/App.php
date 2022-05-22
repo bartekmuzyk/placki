@@ -3,6 +3,7 @@
 
 namespace App;
 
+use App\Controllers\APIController;
 use App\Controllers\EventController;
 use App\Controllers\GroupController;
 use App\Controllers\MediaController;
@@ -25,6 +26,7 @@ class App extends BaseApp
 	public function setup()
 	{
 		$this->addMiddleware(new CheckAuth());
+        $this->useController('/api', APIController::class);
 
 		$this->get('/', 'index');
 
@@ -45,6 +47,10 @@ class App extends BaseApp
 		$this->useController('/media', MediaController::class);
 		$this->useController('/grupy', GroupController::class);
         $this->useController('/wydarzenia', EventController::class);
+
+        $this->get('/ludzie', 'people');
+
+        $this->get('/ja', 'me');
 	}
 
 	public function index(AccountService $accountService): Response
@@ -210,4 +216,19 @@ class App extends BaseApp
 
 		return new Response();
 	}
+
+    public function people(AccountService $accountService): Response
+    {
+        return $this->template('ludzie.twig', [
+            'self' => $accountService->currentLoggedInUser,
+            'people' => $accountService->getAllUsers()
+        ]);
+    }
+
+    public function me(AccountService $accountService): Response
+    {
+        return $this->template('me.twig', [
+            'self' => $accountService->currentLoggedInUser
+        ]);
+    }
 }

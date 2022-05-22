@@ -10,6 +10,8 @@ html, body {
   --primary-light: #b5d2ff;
   --primary-lighter: #e9f4ff;
   overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal.fade .modal-dialog {
@@ -48,39 +50,68 @@ label, p, a, textarea, input, span, td, th, small, li, .modal-title {
 
 .btn-primary { background-color: var(--primary); }
 .btn-primary, .btn-outline-primary { border-color: var(--primary); }
+.btn-outline-primary { color: var(--primary); }
+
 .btn-danger { background-color: #EF5350; }
 .btn-danger, .btn-outline-danger { border-color: #EF5350 }
+.btn-outline-danger { color: #EF5350; }
+
 .btn-success { background-color: #4CAF50; }
 .btn-success, .btn-outline-success { border-color: #4CAF50; }
+.btn-outline-success { color: #4CAF50; }
 
 .progress {
   border-radius: 100vw;
 }
 
 .navbar {
-  background: linear-gradient(var(--primary) 25%, transparent);
+  background-color: var(--primary-lighter);
+  color: var(--primary);
+  border: none;
+  padding: 0;
+  flex: 0 0 auto;
+  align-items: flex-end;
+}
+
+.navbar-brand {
+  font-size: 25px;
+  text-shadow: 1px 1px 0 var(--primary), -1px -1px 0 var(--primary), -1px 1px 0 var(--primary), 1px -1px 0 var(--primary);
+}
+
+.navbar-brand:hover {
+  color: unset !important;
 }
 
 .navbar .nav-link {
-  color: #eee !important;
-  transition: color 125ms, text-shadow 125ms;
+  color: var(--primary) !important;
+  transition: text-shadow 125ms, border-color 125ms;
+  font-family: "Josefin Sans", sans-serif;
   font-weight: 600;
+  border-bottom: 3px solid transparent;
 }
 
-.navbar .nav-link:hover {
-  color: #fff !important;
+.navbar .nav-link > .icon {
+  transition: filter 125ms;
+}
+
+.navbar .nav-link:hover, .navbar .nav-link.active {
   text-shadow: 0 0 6px;
+  border-color: var(--primary-light);
+}
+
+.navbar .nav-link:hover > .icon, .navbar .nav-link.active > .icon {
+  filter: drop-shadow(0 0 6px var(--primary));
 }
 
 .navbar .nav-link.active {
-  color: #fff !important;
-  border-bottom: 3px solid white;
-  border-radius: 3px;
+  border-bottom: 3px solid var(--primary);
   text-shadow: 0 0 6px;
 }
 
-.navbar .nav-link > svg {
+.navbar .nav-link > .icon {
   margin-right: 3px;
+  position: relative;
+  top: -1px;
 }
 
 .page-heading {
@@ -104,13 +135,9 @@ label, p, a, textarea, input, span, td, th, small, li, .modal-title {
 }
 
 .content {
-  height: calc(100% - 134px);
-  max-height: calc(100% - 134px);
-}
-
-.content-no-heading {
-  height: calc(100% - 65px);
-  max-height: calc(100% - 65px);
+  /*height: calc(100% - 134px);*/
+  /*max-height: calc(100% - 134px);*/
+  flex: 1 0 auto;
 }
 
 tr {

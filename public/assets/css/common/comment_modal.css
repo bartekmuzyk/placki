@@ -1,0 +1,9 @@
+#post-comments-iframe {
+    width: 100%;
+    height: calc(100vh - 200px);
+}
+
+#comments-modal-subtitle {
+    margin-left: 10px;
+    color: var(--bs-gray-200);
+}

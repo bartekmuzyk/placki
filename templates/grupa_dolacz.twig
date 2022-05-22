@@ -19,7 +19,7 @@
 <body>
 {% include "snippets/navbar.twig" %}
 {% include "snippets/toast.twig" %}
-<div class="content-no-heading d-flex justify-content-center align-items-center">
+<div class="content d-flex justify-content-center align-items-center">
     <form method="post" class="text-center">
         <p style="position: relative; font-family: 'DM Sans', sans-serif; margin-left: 10px;">dołącz do grupy</p>
         <img width="120" height="120" src="/group_pics/{{ group.picFilename }}" style="border-radius: 120px; border: 1px solid gray;" />
@@ -48,6 +48,7 @@
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/side_menu.js"></script>
 <script src="/assets/js/toast.js"></script>
+<script src="/assets/js/common/chat.js"></script>
 <script src="/assets/js/panel_grupy.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 @import "common/post_attachment_list.css";
 @import "common/user_list_item.css";
+@import "common/comment_modal.css";
 
 .group-grid {
     display: grid;

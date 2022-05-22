@@ -90,4 +90,14 @@ class AccountService extends Service
 
 		return $user;
 	}
+
+    /**
+     * @return User[]
+     */
+    public function getAllUsers(): array
+    {
+        return $this->getApp()->getDBManager()->getAll(User::class, 0, null, [
+            'order_by' => 'username'
+        ]);
+    }
 }

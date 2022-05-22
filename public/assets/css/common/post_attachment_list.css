@@ -50,3 +50,8 @@
 #post-attachment-list > div:hover > div:nth-child(2) {
     visibility: visible;
 }
+
+#post-attachment-upload-error-message {
+    position: relative;
+    color: var(--bs-red);
+}

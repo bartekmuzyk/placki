@@ -1,7 +1,7 @@
 const $postContentEditor = $("#post-content-editor");
 const $postAttachmentList = $("#post-attachment-list");
 const $postAttachmentInput = $("#post-attachment-input");
-const $fileUploadErrorMessage = $("#file-upload-error-message");
+const $fileUploadErrorMessage = $("#post-attachment-upload-error-message");
 
 const fileTypeIcons = {
     "text/plain": `
@@ -218,7 +218,7 @@ function reloadAttachmentsPreview() {
     });
 }
 
-$postAttachmentInput.change(() => {
+$postAttachmentInput.on("change", () => {
     /** @type {File[]} */
     const files = $postAttachmentInput.prop("files");
 
@@ -227,7 +227,7 @@ $postAttachmentInput.change(() => {
 });
 
 function pickPostAttachments() {
-    $postAttachmentInput.on("click", );
+    $postAttachmentInput.trigger("click");
 }
 
 function clearAttachments() {
@@ -272,21 +272,25 @@ function makePostRequest(url, onSuccess, onError) {
                 if (response.ok) {
                     onSuccess();
                 } else {
-                    response.json().then(fileUploadErrorData => {
-                        /** @type {"cannot write to disk"|"too large"} */
-                        const error = fileUploadErrorData["error"];
-                        /** @type {string} */
-                        const filename = fileUploadErrorData["filename"];
+                    response.json()
+                        .then(fileUploadErrorData => {
+                            /** @type {"cannot write to disk"|"too large"} */
+                            const error = fileUploadErrorData["error"];
+                            /** @type {string} */
+                            const filename = fileUploadErrorData["filename"];
 
-                        switch (error) {
-                            case "cannot write to disk":
-                                showFileUploadErrorMessage(`nie udało się zapisać pliku ${filename} na serwerze`);
-                                break;
-                            case "too large":
-                                showFileUploadErrorMessage(`plik ${filename} jest za duży`);
-                                break;
-                        }
-                    });
+                            switch (error) {
+                                case "cannot write to disk":
+                                    showFileUploadErrorMessage(`nie udało się zapisać pliku ${filename} na serwerze`);
+                                    break;
+                                case "too large":
+                                    showFileUploadErrorMessage(`plik ${filename} jest za duży`);
+                                    break;
+                            }
+                        })
+                        .catch(() => {
+                            showFileUploadErrorMessage("nieznany błąd");
+                        });
                 }
             })
             .catch(() => onError())

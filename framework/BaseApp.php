@@ -99,6 +99,11 @@ abstract class BaseApp {
 		}
 	}
 
+    public function getRuntimeConfig(): array
+    {
+        return $this->config['run'];
+    }
+
 	/**
 	 * @param class-string<Service> $service
 	 * @return Service

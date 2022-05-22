@@ -234,11 +234,12 @@ settings.onClickDate = date => {
     selectDate(nativeDate);  // this is a function coming from the calendar script, however it is not detected properly by JetBrains, so this inspection is turned off here
 }
 
-if (initDate) {
-    settings.onClickDate(initDate);
-}
-
-updateEvents(!params.has("forceSync"));
+updateEvents(!params.has("forceSync"))
+    .then(() => {
+        if (initDate) {
+            settings.onClickDate(initDate);
+        }
+    });
 
 $newEventIconPicker.on("change", () => {
     const chosenIconFile = $newEventIconPicker.prop("files")[0];

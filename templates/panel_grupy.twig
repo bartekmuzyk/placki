@@ -119,6 +119,7 @@
                     </span>
         </div>
         {% if group.owner == self %}
+            <label class="menu-subcategory">administracja</label>
             <div class="menu-option" data-optionid="manage">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-settings">
@@ -190,7 +191,7 @@
                         <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path>
                     </svg>
                 </button>
-                <span data-animatedshow="0" id="file-upload-error-message"></span>
+                <span data-animatedshow="0" id="post-attachment-upload-error-message"></span>
                 <input id="post-attachment-input" class="d-none" type="file" multiple />
                 <div id="post-attachment-list" data-show="0"></div>
                 <button
@@ -486,6 +487,7 @@
 <script src="/assets/js/side_menu.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/common/post_editor.js"></script>
+<script src="/assets/js/common/chat.js"></script>
 <script src="/assets/js/panel_grupy.js"></script>
 </body>
 </html>

@@ -14,17 +14,48 @@
     <link rel="stylesheet" href="/assets/css/File-Manager.css" />
     <link rel="stylesheet" href="/assets/css/aos/aos.css" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/person_list.css" />
 </head>
 
 <body>
 {% include "snippets/navbar.twig" %}
 {% include "snippets/toast.twig" %}
 <h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
-    <img style="height: 45px; width: 45px; border-radius: 45px;" src="/group_pics/{{ group.picFilename }}" />
-    {{ group.name }}
+    <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icon-tabler-users"
+            style="top: -8px;"
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
+    </svg>
+    ludzie
 </h1>
-<h1 data-animatedshow="1" style="position: relative; font-family: 'Josefin Sans', sans-serif; font-weight: 900; margin-left: 10px;">{{ message_title }}</h1>
-<p data-animatedshow="1" style="position: relative; font-family: 'DM Sans', sans-serif; margin-left: 10px;">{{ message_subtitle }}</p>
+<div class="text-center content" style="overflow-y: auto;">
+    <div class="input-group justify-content-center mt-1">
+        <span class="input-group-text">wyszukaj</span>
+        <input id="person-search-input" class="form-control flex-grow-0" type="text" style="flex-basis: 30%;" />
+    </div>
+    <br />
+    {% for person in people %}
+        <div class="d-inline-block" style="width: 60px; height: 60px; padding: 5px;" data-searchfriendlyusername="{{ person.username|lower }}">
+            <a href="/profil?uzytkownik={{ person.username }}">
+                <img data-bs-toggle="tooltip" data-bss-tooltip="" style="width: 50px; height: 50px; border-radius: 50px;" src="{{ person.profilePic }}" title="{{ person.username }}" />
+            </a>
+        </div>
+    {% endfor %}
+</div>
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/bs-init.js"></script>
 <script src="/assets/js/aos/aos.js"></script>
@@ -33,9 +64,8 @@
 <script src="/assets/js/moment/locale-pl.min.js"></script>
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/main.js"></script>
-<script src="/assets/js/side_menu.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/common/chat.js"></script>
-<script src="/assets/js/panel_grupy.js"></script>
+<script src="/assets/js/ludzie.js"></script>
 </body>
 </html>

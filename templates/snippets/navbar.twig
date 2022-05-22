@@ -1,13 +1,12 @@
 <nav
         class="navbar navbar-light navbar-expand-md navbar-fixed-top navigation-clean-button no-app"
-        style="border-radius: 20; border-top-left-radius: 20; border-top-right-radius: 20; border-bottom-right-radius: 20; border-bottom-left-radius: 20; border-style: none; padding-top: 0; padding-bottom: 28px;"
 >
-    <div class="container">
+    <div class="container" style="margin-left: 0; margin-right: 0; max-width: 100vw;">
         <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-        <div>
-            <a class="navbar-brand" href="#" style="color: #fff;"><span style="font-family: 'Racing Sans One', sans-serif !important; font-weight: 400;">placki</span> </a>
+        <div style="color: white;">
+            <span class="navbar-brand" style="font-family: 'Racing Sans One', sans-serif !important; font-weight: 400; cursor: default;">placki</span>
         </div>
-        <div class="collapse navbar-collapse" id="navcol-1" style="color: rgb(255, 255, 255);">
+        <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="navbar-nav nav-right">
                 <li class="nav-item">
                     <a class="nav-link" href="/glowna">
@@ -121,32 +120,17 @@
                         ludzie
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a onclick="Chat.init();" class="nav-link">
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="icon icon-tabler icon-tabler-message"
-                        >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4"></path>
-                            <line x1="8" y1="9" x2="16" y2="9"></line>
-                            <line x1="8" y1="13" x2="14" y2="13"></line>
-                        </svg>
-                        czat
-                    </a>
-                </li>
             </ul>
-            <p class="ms-auto navbar-text actions" style="text-align: right; display: flex; flex-direction: row; align-items: center;">
+            <p class="ms-auto navbar-text mb-0 d-flex flex-row align-items-center text-end">
                 <img height="30" width="30" src="{{ self.profilePic }}" style="border-radius: 6px;" />
-                <a href="/ja" style="color: #fff; margin-left: 7px; text-decoration: none; font-weight: bold; font-family: 'DM Sans', sans-serif;">{{ self.username }}</a>
+                <a href="/ja" style="margin-left: 7px; text-decoration: none; font-weight: bold; font-family: 'DM Sans', sans-serif;">{{ self.username }}</a>
+                <a href="/wyloguj" style="margin-left: 5px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-power" width="1.5em" height="1.5em" viewBox="0 0 24 24" stroke-width="2" stroke="#F44336" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M7 6a7.75 7.75 0 1 0 10 0"></path>
+                        <line x1="12" y1="4" x2="12" y2="12"></line>
+                    </svg>
+                </a>
             </p>
         </div>
     </div>
