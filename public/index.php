@@ -8,6 +8,7 @@ define('PROJECT_ROOT', dirname(PUBLIC_DIR));
 require_once PROJECT_ROOT . '/vendor/autoload.php';
 
 use App\App;
+use Framework\BaseApp;
 use Framework\Exception\InvalidInjectionParameter;
 use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
@@ -43,7 +44,7 @@ function renderExceptionOrError(object $exceptionOrError): void
 {
     global $app;
 
-    $showErrors = (bool)$app->getRuntimeConfig()['show_errors'];
+    $showErrors = !$app instanceof BaseApp || $app->getRuntimeConfig()['show_errors'];
 
     if ($showErrors) {
         $className = get_class($exceptionOrError);

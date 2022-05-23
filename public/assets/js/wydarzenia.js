@@ -53,7 +53,7 @@ class EventListComponent extends StatefulComponent {
         } else {
             return [
                 `<ul class="list-unstyled event-list">`,
-                events.map(event => `
+                ...events.map(event => `
                     <li
                             class="d-flex"
                             data-eventid="${event.id}"
