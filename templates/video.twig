@@ -68,7 +68,12 @@
                 </div>
             {% endif %}
             <div class="col-md-6 col-xl-8 offset-xl-0">
-                {% include "snippets/video_player.twig" with {"src": src, "thumbnail": video.thumbnail} only %}
+                <placeholder id="chrome-player-warning"></placeholder>
+                {% if fallback_player %}
+                    <video src="{{ src }}" poster="{{ thumbnail }}" autoplay controls style="max-width: 100%;"></video>
+                {% else %}
+                    {% include "snippets/video_player.twig" with {"src": src, "thumbnail": video.thumbnail} only %}
+                {% endif %}
             </div>
             <div class="col-md-6 col-xl-4">
                 <div class="card" style="margin-top: 10px;">
@@ -197,6 +202,8 @@
 <script src="/assets/js/moment/moment.min.js"></script>
 <script src="/assets/js/moment/locale-pl.min.js"></script>
 <script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/bowser/bowser.js"></script>
+<script src="/assets/js/stateful_components/main.js"></script>
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/common/chat.js"></script>

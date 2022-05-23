@@ -22,6 +22,11 @@ class MediaElement
 	 */
 	public int $mediaType;
 
+    /**
+     * @ORM\Column(type="text")
+     */
+    public string $mimeType;
+
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 */

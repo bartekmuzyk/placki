@@ -31,6 +31,11 @@ class VideoUploadToken
 	 */
 	public string $description;
 
+    /**
+     * @ORM\Column(type="text")
+     */
+    public string $mimeType;
+
 	/**
 	 * @ORM\Column(type="smallint")
 	 */

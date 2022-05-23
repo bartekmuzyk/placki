@@ -530,9 +530,11 @@ async function startVideoUpload() {
 
     const description = $videoUploadDescriptionInput.val().trim();
     const visibility = {"public": 0, "unlisted": 1, "private": 2}[BigChooser.getActiveOption("video-visibility")];
+    /** @type {File} */
+    const videoFile = $videoUploadInput.prop("files")[0];
 
     const status = await startUploadInParts(
-        $videoUploadInput.prop("files")[0],
+        videoFile,
         percentage => {
             $videoUploadProgressBar
                 .css("width", `${percentage}%`)
@@ -547,7 +549,8 @@ async function startVideoUpload() {
             name,
             description,
             visibility,
-            "thumbnail": currentVideoUploadThumbnail
+            "thumbnail": currentVideoUploadThumbnail,
+            "type": videoFile.type
         }
     );
 

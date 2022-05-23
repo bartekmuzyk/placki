@@ -17,6 +17,7 @@ use App\Services\MediaService;
 use Framework\Controller\Controller;
 use Framework\Http\Response;
 use Framework\Http\UploadedFile;
+use Framework\Utils\Utils;
 
 class MediaController extends Controller
 {
@@ -119,7 +120,7 @@ class MediaController extends Controller
 
 		$mediaService->checkAndCountView($mediaElement, $accountService->currentLoggedInUser);
 
-		$mediaSourceUrl = '/media_sources/' . $mediaElement->id;
+		$mediaSourceUrl = '/media_sources/' . $mediaElement->id . '.' . Utils::mimeToExtension($mediaElement->mimeType);
 
 		return $this->template('video.twig', [
 			'self' => $accountService->currentLoggedInUser,
@@ -135,7 +136,8 @@ class MediaController extends Controller
 				'count' => $mediaElement->likedBy->count(),
 				'liked_by_me' => $mediaElement->likedBy->contains($accountService->currentLoggedInUser)
 			],
-			'views' => $mediaElement->viewedBy->count()
+			'views' => $mediaElement->viewedBy->count(),
+            'fallback_player' => ($req->query['fallback'] ?? '0') === '1'
 		]);
 	}
 
@@ -407,7 +409,7 @@ class MediaController extends Controller
 	{
 		$req = $this->getRequest();
 
-		if (!$req->hasPayload('name') || !$req->hasPayload('description') || !$req->hasPayload('visibility')) {
+		if (!$req->hasPayload('name') || !$req->hasPayload('description') || !$req->hasPayload('visibility') || !$req->hasPayload('type')) {
 			return Response::code(400);
 		}
 
@@ -421,6 +423,7 @@ class MediaController extends Controller
 			$accountService->currentLoggedInUser,
 			$req->payload['name'],
 			$req->payload['description'],
+            $req->payload['type'],
 			(int)$req->payload['visibility'],
 			$thumbnailFile
 		);
@@ -466,6 +469,7 @@ class MediaController extends Controller
 				{
 					$mediaElement->name = $uploadToken->name;
 					$mediaElement->description = $uploadToken->description;
+                    $mediaElement->mimeType = $uploadToken->mimeType;
 					$mediaElement->visibility = $uploadToken->visibility;
 
 					$thumbnailUri = $this->mediaService->publishThumbnail($uploadToken, $mediaElement);

@@ -9,6 +9,10 @@ class TempFileUtil
 	public function __construct(string $tempFilesDirectoryPath)
 	{
 		$this->dirPath = $tempFilesDirectoryPath;
+
+        if (!is_dir($this->dirPath)) {
+            mkdir($this->dirPath);
+        }
 	}
 
 	private function getFilePathForName(string $name): string

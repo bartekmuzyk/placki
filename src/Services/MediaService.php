@@ -147,6 +147,10 @@ class MediaService extends Service
 
 	public function getFilePath(MediaElement $mediaElement): string
 	{
+        if ($mediaElement->mediaType === self::MEDIATYPE_VIDEO) {
+            return self::MEDIA_SOURCES_DIR . $mediaElement->id . '.' . Utils::mimeToExtension($mediaElement->mimeType);
+        }
+
 		return self::MEDIA_SOURCES_DIR . $mediaElement->id;
 	}
 
@@ -473,21 +477,23 @@ class MediaService extends Service
 		return "/thumbnails/$mediaElement->id";
 	}
 
-	/**
-	 * @param User $for
-	 * @param string $name
-	 * @param string $description
-	 * @param int $visibility
-	 * @param UploadedFile $thumbnailFile
-	 * @return void
-	 * @throws MediaUploadCancellationFailureException
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws Exception
-	 */
+    /**
+     * @param User $for
+     * @param string $name
+     * @param string $description
+     * @param string $mimeType
+     * @param int $visibility
+     * @param UploadedFile $thumbnailFile
+     * @return void
+     * @throws MediaUploadCancellationFailureException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws Exception
+     */
 	public function startVideoUpload(User $for,
 									 string $name,
 									 string $description,
+                                     string $mimeType,
 									 int $visibility,
 									 UploadedFile $thumbnailFile): void
     {
@@ -499,6 +505,7 @@ class MediaService extends Service
 		$token->for = $for;
 		$token->name = $name;
 		$token->description = $description;
+        $token->mimeType = $mimeType;
 		$token->visibility = $visibility;
 
 		$tempThumbnailFileName = $this->getThumbnailTempFileName($token);

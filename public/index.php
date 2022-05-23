@@ -40,9 +40,12 @@ function getTraceAsHTML(object $exceptionOrError): string
  * @param object|Exception|Error $exceptionOrError
  * @return void
  */
-function renderExceptionOrError(object $exceptionOrError): void
+function handleExceptionOrError(object $exceptionOrError): void
 {
     global $app;
+
+    $errorInfo = get_class($exceptionOrError) . ": {$exceptionOrError->getMessage()}\n\n{$exceptionOrError->getTraceAsString()}";
+    file_put_contents(PROJECT_ROOT . '/last_error.txt', $errorInfo);
 
     $showErrors = !$app instanceof BaseApp || $app->getRuntimeConfig()['show_errors'];
 
@@ -96,7 +99,7 @@ $request = Request::createFromGlobals();
 try {
 	$app = new App($request);
 } catch (Exception $exception) {
-	renderExceptionOrError($exception);
+	handleExceptionOrError($exception);
 }
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -160,5 +163,5 @@ try {
 
 	sendResponse($response->content, $response->code);
 } catch (Exception|Error $exception) {
-	renderExceptionOrError($exception);
+	handleExceptionOrError($exception);
 }
