@@ -75,6 +75,26 @@ class MediaService extends Service
 			->getOneOrNullResult();
 	}
 
+    /**
+     * @param User $author
+     * @param int $mediaType
+     * @return MediaElement[]
+     */
+    public function getMediaByAuthorAndMediaType(User $author, int $mediaType): array
+    {
+        $db = $this->getApp()->getDBManager();
+
+        return $db->query('m', MediaElement::class)
+            ->andWhere('m.uploadedBy = :authorUsername')
+            ->andWhere('m.mediaType = :mediaType')
+            ->setParameters([
+                'authorUsername' => $author->username,
+                'mediaType' => $mediaType
+            ])
+            ->getQuery()
+            ->getResult();
+    }
+
 	/**
 	 * @param string $mediaIdentifier
 	 * @param int $validateMediaType

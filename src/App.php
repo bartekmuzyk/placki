@@ -8,6 +8,7 @@ use App\Controllers\EventController;
 use App\Controllers\GroupController;
 use App\Controllers\MediaController;
 use App\Controllers\PostController;
+use App\Controllers\ProfileController;
 use App\Entities\Post;
 use App\Exceptions\AttachmentTooLargeException;
 use App\Exceptions\CannotWriteAttachmentToDiskException;
@@ -50,7 +51,7 @@ class App extends BaseApp
 
         $this->get('/ludzie', 'people');
 
-        $this->get('/ja', 'me');
+        $this->useController('/ja', ProfileController::class);
 	}
 
 	public function index(AccountService $accountService): Response
@@ -222,13 +223,6 @@ class App extends BaseApp
         return $this->template('ludzie.twig', [
             'self' => $accountService->currentLoggedInUser,
             'people' => $accountService->getAllUsers()
-        ]);
-    }
-
-    public function me(AccountService $accountService): Response
-    {
-        return $this->template('me.twig', [
-            'self' => $accountService->currentLoggedInUser
         ]);
     }
 }
