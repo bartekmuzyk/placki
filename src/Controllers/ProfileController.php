@@ -19,7 +19,7 @@ class ProfileController extends Controller
 
     public function index(AccountService $accountService): Response
     {
-        return $this->template('me.twig', [
+        return $this->template('ja.twig', [
             'self' => $accountService->currentLoggedInUser
         ]);
     }

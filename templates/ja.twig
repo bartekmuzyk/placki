@@ -29,7 +29,7 @@
 </h1>
 <div class="d-flex flex-row content">
     <div class="side-menu">
-        <div class="menu-option menu-option-active" data-optionid="info">
+        <div class="menu-option menu-option-active" data-optionid="details">
             <span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -109,8 +109,19 @@
         </div>
     </div>
     <div class="flex-grow-1">
-        <div id="details">
-
+        <div id="details" style="display: flex; flex-direction: column; align-items: center;">
+            <div style="position: relative; width: 140px; height: 135px; left: 10px;">
+                <img src="{{ self.profilePic }}" style="border-radius: 6px;" width="120" height="120" />
+                <button class="btn btn-sm btn-primary" style="position: absolute; bottom: 0; right: 0; box-shadow: 0 0 10px black;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+                        <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+                    </svg>
+                    zmień
+                </button>
+            </div>
+            <h1 style="font-family: 'DM Sans', sans-serif; font-weight: 900;">{{ self.username }}</h1>
         </div>
     </div>
 </div>
