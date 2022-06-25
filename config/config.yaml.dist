@@ -9,3 +9,4 @@ run:
     middleware:
       - \App\Middleware\Twig\Breakify
       - \App\Middleware\Twig\UserInfo
+      - \App\Middleware\Twig\DateFormatter
