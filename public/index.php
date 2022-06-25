@@ -15,6 +15,7 @@ use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
 use Framework\Http\Response;
 use JetBrains\PhpStorm\NoReturn;
+use Twig\Error\SyntaxError;
 
 /**
  * @internal
@@ -37,9 +38,9 @@ function getTraceAsHTML(object $exceptionOrError): string
 }
 
 /**
- * @internal
- * @param object|Exception|Error $exceptionOrError
+ * @param object $exceptionOrError
  * @return void
+ * @internal
  */
 function handleExceptionOrError(object $exceptionOrError): void
 {
@@ -53,10 +54,20 @@ function handleExceptionOrError(object $exceptionOrError): void
     if ($showErrors) {
         $className = get_class($exceptionOrError);
         $trace = getTraceAsHTML($exceptionOrError);
+        $additionalInfoHtml = $exceptionOrError instanceof SyntaxError ?
+            "
+            <div style='border: 5px solid white;'>
+                <b>Template file: {$exceptionOrError->getSourceContext()->getName()}</b>
+                <label>Line number: {$exceptionOrError->getTemplateLine()}</label>
+            </div>
+            "
+            :
+            '';
         sendResponse("
 <body style='background-color: #EF5350; color: white; font-family: sans-serif;'>
 	<h1>Unhandled $className</h1>
 	<p>{$exceptionOrError->getMessage()}</p>
+	$additionalInfoHtml
 	<hr style='border-color: white;'/>
 	<div style='width: 100%; padding: 5px; background-color: #212121; color: #FAFAFA; box-sizing: border-box; border-radius: 10px; border: 3px dotted white;'>
 		<code style='font-size: 18px; line-height: 22px;'>$trace</code>
@@ -163,6 +174,8 @@ try {
     }
 
     sendResponse($response->content, $response->code);
+} catch (SyntaxError $exception) {
+    handleExceptionOrError($exception);
 } catch (Exception|Error $exception) {
 	handleExceptionOrError($exception);
 }
