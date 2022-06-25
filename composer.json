@@ -18,6 +18,7 @@
         "twig/twig": "v3.3.7",
         "ext-json": "*",
         "ext-yaml": "*",
+        "ext-intl": "*",
         "doctrine/orm": "^2.11.0",
         "doctrine/dbal": "^3.2",
         "doctrine/annotations": "1.13.2",
@@ -27,5 +28,5 @@
         "guzzlehttp/guzzle": "^7.4",
         "ramsey/uuid": "^4.2",
         "ramsey/uuid-doctrine": "^1.8"
-	}
+    }
 }

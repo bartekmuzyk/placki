@@ -2,26 +2,6 @@ function setActiveNavTab(href) {
     $(`.navbar .nav-link[href="${href}"]`).addClass("active");
 }
 
-$(".press-enter-to-search-message[data-depends]").each((index, el) => {
-    const $el = $(el);
-    const depends = $el.data("depends");
-    
-    $el.attr("data-animationenabled", "0");
-    
-    if (depends) {
-        const dependencies = $(depends);
-        
-        dependencies.on("focus", () => {
-            $el.attr("data-animationenabled", "1");
-            $el.attr("data-animatedshow", "1");
-        });
-        
-        dependencies.on("blur", () => {
-            $el.attr("data-animatedshow", "0");
-        });
-    }
-});
-
 const __Base64_toUtf8 = function (text) {
     const surrogate = encodeURIComponent(text);
     let result = '';
@@ -72,4 +52,17 @@ const Base64 = {
  */
 const escapeHtml = unsafe => {
     return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+}
+
+/**
+ * @param blob {Blob}
+ * @param filename {string}
+ */
+function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
 }

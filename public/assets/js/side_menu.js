@@ -1,4 +1,5 @@
-let _menu_option_callback = () => undefined;
+/** @type {(optionId: string) => any} */
+let _menu_option_callback = optionId => optionId;
 
 $(".side-menu > .menu-option").on("click", function() {
     const self = $(this);
@@ -8,6 +9,9 @@ $(".side-menu > .menu-option").on("click", function() {
     _menu_option_callback(optionId);
 });
 
+/**
+ * @param cb {(optionId: string) => any}
+ */
 function setSideMenuOptionCallback(cb) {
     _menu_option_callback = cb;
 }

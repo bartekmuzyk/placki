@@ -4,38 +4,6 @@ const $likeCount = $("#like-count");
 const $downloadBtn = $("#download-btn");
 const $videoPlayer = $("video");
 
-const params = new URLSearchParams(location.search);
-const isFallbackPlayer = params.get("fallback") === "1";
-
-function switchToFallbackPlayer() {
-    localStorage.setItem("useFallbackPlayer", "1");
-    location.search = new URLSearchParams([
-        ...params.entries(),
-        ["fallback", "1"]
-    ]).toString();
-}
-
-class ChromePlayerWarningComponent extends StatefulComponent {
-    render() {
-        return !isFallbackPlayer && bowser.parse(navigator.userAgent).browser.name === "Chrome" ? `
-            <div class="alert alert-danger" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-triangle" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                   <path d="M12 9v2m0 4v.01"></path>
-                   <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
-                </svg>
-                odtwarzacz może nie działać poprawnie w przeglądarce Chrome. zalecane jest użycie domyślnego odtwarzacza przeglądarki.
-                <br/>
-                <button class="btn btn-sm btn-primary mt-2" onclick="switchToFallbackPlayer();">użyj rezerwowego odtwarzacza</button>
-            </div>
-`
-            : "";
-    }
-}
-
-const chromePlayerWarningComponent = new ChromePlayerWarningComponent("chrome-player-warning");
-chromePlayerWarningComponent.reRender();
-
 let likeCount = parseInt($likeCount.text());
 if (isNaN(likeCount)) {
     likeCount = 0;

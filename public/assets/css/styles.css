@@ -68,9 +68,11 @@ label, p, a, textarea, input, span, td, th, small, li, .modal-title {
   background-color: var(--primary-lighter);
   color: var(--primary);
   border: none;
+  border-radius: 100vw;
   padding: 0;
   flex: 0 0 auto;
   align-items: flex-end;
+  margin: 10px 10px 0 10px;
 }
 
 .navbar-brand {
@@ -135,9 +137,8 @@ label, p, a, textarea, input, span, td, th, small, li, .modal-title {
 }
 
 .content {
-  /*height: calc(100% - 134px);*/
-  /*max-height: calc(100% - 134px);*/
   flex: 1 0 auto;
+  height: 0;
 }
 
 tr {

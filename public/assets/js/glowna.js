@@ -52,11 +52,11 @@ function postBrowserNextPage(lastPostId) {
 }
 
 function post() {
-    makePostRequest(
+    PostEditor.makePostRequest(
         "/posty",
         () => {
-            $postContentEditor.val("");
-            clearAttachments();
+            PostEditor.$postContentEditor.val("");
+            PostEditor.clearAttachments();
             PostBrowser.refresh();
         },
         () => {

@@ -81,7 +81,7 @@
         {% endfor %}
         <div class="d-flex flex-row">
             <div class="flex-grow-1">
-                <span style="color: gray;">{{ post.at.format("j F Y") }} o {{ post.at.format("G:i") }}</span>
+                <span style="color: gray;">{{ post.at|format_date_human() }}</span>
             </div>
             <div class="d-flex justify-content-xl-end align-items-xl-center like-btns" data-liked="{{ self in post.likedBy }}" style="height: 100%;">
                 <i class="far fa-heart" style="font-size: 25px; color: var(--bs-gray-900);"></i><i class="fas fa-heart" style="font-size: 25px; color: var(--primary); text-shadow: 0 0 8px;"></i>

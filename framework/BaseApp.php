@@ -8,7 +8,7 @@ use Framework\Database\DatabaseManager;
 use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
 use Framework\Http\Response;
-use Framework\Middleware\MiddlewareInterface;
+use Framework\Middleware\AppMiddlewareInterface;
 use Framework\Service\Service;
 use Framework\Session\SessionManager;
 use Framework\TempFileUtil\TempFileUtil;
@@ -35,7 +35,7 @@ abstract class BaseApp {
 
 	private array $config;
 
-	/** @var MiddlewareInterface[] */
+	/** @var AppMiddlewareInterface[] */
 	public array $middleware;
 
 	private array $serviceMap = [];
@@ -46,22 +46,24 @@ abstract class BaseApp {
 	 */
 	public function __construct(?Request $request)
 	{
+        if (!is_file(self::CONFIG_FILE)) {
+            throw new Exception(sprintf('Expected configuration file at: %s', self::CONFIG_FILE));
+        }
+
+        $this->config = yaml_parse_file(self::CONFIG_FILE);
+
+        $this->autoRegisterServices();
+
 		if ($request instanceof Request) {
 			$this->routes = ['GET' => [], 'POST' => [], 'PUT' => [], 'DELETE' => []];
 			$this->request = $request;
-			$this->twigRenderer = new TwigRenderer();
+			$this->twigRenderer = new TwigRenderer($this);
 			$this->sessionManager = new SessionManager();
 			$this->tempFileUtil = new TempFileUtil(PROJECT_ROOT . '/cache/temp_files/');
 
-			$this->autoRegisterServices();
 			$this->setup();
 		}
 
-		if (!is_file(self::CONFIG_FILE)) {
-			throw new Exception(sprintf('Expected configuration file at: %s', self::CONFIG_FILE));
-		}
-
-		$this->config = yaml_parse_file(self::CONFIG_FILE);
 		$this->databaseManager = DatabaseManager::fromConfig($this->config['database']);
 	}
 
@@ -167,7 +169,7 @@ abstract class BaseApp {
 		$controllerInstance->configureRoutes();
 	}
 
-	protected function addMiddleware(MiddlewareInterface $middleware): void
+	protected function addMiddleware(AppMiddlewareInterface $middleware): void
     {
 		$this->middleware[] = $middleware;
 	}

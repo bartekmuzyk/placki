@@ -101,11 +101,11 @@ SafeBrowser.$loggedIntoSafeAlert.find("button").on("click", function() {
 });
 
 function post() {
-    makePostRequest(
+    PostEditor.makePostRequest(
         `/grupy/tablica?id=${GROUP_ID}`,
         () => {
-            $postContentEditor.val("");
-            clearAttachments();
+            PostEditor.$postContentEditor.val("");
+            PostEditor.clearAttachments();
             WallPostsBrowser.refresh();
         },
         () => {

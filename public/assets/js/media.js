@@ -376,19 +376,6 @@ $cancelFileUploadBtn.on("click", () => {
     Toast.show("zatrzymywanie transferu...", "info");
 });
 
-/**
- * @param blob {Blob}
- * @param filename {string}
- */
-function downloadBlob(blob, filename) {
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-}
-
 $(".file-actions > button").on("click", function() {
     const fileId = this.parentElement.getAttribute("data-fileid");
     /** @type {"delete"|"download"|"share"} */
@@ -567,3 +554,5 @@ async function startVideoUpload() {
             break;
     }
 }
+
+SearchTables.load();

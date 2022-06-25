@@ -8,6 +8,7 @@ define('PROJECT_ROOT', dirname(PUBLIC_DIR));
 require_once PROJECT_ROOT . '/vendor/autoload.php';
 
 use App\App;
+use Doctrine\ORM\Query\QueryException;
 use Framework\BaseApp;
 use Framework\Exception\InvalidInjectionParameter;
 use Framework\Exception\NoSuchServiceException;
@@ -138,30 +139,30 @@ if (!$reflectedController->hasMethod($controllerMethodName)) {
 }
 
 try {
-	session_start();
+    session_start();
 
-	/** @var Response $response */
-	$response = null;
+    /** @var Response $response */
+    $response = null;
 
-	foreach ($app->middleware as $middleware) {
-		$middlewareResponse = $middleware->run($app);
+    foreach ($app->middleware as $middleware) {
+        $middlewareResponse = $middleware->run($app);
 
-		if ($middlewareResponse instanceof Response) {
-			$response = $middlewareResponse;
-			break;
-		}
-	}
+        if ($middlewareResponse instanceof Response) {
+            $response = $middlewareResponse;
+            break;
+        }
+    }
 
-	if ($response === null) {
-		$args = getArgumentsForDependencyInjection($controllerMethod);
-		$response = $controllerMethod->invoke($controllerInstance, ...$args);
-	}
+    if ($response === null) {
+        $args = getArgumentsForDependencyInjection($controllerMethod);
+        $response = $controllerMethod->invoke($controllerInstance, ...$args);
+    }
 
-	foreach ($response->headers as $name => $value) {
-		header("$name: $value");
-	}
+    foreach ($response->headers as $name => $value) {
+        header("$name: $value");
+    }
 
-	sendResponse($response->content, $response->code);
+    sendResponse($response->content, $response->code);
 } catch (Exception|Error $exception) {
 	handleExceptionOrError($exception);
 }

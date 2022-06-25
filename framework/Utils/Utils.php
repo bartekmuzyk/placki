@@ -2,6 +2,8 @@
 
 namespace Framework\Utils;
 
+use Exception;
+
 class Utils
 {
 	/**
@@ -210,5 +212,27 @@ class Utils
         ];
 
         return $mime_map[$mime];
+    }
+
+    /**
+     * converts a php size string (e.g. `1024M`, `3K`, `10G`, `256`) to a number of bytes
+     * @param string $size
+     * @return int
+     * @throws Exception when the size string is invalid
+     */
+    public static function parsePhpSizeString(string $size): int
+    {
+        $bytes = (int)$size;
+
+        if (is_numeric($size)) {
+            return $bytes;
+        }
+
+        return match ($size[strlen($size) - 1]) {
+            'G' => $bytes * 1024 * 1024 * 1024,
+            'M' => $bytes * 1024 * 1024,
+            'K' => $bytes * 1024,
+            default => throw new Exception("Invalid size string: $size"),
+        };
     }
 }

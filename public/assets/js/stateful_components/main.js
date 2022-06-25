@@ -8,6 +8,9 @@ class StatefulComponent {
 
     /** @type {Props} */ props;
 
+    /** @type {() => any} */
+    postRender = () => undefined;
+
     /**
      * @param placeholderId {string}
      * @param props {Props}
@@ -24,6 +27,13 @@ class StatefulComponent {
         this.reRender();
     }
 
+    /**
+     * @param modifier {(currentState: any) => void}
+     */
+    modifyState(modifier) {
+        this.state = modifier(this.state);
+    }
+
     get state() {
         return this._state;
     }
@@ -38,5 +48,6 @@ class StatefulComponent {
     reRender() {
         const rendered = this.render();
         this._placeholder.html(Array.isArray(rendered) ? rendered.join("") : rendered);
+        this.postRender();
     }
 }

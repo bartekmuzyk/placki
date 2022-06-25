@@ -5,3 +5,7 @@ database:
   password: YOUR_PASSWORD_HERE
 run:
   show_errors: true  # Whether to show information about an exception which has occurred
+  twig:
+    middleware:
+      - \App\Middleware\Twig\Breakify
+      - \App\Middleware\Twig\UserInfo

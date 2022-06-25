@@ -66,7 +66,7 @@
                 style="width: 100%; resize: none; margin-top: 5px;"
         ></textarea>
         <div class="text-start" style="width: 100%; margin-top: 5px; margin-bottom: 5px;">
-            <button onclick="pickPostAttachments();" class="btn btn-light btn-sm" type="button" data-toggle="tooltip" data-placement="right" title="dodaj załączniki">
+            <button onclick="PostEditor.pickPostAttachments();" class="btn btn-light btn-sm" type="button" data-toggle="tooltip" data-placement="right" title="dodaj załączniki">
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="1em"
@@ -111,20 +111,24 @@
             najbliższe wydarzenia
         </h1>
         <ul class="list-unstyled event-list">
-            {% for event in nearest_events %}
-                <li class="d-flex">
-                    <div class="d-flex flex-grow-0 align-items-center">
-                        <img src="/event_icons/{{ event.id }}" />
-                    </div>
-                    <div class="flex-grow-1">
-                        <p>{{ event.title }}</p>
-                        <p>{{ event.description }}</p>
-                    </div>
-                    <div class="d-flex flex-grow-0 align-items-center">
-                        <label class="form-label">{{ event.at }}</label>
-                    </div>
-                </li>
-            {% endfor %}
+            {% if nearest_events|length > 0 %}
+                {% for event in nearest_events %}
+                    <li class="d-flex">
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <img src="/event_icons/{{ event.id }}" />
+                        </div>
+                        <div class="flex-grow-1">
+                            <p>{{ event.title }}</p>
+                            <p>{{ event.description }}</p>
+                        </div>
+                        <div class="d-flex flex-grow-0 align-items-center">
+                            <label class="form-label">{{ event.at|format_date("EEEE") }} o {{ event.at.format("G:i") }}</label>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <label>nie ma żadnych bliskich wydarzeń</label>
+            {% endif %}
         </ul>
     </div>
 </div>

@@ -56,5 +56,6 @@ function setUploadButtonEnabledState(state) {
     else $uploadFileButton.addClass("disabled");
 }
 
-fileUploadInputElement.onchange = () => setUploadButtonEnabledState(fileUploadInputElement.files.length > 0);
-fileUploadInputElement.onchange();
+const updateUploadButtonState = () => setUploadButtonEnabledState(fileUploadInputElement.files.length > 0);
+fileUploadInputElement.onchange = updateUploadButtonState;
+updateUploadButtonState();

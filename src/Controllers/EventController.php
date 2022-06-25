@@ -30,9 +30,7 @@ class EventController extends Controller
 
     public function index(AccountService $accountService): Response
     {
-        return $this->template('wydarzenia.twig', [
-            'self' => $accountService->currentLoggedInUser
-        ]);
+        return $this->template('wydarzenia.twig');
     }
 
     public function jsonEvents(EventsService $eventsService, AccountService $accountService): Response

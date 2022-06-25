@@ -2,6 +2,9 @@
 
 namespace Framework\Twig;
 
+use App\App;
+use Framework\Middleware\TwigMiddlewareInterface;
+use HaydenPierce\ClassFinder\ClassFinder;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -12,20 +15,15 @@ use Twig\TwigFilter;
 class TwigRenderer {
 	private Environment $environment;
 
-	public function __construct()
+    private App $app;
+
+	public function __construct(App $app)
 	{
+        $this->app = $app;
 		$loader = new FilesystemLoader(PROJECT_ROOT . '/templates');
 		$this->environment = new Environment($loader, [
 			'cache' => PROJECT_ROOT . '/cache/twig'
 		]);
-		$this->environment->addFilter(new TwigFilter(
-			'breakify',
-			fn(string $source) => str_replace("\n", '<br/>', $source),
-			[
-				'pre_escape' => 'html',
-				'is_safe' => ['html']
-			]
-		));
 	}
 
 	/**
@@ -38,6 +36,12 @@ class TwigRenderer {
 	 */
 	public function render(string $templateFile, array $variables): string
 	{
+        foreach ($this->app->getRuntimeConfig()['twig']['middleware'] as $middlewareClass) {
+            /** @var TwigMiddlewareInterface $middlewareInstance */
+            $middlewareInstance = new $middlewareClass();
+            $middlewareInstance->run($this->app, $this->environment);
+        }
+
 		return $this->environment->render($templateFile, $variables);
 	}
 }

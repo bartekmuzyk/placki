@@ -65,7 +65,6 @@ class GroupController extends Controller
 		);
 
 		return $this->template('grupy.twig', [
-			'self' => $me,
 			'groups' => $groups,
 			'my_groups' => $myGroupsIds,
 			'joined_groups' => $joinedGroupsIds
@@ -99,7 +98,6 @@ class GroupController extends Controller
 			return $this->redirect('/grupy');
 		} else if ($groupsService->isBanned($group, $accountService->currentLoggedInUser)) {
 			return $this->template('grupa_z_wiadomoscia.twig', [
-				'self' => $accountService->currentLoggedInUser,
 				'group' => $group,
 				'message_title' => 'masz bana ¯\_(ツ)_/¯',
 				'message_subtitle' => 'nie możesz uzyskać dostępu do tej grupy, ponieważ jej administrator zbanował twoje konto'
@@ -111,12 +109,10 @@ class GroupController extends Controller
 					return $this->template('grupa_dolacz.twig', [
 						'needs_permission' => $group->accessLevel === GroupsService::ACCESS_NEEDS_PERMISSION,
 						'request_sent' => $groupsService->joinRequested($group, $accountService->currentLoggedInUser),
-						'self' => $accountService->currentLoggedInUser,
 						'group' => $group
 					]);
 				case GroupsService::ACCESS_INVITE_ONLY:
 					return $this->template('grupa_z_wiadomoscia.twig', [
-						'self' => $accountService->currentLoggedInUser,
 						'group' => $group,
 						'message_title' => 'dostęp do tej grupy jest ograniczony',
 						'message_subtitle' => 'administrator tej grupy pozwolił na dołączanie do grupy wyłącznie za pomocą zaproszenia'
@@ -125,7 +121,6 @@ class GroupController extends Controller
 		}
 
 		return $this->template('panel_grupy.twig', [
-			'self' => $accountService->currentLoggedInUser,
 			'group' => $group,
 			'all_users' => $groupsService->possibleUsers($group)
 		]);
@@ -210,7 +205,6 @@ class GroupController extends Controller
 
 		return $this->template('posty.twig', [
 			'hide_group_labels' => true,
-			'self' => $accountService->currentLoggedInUser,
 			'posts' => $posts,
 			'attachmentSources' => $attachmentSources
 		]);

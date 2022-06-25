@@ -1,9 +1,4 @@
-const $postContentEditor = $("#post-content-editor");
-const $postAttachmentList = $("#post-attachment-list");
-const $postAttachmentInput = $("#post-attachment-input");
-const $fileUploadErrorMessage = $("#post-attachment-upload-error-message");
-
-const fileTypeIcons = {
+const __PostEditor_fileTypeIcons = {
     "text/plain": `
     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-description" width="56" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -120,8 +115,7 @@ const fileTypeIcons = {
     </svg>
     `
 };
-
-const postAttachmentListRemoveOverlayHTML = `
+const __PostEditor_postAttachmentListRemoveOverlayHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="60" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <line x1="4" y1="7" x2="20" y2="7"></line>
@@ -133,166 +127,172 @@ const postAttachmentListRemoveOverlayHTML = `
     <label>usuń</label>
 `;
 
-/**
- * @param file {File}
- * @param fileIndex {number}
- * @returns {HTMLDivElement}
- */
-function createAttachmentPreviewElement(file, fileIndex) {
-    /** @returns {HTMLDivElement} */
-    const div = () => document.createElement("div");
+class PostEditor {
+    static $postContentEditor = $("#post-content-editor");
+    static $postAttachmentList = $("#post-attachment-list");
+    static $postAttachmentInput = $("#post-attachment-input");
+    static $fileUploadErrorMessage = $("#post-attachment-upload-error-message");
+    static currentPostAttachments = [];
 
-    const root = div();
-    root.setAttribute("data-fileindex", fileIndex.toString());
+    /**
+     * @param file {File}
+     * @param fileIndex {number}
+     * @returns {HTMLDivElement}
+     */
+    static createAttachmentPreviewElement(file, fileIndex) {
+        /** @returns {HTMLDivElement} */
+        const div = () => document.createElement("div");
 
-    const previewDiv = div();
+        const root = div();
+        root.setAttribute("data-fileindex", fileIndex.toString());
 
-    switch (file.type) {
-        case "image/jpeg":
-        case "image/png":
-        case "image/bmp":
-        case "image/gif":
-        case "image/webp":
-            const reader = new FileReader();
+        const previewDiv = div();
 
-            reader.onload = ev => {
-                previewDiv.style.backgroundImage = `url(${ev.target.result})`;
-            };
+        switch (file.type) {
+            case "image/jpeg":
+            case "image/png":
+            case "image/bmp":
+            case "image/gif":
+            case "image/webp":
+                const reader = new FileReader();
 
-            reader.readAsDataURL(file);
+                reader.onload = ev => {
+                    previewDiv.style.backgroundImage = `url(${ev.target.result})`;
+                };
 
-            break;
-        default:
-            let icon;
+                reader.readAsDataURL(file);
 
-            if (file.type in fileTypeIcons) {
-                icon = fileTypeIcons[file.type];
-            } else {
-                const generalFileType = file.type.split("/", 1)[0];
+                break;
+            default:
+                let icon;
 
-                icon = fileTypeIcons[generalFileType] ?? fileTypeIcons.default;
+                if (file.type in __PostEditor_fileTypeIcons) {
+                    icon = __PostEditor_fileTypeIcons[file.type];
+                } else {
+                    const generalFileType = file.type.split("/", 1)[0];
+
+                    icon = __PostEditor_fileTypeIcons[generalFileType] ?? __PostEditor_fileTypeIcons.default;
+                }
+
+                previewDiv.innerHTML = icon + "<br/>" + file.name;
+
+                break;
+        }
+
+        root.appendChild(previewDiv);
+
+        const removeOverlay = div();
+        removeOverlay.innerHTML = __PostEditor_postAttachmentListRemoveOverlayHTML;
+        root.appendChild(removeOverlay);
+
+        return root;
+    }
+
+    static reloadAttachmentsPreview() {
+        if (this.currentPostAttachments.length > 0) {
+            this.$postAttachmentList.attr("data-show", "1");
+        } else {
+            this.$postAttachmentList.attr("data-show", "0");
+            return;
+        }
+
+        const previewElements = [];
+
+        for (const [ fileIndex, file ] of Object.entries(this.currentPostAttachments)) {
+            const el = this.createAttachmentPreviewElement(file, Number(fileIndex));
+
+            previewElements.push(el);
+        }
+
+        this.$postAttachmentList.html("");
+        this.$postAttachmentList.append(...previewElements);
+
+        $("#post-attachment-list > div > div:nth-child(2)").on("click", function() {
+            /** @type {HTMLDivElement} */
+            const attachmentRootElement = this.parentElement;
+            const fileIndex = Number(attachmentRootElement.getAttribute("data-fileindex"));
+
+            PostEditor.currentPostAttachments.splice(fileIndex, 1);
+            PostEditor.reloadAttachmentsPreview();
+        });
+    }
+
+    static pickPostAttachments() {
+        this.$postAttachmentInput.trigger("click");
+    }
+
+    static clearAttachments() {
+        this.currentPostAttachments = [];
+        this.reloadAttachmentsPreview();
+    }
+
+    /**
+     * @param message {string}
+     */
+    static showFileUploadErrorMessage(message) {
+        this.$fileUploadErrorMessage.text(message);
+        this.$fileUploadErrorMessage.attr("data-animatedshow", "1");
+
+        setTimeout(() => this.$fileUploadErrorMessage.attr("data-animatedshow", "0"), 3000);
+    }
+
+    /**
+     * @param url {string}
+     * @param onSuccess {() => void}
+     * @param onError {() => void}
+     */
+    static makePostRequest(url, onSuccess, onError) {
+        const postContent = this.$postContentEditor.val().trim();
+
+        if (postContent.length > 0 || this.currentPostAttachments.length > 0) {
+            const formData = new FormData();
+
+            if (postContent.length > 0) {
+                formData.append("content", postContent);
             }
 
-            previewDiv.innerHTML = icon + "<br/>" + file.name;
+            for (const file of this.currentPostAttachments) {
+                formData.append("attachments[]", file, file.name);
+            }
 
-            break;
-    }
-
-    root.appendChild(previewDiv);
-
-    const removeOverlay = div();
-    removeOverlay.innerHTML = postAttachmentListRemoveOverlayHTML;
-    root.appendChild(removeOverlay);
-
-    return root;
-}
-
-let currentPostAttachments = [];
-
-function reloadAttachmentsPreview() {
-    if (currentPostAttachments.length > 0) {
-        $postAttachmentList.attr("data-show", "1");
-    } else {
-        $postAttachmentList.attr("data-show", "0");
-        return;
-    }
-
-    const previewElements = [];
-
-    for (const [ fileIndex, file ] of Object.entries(currentPostAttachments)) {
-        const el = createAttachmentPreviewElement(file, Number(fileIndex));
-
-        previewElements.push(el);
-    }
-
-    $postAttachmentList.html("");
-    $postAttachmentList.append(...previewElements);
-
-    $("#post-attachment-list > div > div:nth-child(2)").on("click", function() {
-        /** @type {HTMLDivElement} */
-        const attachmentRootElement = this.parentElement;
-        const fileIndex = Number(attachmentRootElement.getAttribute("data-fileindex"));
-
-        currentPostAttachments.splice(fileIndex, 1);
-        reloadAttachmentsPreview();
-    });
-}
-
-$postAttachmentInput.on("change", () => {
-    /** @type {File[]} */
-    const files = $postAttachmentInput.prop("files");
-
-    currentPostAttachments.push(...files);
-    reloadAttachmentsPreview();
-});
-
-function pickPostAttachments() {
-    $postAttachmentInput.trigger("click");
-}
-
-function clearAttachments() {
-    currentPostAttachments = [];
-    reloadAttachmentsPreview();
-}
-
-/**
- * @param message {string}
- */
-function showFileUploadErrorMessage(message) {
-    $fileUploadErrorMessage.text(message);
-    $fileUploadErrorMessage.attr("data-animatedshow", "1");
-
-    setTimeout(() => $fileUploadErrorMessage.attr("data-animatedshow", "0"), 3000);
-}
-
-/**
- * @param url {string}
- * @param onSuccess {() => void}
- * @param onError {() => void}
- */
-function makePostRequest(url, onSuccess, onError) {
-    const postContent = $postContentEditor.val().trim();
-
-    if (postContent.length > 0 || currentPostAttachments.length > 0) {
-        const formData = new FormData();
-
-        if (postContent.length > 0) {
-            formData.append("content", postContent);
-        }
-
-        for (const file of currentPostAttachments) {
-            formData.append("attachments[]", file, file.name);
-        }
-
-        fetch(url, {
-            method: "POST",
-            body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    onSuccess();
-                } else {
-                    response.json()
-                        .then(fileUploadErrorData => {
-                            /** @type {"cannot write to disk"|"too large"} */
-                            const error = fileUploadErrorData["error"];
-                            /** @type {string} */
-                            const filename = fileUploadErrorData["filename"];
-
-                            switch (error) {
-                                case "cannot write to disk":
-                                    showFileUploadErrorMessage(`nie udało się zapisać pliku ${filename} na serwerze`);
-                                    break;
-                                case "too large":
-                                    showFileUploadErrorMessage(`plik ${filename} jest za duży`);
-                                    break;
-                            }
-                        })
-                        .catch(() => {
-                            showFileUploadErrorMessage("nieznany błąd");
-                        });
-                }
+            fetch(url, {
+                method: "POST",
+                body: formData
             })
-            .catch(() => onError())
+                .then(response => {
+                    if (response.ok) {
+                        onSuccess();
+                    } else {
+                        response.json()
+                            .then(fileUploadErrorData => {
+                                /** @type {"cannot write to disk"|"too large"} */
+                                const error = fileUploadErrorData["error"];
+                                /** @type {string} */
+                                const filename = fileUploadErrorData["filename"];
+
+                                switch (error) {
+                                    case "cannot write to disk":
+                                        this.showFileUploadErrorMessage(`nie udało się zapisać pliku ${filename} na serwerze`);
+                                        break;
+                                    case "too large":
+                                        this.showFileUploadErrorMessage(`plik ${filename} jest za duży`);
+                                        break;
+                                }
+                            })
+                            .catch(() => {
+                                this.showFileUploadErrorMessage("nieznany błąd");
+                            });
+                    }
+                })
+                .catch(() => onError())
+        }
     }
 }
+
+PostEditor.$postAttachmentInput.on("change", () => {
+    /** @type {File[]} */
+    const files = PostEditor.$postAttachmentInput.prop("files");
+
+    PostEditor.currentPostAttachments.push(...files);
+    PostEditor.reloadAttachmentsPreview();
+});

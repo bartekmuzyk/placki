@@ -68,12 +68,7 @@
                 </div>
             {% endif %}
             <div class="col-md-6 col-xl-8 offset-xl-0">
-                <placeholder id="chrome-player-warning"></placeholder>
-                {% if fallback_player %}
-                    <video src="{{ src }}" poster="{{ thumbnail }}" autoplay controls style="max-width: 100%;"></video>
-                {% else %}
-                    {% include "snippets/video_player.twig" with {"src": src, "thumbnail": video.thumbnail} only %}
-                {% endif %}
+                {% include "snippets/video_player.twig" with {"src": "/media/film/stream?id=" ~ video.id, "thumbnail": video.thumbnail} only %}
             </div>
             <div class="col-md-6 col-xl-4">
                 <div class="card" style="margin-top: 10px;">
@@ -105,8 +100,8 @@
                     <div class="card-body">
                         <p class="card-text">
                             <strong>nazwa pliku: </strong>{{ additional.filename }}<br />
-                            <strong>rozdzielczość: </strong>{{ additional.resolution }}<br />
-                            <strong>bitrate: </strong>{{ additional.bitrate }}<br />
+{#                            <strong>rozdzielczość: </strong>{{ additional.resolution }}<br />#}
+{#                            <strong>bitrate: </strong>{{ additional.bitrate }}<br />#}
                             <strong>rozmiar: </strong>{{ additional.size }}
                         </p>
                         <a
@@ -155,7 +150,7 @@
                 <div style="margin-top: 10px;">
                     <div style="width: 100%; border-bottom: 1px solid #ccc;">
                         <b style="font-family: 'Josefin Sans', sans-serif;">opis</b>
-                        <span style="float: right;">wrzucone {{ video.uploadedAt.format("j F Y") }} o {{ video.uploadedAt.format("G:i") }}</span>
+                        <span style="float: right;">wrzucone {{ video.uploadedAt|format_date_human() }}</span>
                     </div>
                     {% if video.description|length > 0 %}
                         <p>

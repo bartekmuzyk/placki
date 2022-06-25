@@ -12,9 +12,10 @@ use App\Controllers\ProfileController;
 use App\Entities\Post;
 use App\Exceptions\AttachmentTooLargeException;
 use App\Exceptions\CannotWriteAttachmentToDiskException;
-use App\Middleware\CheckAuth;
+use App\Middleware\App\CheckAuth;
 use App\Services\AccountService;
 use App\Services\AttachmentService;
+use App\Services\EventsService;
 use App\Services\PostService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -26,7 +27,7 @@ class App extends BaseApp
 {
 	public function setup()
 	{
-		$this->addMiddleware(new CheckAuth());
+        $this->addMiddleware(new CheckAuth());
         $this->useController('/api', APIController::class);
 
 		$this->get('/', 'index');
@@ -123,11 +124,11 @@ class App extends BaseApp
 		return $this->redirect('/');
 	}
 
-	public function homepage(AccountService $accountService): Response
+	public function homepage(EventsService $eventsService): Response
 	{
 		return $this->template('glowna.twig', [
-			'self' => $accountService->currentLoggedInUser
-		]);
+            'nearest_events' => $eventsService->getNearestEvents()
+        ]);
 	}
 
 	public function posts(PostService $postService, AccountService $accountService, AttachmentService $attachmentService): Response
@@ -145,7 +146,6 @@ class App extends BaseApp
 		}
 
 		return $this->template('posty.twig', [
-			'self' => $accountService->currentLoggedInUser,
 			'posts' => $posts,
 			'attachmentSources' => $attachmentSources
 		]);
@@ -221,7 +221,6 @@ class App extends BaseApp
     public function people(AccountService $accountService): Response
     {
         return $this->template('ludzie.twig', [
-            'self' => $accountService->currentLoggedInUser,
             'people' => $accountService->getAllUsers()
         ]);
     }

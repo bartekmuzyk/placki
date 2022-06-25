@@ -8,9 +8,11 @@ use App\Entities\SharedMedia;
 use App\Entities\User;
 use App\Entities\VideoComment;
 use App\Entities\VideoUploadToken;
+use App\Exceptions\CannotOpenVideoStreamException;
 use App\Exceptions\CannotWriteMediaToDiskException;
 use App\Exceptions\MediaUploadCancellationFailureException;
 use App\Exceptions\MediaTooLargeException;
+use App\Exceptions\MimeTypeNotProvidedException;
 use App\Interfaces\PostUploadMediaElementConfigurator;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
@@ -19,6 +21,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
 use Exception;
 use Framework\Database\DatabaseManager;
+use Framework\Http\Response;
 use Framework\Http\UploadedFile;
 use Framework\Service\Service;
 use Framework\TempFileUtil\Exception\TempFileDeleteException;
@@ -39,6 +42,8 @@ class MediaService extends Service
 	public const VIDEO_VISIBILITY_PRIVATE = 2;
 
 	public MediaSharingService $mediaSharingService;
+
+    public VideoStreamService $videoStreamService;
 
 	/**
 	 * @return MediaElement[] returns all media held in the database. may contain private media which needs to be filtered before displaying to the user.
@@ -115,6 +120,20 @@ class MediaService extends Service
 
 		return $found;
 	}
+
+    /**
+     * @param MediaElement $mediaElement
+     * @return Response
+     * @throws CannotOpenVideoStreamException
+     * @throws MimeTypeNotProvidedException
+     */
+    public function streamVideo(MediaElement $mediaElement): Response
+    {
+        $this->videoStreamService->setFilePath($this->getFilePath($mediaElement));
+        $this->videoStreamService->setMimeType($mediaElement->mimeType);
+
+        return $this->videoStreamService->getStreamResponse();
+    }
 
 	private function createMediaElement(User $uploadedBy, int $mediaType): MediaElement
 	{

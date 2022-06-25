@@ -67,7 +67,6 @@ class PostController extends Controller
 
 		return $this->template('komentarze.twig', [
 			'show_scrollbar' => true,
-			'self' => $accountService->currentLoggedInUser,
 			'comments' => $post->comments
 		]);
 	}

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware;
+namespace App\Middleware\App;
 
 use App\App;
 use App\Entities\User;
@@ -10,9 +10,9 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
 use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Response;
-use Framework\Middleware\MiddlewareInterface;
+use Framework\Middleware\AppMiddlewareInterface;
 
-class CheckAuth implements MiddlewareInterface
+class CheckAuth implements AppMiddlewareInterface
 {
 	private static array $blacklist = ['/', '/rejestracja', '/login', '/media/plik/udostepnione'];
 

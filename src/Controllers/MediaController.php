@@ -28,6 +28,8 @@ class MediaController extends Controller
 		$this->get('/film', 'video');
 		$this->delete('/film', 'deleteVideo');
 
+        $this->get('/film/stream', 'streamVideo');
+
 		$this->post('/film/wrzuc/start', 'startVideoUpload');
 		$this->post('/film/wrzuc', 'uploadVideoPart');
 		$this->post('/film/wrzuc/anuluj', 'cancelVideoUpload');
@@ -87,7 +89,6 @@ class MediaController extends Controller
 		);
 
 		return $this->template('media.twig', [
-			'self' => $accountService->currentLoggedInUser,
 			'shared_videos' => $videos,
 			'shared_photos' => [
 				'albums' => $albums,
@@ -123,9 +124,7 @@ class MediaController extends Controller
 		$mediaSourceUrl = '/media_sources/' . $mediaElement->id . '.' . Utils::mimeToExtension($mediaElement->mimeType);
 
 		return $this->template('video.twig', [
-			'self' => $accountService->currentLoggedInUser,
 			'video' => $mediaElement,
-			'src' => $mediaSourceUrl,
 			'additional' => [
 				'filename' => pathinfo(PUBLIC_DIR . $mediaSourceUrl, PATHINFO_BASENAME),
 				'resolution' => 'nieznana',
@@ -136,8 +135,7 @@ class MediaController extends Controller
 				'count' => $mediaElement->likedBy->count(),
 				'liked_by_me' => $mediaElement->likedBy->contains($accountService->currentLoggedInUser)
 			],
-			'views' => $mediaElement->viewedBy->count(),
-            'fallback_player' => ($req->query['fallback'] ?? '0') === '1'
+			'views' => $mediaElement->viewedBy->count()
 		]);
 	}
 
@@ -161,6 +159,23 @@ class MediaController extends Controller
 
 		return new Response();
 	}
+
+    public function streamVideo(MediaService $mediaService): Response
+    {
+        $req = $this->getRequest();
+
+        if (!$req->hasQuery('id')) {
+            return Response::code(400);
+        }
+
+        $video = $mediaService->getMediaElement($req->query['id'], MediaService::MEDIATYPE_VIDEO);
+
+        if (!($video instanceof MediaElement)) {
+            return Response::code(404);
+        }
+
+        return $mediaService->streamVideo($video);
+    }
 
 	public function like(AccountService $accountService, MediaService $mediaService): Response
 	{
@@ -197,7 +212,6 @@ class MediaController extends Controller
 		}
 
 		return $this->template('komentarze.twig', [
-			'self' => $accountService->currentLoggedInUser,
 			'comments' => $mediaService->getComments($req->query['id'])
 		]);
 	}

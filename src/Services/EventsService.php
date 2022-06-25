@@ -6,6 +6,8 @@ use App\Controllers\EventController;
 use App\Entities\Event;
 use App\Entities\User;
 use App\Exceptions\EventIconDeletionFailureException;
+use DateInterval;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -30,6 +32,24 @@ class EventsService extends Service
         $db = $this->getApp()->getDBManager();
 
         return $db->getAll(Event::class, 0, null, ['order_by' => 'at']);
+    }
+
+    /**
+     * @return Event[]
+     */
+    public function getNearestEvents(): array
+    {
+        $db = $this->getApp()->getDBManager();
+        $qb = $db->query('e', Event::class);
+
+        return $qb
+            ->andWhere("e.at BETWEEN :from AND :to")
+            ->setParameters([
+                'from' => date('Y-m-d H:i:s'),
+                'to' => (new DateTime())->add(new DateInterval('P7D'))->format('Y-m-d H:i:s')
+            ])
+            ->getQuery()
+            ->getResult();
     }
 
     /**

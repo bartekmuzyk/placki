@@ -7,10 +7,14 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
+use Framework\Http\UploadedFile;
 use Framework\Service\Service;
 
 class AccountService extends Service
 {
+    public const DEFAULT_PROFILE_PICTURE = '/assets/img/no-pic.png';
+    private const PROFILE_PICTURES_DIR = PUBLIC_DIR . '/pfp/';
+
 	public ?User $currentLoggedInUser = null;
 
 	public function isLoggedIn(): bool
@@ -48,7 +52,7 @@ class AccountService extends Service
 
 		$user->username = $username;
 		$user->password = $hashedPassword;
-		$user->profilePic = '/assets/img/no-pic.png';
+		$user->profilePic = self::DEFAULT_PROFILE_PICTURE;
 
 		return $user;
 	}
@@ -99,5 +103,38 @@ class AccountService extends Service
         return $this->getApp()->getDBManager()->getAll(User::class, 0, null, [
             'order_by' => 'username'
         ]);
+    }
+
+    /**
+     * @param User $user
+     * @param UploadedFile $picture
+     * @return void
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function setCustomProfilePicture(User $user, UploadedFile $picture): void
+    {
+        $db = $this->getApp()->getDBManager();
+
+        $picture->move(self::PROFILE_PICTURES_DIR . $user->username);
+        $user->profilePic = "/pfp/$user->username";
+
+        $db->persistAndFlush($user);
+    }
+
+    /**
+     * @param User $user
+     * @return void
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function resetProfilePicture(User $user): void
+    {
+        $db = $this->getApp()->getDBManager();
+
+        unlink(self::PROFILE_PICTURES_DIR . $user->username);
+        $user->profilePic = self::DEFAULT_PROFILE_PICTURE;
+
+        $db->persistAndFlush($user);
     }
 }
