@@ -26,7 +26,7 @@
     let GROUP_ACCESS_LEVEL = parseInt("{{ group.accessLevel }}");
     let joinRequestsCount = parseInt("{{ group.joinRequests|length }}");
 </script>
-{% set group_picture = "/group_pics/" ~ group.picFilename %}
+{% set group_picture = "/cdn/group_pics/" ~ group.picFilename %}
 <h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
     <img id="heading-pic" style="height: 45px; width: 45px; border-radius: 45px;" src="{{ group_picture }}" />
     <span id="heading-name" style="font: inherit !important;">{{ group.name }}</span>

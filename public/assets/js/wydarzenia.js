@@ -59,7 +59,7 @@ class EventListComponent extends StatefulComponent {
                             onclick="viewEvent(JSON.parse(Base64.decode(this.getAttribute('data-json'))));"
                     >
                         <div class="d-flex flex-grow-0 align-items-center">
-                            <img src="/event_icons/${event.id}" />
+                            <img src="/cdn/event_icons/${event.id}" />
                         </div>
                         <div class="flex-grow-1">
                             <p>${escapeHtml(event.title)}</p>
@@ -340,7 +340,7 @@ function viewEvent(data) {
 
     currentViewEvent = data;
 
-    $eventViewIcon.attr("src", `/event_icons/${currentViewEvent.id}`);
+    $eventViewIcon.attr("src", `/cdn/event_icons/${currentViewEvent.id}`);
     $eventViewTitle.text(currentViewEvent.title);
     $eventViewAt.html(currentViewEvent.at);
 

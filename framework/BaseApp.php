@@ -23,6 +23,8 @@ abstract class BaseApp {
 
 	public array $routes;
 
+    public array $wildcardRoutes;
+
 	private Request $request;
 
 	private TwigRenderer $twigRenderer;
@@ -56,6 +58,7 @@ abstract class BaseApp {
 
 		if ($request instanceof Request) {
 			$this->routes = ['GET' => [], 'POST' => [], 'PUT' => [], 'DELETE' => []];
+			$this->wildcardRoutes = ['GET' => [], 'POST' => [], 'PUT' => [], 'DELETE' => []];
 			$this->request = $request;
 			$this->twigRenderer = new TwigRenderer($this);
 			$this->sessionManager = new SessionManager();
@@ -132,8 +135,13 @@ abstract class BaseApp {
 	public function addRoute(string $method, string $route, object $controllerInstance, string $controllerMethod): self
 	{
 		$routeData = [$controllerInstance, $controllerMethod];
-		$this->routes[$method][$route] = $routeData;
-		$this->routes[$method]["$route/"] = $routeData;
+
+        if (str_ends_with($route, '*')) {
+            $this->wildcardRoutes[$method][str_replace('*', '' , $route)] = $routeData;
+        } else {
+            $this->routes[$method][$route] = $routeData;
+            $this->routes[$method]["$route/"] = $routeData;
+        }
 
 		return $this;
 	}

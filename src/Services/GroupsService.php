@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Entities\Group;
 use App\Entities\User;
+use App\Exceptions\CDNFileCreationFailureException;
+use App\Exceptions\CDNFileDeletionFailureException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
@@ -14,11 +16,11 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class GroupsService extends Service
 {
-	public const GROUP_PICS_DIR = PUBLIC_DIR . '/group_pics/';
-
 	public const ACCESS_PUBLIC = 0;
 	public const ACCESS_NEEDS_PERMISSION = 1;
 	public const ACCESS_INVITE_ONLY = 2;
+
+    public CDNService $CDNService;
 
 	/**
 	 * @return Group[]
@@ -47,6 +49,7 @@ class GroupsService extends Service
      * @param Group $group
      * @return string|null path of the generated picture file
      * @throws GuzzleException
+     * @throws CDNFileCreationFailureException
      */
 	private function generatePicture(Group $group): ?string
 	{
@@ -65,20 +68,20 @@ class GroupsService extends Service
 		]);
 
 		$filename = uniqid() . '.png';
-		$path = self::GROUP_PICS_DIR . $filename;
-		file_put_contents($path, $response->getBody()->getContents());
+        $this->CDNService->writeFile("group_pics/$filename", $response->getBody()->getContents());
 
 		return $filename;
 	}
 
-	/**
-	 * @param string $name
-	 * @param User $owner
-	 * @return int created group id
-	 * @throws GuzzleException
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 */
+    /**
+     * @param string $name
+     * @param User $owner
+     * @return int created group id
+     * @throws CDNFileCreationFailureException
+     * @throws GuzzleException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
 	public function createGroup(string $name, User $owner): int
 	{
 		$db = $this->getApp()->getDBManager();
@@ -95,17 +98,18 @@ class GroupsService extends Service
 		return $group->id;
 	}
 
-	/**
-	 * @param Group $group
-	 * @return void
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 */
+    /**
+     * @param Group $group
+     * @return void
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws CDNFileDeletionFailureException
+     */
 	public function deleteGroup(Group $group): void
     {
 		$db = $this->getApp()->getDBManager();
 
-		unlink(self::GROUP_PICS_DIR . $group->picFilename);
+        $this->CDNService->deleteFile("group_pics/$group->picFilename");
 
 		// TODO remove safe files and referenced safe record when deleting a group to prevent leaks
 		$db->removeAndFlush($group);
@@ -271,20 +275,21 @@ class GroupsService extends Service
 		if ($flush) $db->flush();
 	}
 
-	/**
-	 * @param Group $group
-	 * @param string $name
-	 * @param string $description
-	 * @param UploadedFile $picFile
-	 * @return void
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 */
+    /**
+     * @param Group $group
+     * @param string $name
+     * @param string $description
+     * @param UploadedFile $picFile
+     * @return void
+     * @throws CDNFileCreationFailureException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
 	public function updateLook(Group $group, string $name, string $description, UploadedFile $picFile): void
     {
 		$db = $this->getApp()->getDBManager();
 
-		$picFile->move(self::GROUP_PICS_DIR . $group->picFilename);
+        $this->CDNService->writeFileFrom("group_pics/$group->picFilename", $picFile);
 		$group->name = $name;
 		$group->description = $description;
 

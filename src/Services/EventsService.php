@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Controllers\EventController;
 use App\Entities\Event;
 use App\Entities\User;
+use App\Exceptions\CDNFileCreationFailureException;
+use App\Exceptions\CDNFileDeletionFailureException;
 use App\Exceptions\EventIconDeletionFailureException;
 use DateInterval;
 use DateTime;
@@ -14,15 +16,16 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
 use Framework\Http\UploadedFile;
 use Framework\Service\Service;
+use Framework\TempFileUtil\Exception\TempFileReadException;
 
 class EventsService extends Service
 {
-    private const EVENT_ICONS_DIR = PUBLIC_DIR . '/event_icons/';
-
     /** date format used when returning the list of events as a JSON response (example in {@link EventController::jsonEvents()}) */
     public const JSON_API_KEY_DATE_FORMAT = 'Ymd';
     /** date format which must be used when expecting the value to be parsed by <code>moment.js</code> on the frontend */
     public const FRONTEND_DATE_FORMAT = DateTimeInterface::ATOM;
+
+    public CDNService $CDNService;
 
     /**
      * @return Event[]
@@ -77,6 +80,8 @@ class EventsService extends Service
      * @return void
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws CDNFileCreationFailureException
+     * @throws TempFileReadException
      */
     public function createEvent(User $organiser, string $title, string $description, DateTimeInterface $at, UploadedFile $iconFile): void
     {
@@ -91,7 +96,7 @@ class EventsService extends Service
 
         $db->persistAndFlush($event);
 
-        $iconFile->move(self::EVENT_ICONS_DIR . $event->id);
+        $this->CDNService->writeFileFrom("event_icons/$event->id", $iconFile);
     }
 
     /**
@@ -104,12 +109,14 @@ class EventsService extends Service
     public function deleteEvent(Event $event): void
     {
         $db = $this->getApp()->getDBManager();
+        $eventIconCDNPath = "event_icons/$event->id";
 
-        $eventIconDir = self::EVENT_ICONS_DIR . $event->id;
-        $iconDeleted = !is_file($eventIconDir) || unlink($eventIconDir);
-
-        if (!$iconDeleted) {
-            throw new EventIconDeletionFailureException();
+        if ($this->CDNService->fileExists($eventIconCDNPath)) {
+            try {
+                $this->CDNService->deleteFile($eventIconCDNPath);
+            } catch (CDNFileDeletionFailureException) {
+                throw new EventIconDeletionFailureException();
+            }
         }
 
         $db->removeAndFlush($event);

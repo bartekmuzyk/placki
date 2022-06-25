@@ -4,6 +4,7 @@
 namespace App;
 
 use App\Controllers\APIController;
+use App\Controllers\CDNController;
 use App\Controllers\EventController;
 use App\Controllers\GroupController;
 use App\Controllers\MediaController;
@@ -29,6 +30,7 @@ class App extends BaseApp
 	{
         $this->addMiddleware(new CheckAuth());
         $this->useController('/api', APIController::class);
+        $this->useController('/cdn', CDNController::class);
 
 		$this->get('/', 'index');
 

@@ -121,6 +121,7 @@ if (!in_array($requestMethod, ['GET', 'POST', 'PUT', 'DELETE'])) {
 }
 
 $routes = $app->routes[$requestMethod];
+$wildcardRoutes = $app->wildcardRoutes[$requestMethod];
 $route = $_SERVER['REQUEST_URI'];
 
 if (strpos($route, '?')) {  // Remove query parameters from url for resolving route
@@ -129,11 +130,24 @@ if (strpos($route, '?')) {  // Remove query parameters from url for resolving ro
 
 $request->route = $route;
 
-if (!array_key_exists($route, $routes)) {
-	sendResponse('Route not found', 404);
+/** @var ?array $routeData */
+$routeData = null;
+
+if (array_key_exists($route, $routes)) {
+    $routeData = $routes[$route];
+} else {
+    foreach ($wildcardRoutes as $wildcardRoute => $wildcardRouteData) {
+        if (str_starts_with($route, $wildcardRoute)) {
+            $routeData = $wildcardRouteData;
+        }
+    }
 }
 
-[$controllerInstance, $controllerMethodName] = $routes[$route];
+if ($routeData == null) {
+    sendResponse('Route not found', 404);
+}
+
+[$controllerInstance, $controllerMethodName] = $routeData;
 $reflectedController = new ReflectionObject($controllerInstance);
 
 if (!$reflectedController->hasMethod($controllerMethodName)) {

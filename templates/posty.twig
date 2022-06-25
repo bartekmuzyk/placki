@@ -34,7 +34,7 @@
                     <span style="color: gray;">
                         w grupie
                         <img
-                                src="/group_pics/{{ post.group.picFilename }}"
+                                src="/cdn/group_pics/{{ post.group.picFilename }}"
                                 width="30"
                                 height="30"
                                 style="border-radius: 30px;"
@@ -61,7 +61,7 @@
         </div>
         <p style="{{ post.content|length < 45 ? 'font-size: 35px;' : '' }}">{{ post.content|breakify }}</p>
         {% for attachment in post.attachments %}
-            {% set src = attachmentSources[attachment.id] %}
+            {% set src = attachment|att_src %}
 
             {% if attachment.extension in ["jpeg", "jpg", "png", "bmp", "gif", "webp"] %}
                 <img src="{{ src }}" />

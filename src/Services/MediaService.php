@@ -10,6 +10,8 @@ use App\Entities\VideoComment;
 use App\Entities\VideoUploadToken;
 use App\Exceptions\CannotOpenVideoStreamException;
 use App\Exceptions\CannotWriteMediaToDiskException;
+use App\Exceptions\CDNFileCreationFailureException;
+use App\Exceptions\CDNFileDeletionFailureException;
 use App\Exceptions\MediaUploadCancellationFailureException;
 use App\Exceptions\MediaTooLargeException;
 use App\Exceptions\MimeTypeNotProvidedException;
@@ -25,6 +27,7 @@ use Framework\Http\Response;
 use Framework\Http\UploadedFile;
 use Framework\Service\Service;
 use Framework\TempFileUtil\Exception\TempFileDeleteException;
+use Framework\TempFileUtil\Exception\TempFileReadException;
 use Framework\TempFileUtil\TempFile;
 use Framework\Utils\Utils;
 
@@ -44,6 +47,8 @@ class MediaService extends Service
 	public MediaSharingService $mediaSharingService;
 
     public VideoStreamService $videoStreamService;
+
+    public CDNService $CDNService;
 
 	/**
 	 * @return MediaElement[] returns all media held in the database. may contain private media which needs to be filtered before displaying to the user.
@@ -172,25 +177,22 @@ class MediaService extends Service
 		$db->removeAndFlush($mediaElement);
 	}
 
-	/**
-	 * @param MediaElement $mediaElement
-	 * @return void
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 */
+    /**
+     * @param MediaElement $mediaElement
+     * @return void
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws CDNFileDeletionFailureException
+     */
 	public function deleteVideo(MediaElement $mediaElement): void
     {
-		unlink(self::MEDIA_THUMBNAILS_DIR . $mediaElement->id);
+        $this->CDNService->deleteFile("thumbnails/$mediaElement->id");
 		$this->deleteMediaElement($mediaElement);
 	}
 
 	public function getFilePath(MediaElement $mediaElement): string
 	{
-        if ($mediaElement->mediaType === self::MEDIATYPE_VIDEO) {
-            return self::MEDIA_SOURCES_DIR . $mediaElement->id . '.' . Utils::mimeToExtension($mediaElement->mimeType);
-        }
-
-		return self::MEDIA_SOURCES_DIR . $mediaElement->id;
+		return $this->CDNService->getFilePath("media_sources/$mediaElement->id");
 	}
 
 	/**
@@ -501,19 +503,21 @@ class MediaService extends Service
 		return "thumb$videoUploadToken->token";
 	}
 
-	/**
-	 * @param VideoUploadToken $videoUploadToken
-	 * @param MediaElement $mediaElement
-	 * @return string relative path to the thumbnail file accesible by the browser
-	 * @throws TempFileDeleteException
-	 */
+    /**
+     * @param VideoUploadToken $videoUploadToken
+     * @param MediaElement $mediaElement
+     * @return string relative path to the thumbnail file accesible by the browser
+     * @throws CDNFileCreationFailureException
+     * @throws TempFileReadException
+     */
 	public function publishThumbnail(VideoUploadToken $videoUploadToken, MediaElement $mediaElement): string
 	{
-		$this->getApp()->getTempFileUtil()
-			->getTempFile($this->getThumbnailTempFileName($videoUploadToken))
-			->move(self::MEDIA_THUMBNAILS_DIR . $mediaElement->id);
+        $this->CDNService->writeFileFrom(
+            "thumbnails/$mediaElement->id",
+            $this->getApp()->getTempFileUtil()->getTempFile($this->getThumbnailTempFileName($videoUploadToken))
+        );
 
-		return "/thumbnails/$mediaElement->id";
+		return "/cdn/thumbnails/$mediaElement->id";
 	}
 
     /**

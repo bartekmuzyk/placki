@@ -5,12 +5,16 @@ namespace App\Services;
 use App\Entities\Attachment;
 use App\Exceptions\AttachmentTooLargeException;
 use App\Exceptions\CannotWriteAttachmentToDiskException;
+use App\Exceptions\CDNFileCreationFailureException;
+use App\Exceptions\CDNFileDeletionFailureException;
 use Framework\Http\UploadedFile;
 use Framework\Service\Service;
 
 class AttachmentService extends Service
 {
 	public const ATTACHMENTS_DIR = PUBLIC_DIR . '/attachments/';
+
+    public CDNService $CDNService;
 
 	/**
 	 * @param UploadedFile $file
@@ -37,21 +41,29 @@ class AttachmentService extends Service
 		return $attachment;
 	}
 
-	public function getAttachmentFilePath(Attachment $attachment, bool $full = false): string
+	public function getAttachmentFilePath(Attachment $attachment): string
 	{
-		return $full ?
-			self::ATTACHMENTS_DIR . $attachment->id
-			:
-			'/attachments/' . $attachment->id;
+		return '/cdn/attachments/' . $attachment->id;
 	}
 
-	public function deleteAttachmentFileFromDisk(Attachment $attachment)
-	{
-		unlink($this->getAttachmentFilePath($attachment, true));
+    /**
+     * @param Attachment $attachment
+     * @return void
+     * @throws CDNFileDeletionFailureException
+     */
+	public function deleteAttachmentFileFromDisk(Attachment $attachment): void
+    {
+        $this->CDNService->deleteFile("attachment/$attachment->id");
 	}
 
-	public function saveAttachmentFileOnDisk(Attachment $attachment, UploadedFile $file)
-	{
-		$file->move($this->getAttachmentFilePath($attachment, true));
+    /**
+     * @param Attachment $attachment
+     * @param UploadedFile $file
+     * @return void
+     * @throws CDNFileCreationFailureException
+     */
+	public function saveAttachmentFileOnDisk(Attachment $attachment, UploadedFile $file): void
+    {
+        $this->CDNService->writeFileFrom("attachment/$attachment->id", $file);
 	}
 }

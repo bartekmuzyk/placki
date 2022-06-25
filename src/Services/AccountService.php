@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Entities\User;
+use App\Exceptions\CDNFileCreationFailureException;
+use App\Exceptions\CDNFileDeletionFailureException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -13,9 +15,10 @@ use Framework\Service\Service;
 class AccountService extends Service
 {
     public const DEFAULT_PROFILE_PICTURE = '/assets/img/no-pic.png';
-    private const PROFILE_PICTURES_DIR = PUBLIC_DIR . '/pfp/';
 
 	public ?User $currentLoggedInUser = null;
+
+    public CDNService $CDNService;
 
 	public function isLoggedIn(): bool
 	{
@@ -111,13 +114,14 @@ class AccountService extends Service
      * @return void
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws CDNFileCreationFailureException
      */
     public function setCustomProfilePicture(User $user, UploadedFile $picture): void
     {
         $db = $this->getApp()->getDBManager();
 
-        $picture->move(self::PROFILE_PICTURES_DIR . $user->username);
-        $user->profilePic = "/pfp/$user->username";
+        $this->CDNService->writeFileFrom("pfp/$user->username", $picture);
+        $user->profilePic = "/cdn/pfp/$user->username";
 
         $db->persistAndFlush($user);
     }
@@ -127,12 +131,13 @@ class AccountService extends Service
      * @return void
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws CDNFileDeletionFailureException
      */
     public function resetProfilePicture(User $user): void
     {
         $db = $this->getApp()->getDBManager();
 
-        unlink(self::PROFILE_PICTURES_DIR . $user->username);
+        $this->CDNService->deleteFile("pfp/$user->username");
         $user->profilePic = self::DEFAULT_PROFILE_PICTURE;
 
         $db->persistAndFlush($user);
