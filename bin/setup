@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mkdir -p {cache/{proxies,temp_files,twig},cdn/{attachments,event_icons,group_pics,media_sources,pfp,thumbnails}}
