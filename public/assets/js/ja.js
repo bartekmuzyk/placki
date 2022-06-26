@@ -83,8 +83,8 @@ class PhotoListComponent extends StatefulComponent {
         return photos.data.map((photo, index) => `
             <div class="media-photo-item">
                 <div
-                        style='background: url("/media_sources/${photo.id}") center / cover no-repeat;'
-                        onclick="open('/media_sources/${photo.id}', '_blank', 'location=no,status=no');"
+                        style='background: url("/cdn/media_sources/${photo.id}") center / cover no-repeat;'
+                        onclick="open('/cdn/media_sources/${photo.id}', '_blank', 'location=no,status=no');"
                 ></div>
                 <div style="padding: 3px;">
                     <p>
