@@ -19,7 +19,7 @@ class Post
 	public int $id;
 
 	/**
-	 * @ORM\Column(length=300)
+	 * @ORM\Column(length=1000)
 	 */
 	public string $content;
 
