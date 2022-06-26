@@ -9,6 +9,7 @@ use App\Exceptions\CDNFileCreationFailureException;
 use App\Exceptions\CDNFileDeletionFailureException;
 use Framework\Http\UploadedFile;
 use Framework\Service\Service;
+use Framework\TempFileUtil\Exception\TempFileReadException;
 
 class AttachmentService extends Service
 {
@@ -53,7 +54,7 @@ class AttachmentService extends Service
      */
 	public function deleteAttachmentFileFromDisk(Attachment $attachment): void
     {
-        $this->CDNService->deleteFile("attachment/$attachment->id");
+        $this->CDNService->deleteFile("attachments/$attachment->id");
 	}
 
     /**
@@ -61,9 +62,10 @@ class AttachmentService extends Service
      * @param UploadedFile $file
      * @return void
      * @throws CDNFileCreationFailureException
+     * @throws TempFileReadException
      */
 	public function saveAttachmentFileOnDisk(Attachment $attachment, UploadedFile $file): void
     {
-        $this->CDNService->writeFileFrom("attachment/$attachment->id", $file);
+        $this->CDNService->writeFileFrom("attachments/$attachment->id", $file);
 	}
 }

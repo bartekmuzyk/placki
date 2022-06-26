@@ -33,7 +33,7 @@ class CDNService extends Service
     {
         $content = file_get_contents($this->getFilePath($path));
 
-        if (!$content) {
+        if ($content === false) {
             throw new CDNFileNotFoundException($path);
         }
 
@@ -50,7 +50,7 @@ class CDNService extends Service
     {
         $result = file_put_contents($this->getFilePath($path), $contents);
 
-        if (!$result) {
+        if ($result === false) {
             throw new CDNFileCreationFailureException();
         }
     }
