@@ -63,7 +63,11 @@ function handleExceptionOrError(object $exceptionOrError): void
             "
             :
             '';
-        $processOwnerUsername = posix_getpwuid(posix_geteuid())['name'];
+
+        $processOwnerUsername = function_exists('posix_getpwuid') ?
+            posix_getpwuid(posix_geteuid())['name']
+            :
+            getenv('username');
 
         sendResponse("
 <body style='background-color: #EF5350; color: white; font-family: sans-serif;'>

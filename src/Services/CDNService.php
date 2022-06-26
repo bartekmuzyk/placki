@@ -9,14 +9,19 @@ use Framework\Http\UploadedFile;
 use Framework\Service\Service;
 use Framework\TempFileUtil\Exception\TempFileReadException;
 use Framework\TempFileUtil\TempFile;
+use Framework\Utils\Utils;
 
 class CDNService extends Service
 {
-    public const CDN_DIR = PROJECT_ROOT . '/cdn';
+    public const CDN_DIR = PROJECT_ROOT . DIRECTORY_SEPARATOR . 'cdn';
 
     public function getFilePath(string $path): string
     {
-        return self::CDN_DIR . '/' . $path;
+        if (Utils::isRunningOnWindows()) {
+            $path = str_replace('/', '\\', $path);
+        }
+
+        return self::CDN_DIR . DIRECTORY_SEPARATOR . $path;
     }
 
     public function fileExists(string $path): bool

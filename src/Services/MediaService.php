@@ -352,6 +352,7 @@ class MediaService extends Service
 
 		$mediaElement = $this->createMediaElement($as, self::MEDIATYPE_PHOTO);
 		$mediaElement->album = $album;
+        $mediaElement->mimeType = $file->getExtension();
 
 		$this->applySizeTextAutomatically($mediaElement);
 		$db->persistAndFlush($mediaElement);

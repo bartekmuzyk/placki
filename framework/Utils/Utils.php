@@ -235,4 +235,13 @@ class Utils
             default => throw new Exception("Invalid size string: $size"),
         };
     }
+
+    /**
+     * detects if the platform the script is running on is a Windows-based OS
+     * @return bool
+     */
+    public static function isRunningOnWindows(): bool
+    {
+        return strcasecmp(substr(PHP_OS, 0, 3), 'WIN') == 0;
+    }
 }

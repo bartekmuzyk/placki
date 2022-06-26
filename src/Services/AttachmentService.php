@@ -13,8 +13,6 @@ use Framework\TempFileUtil\Exception\TempFileReadException;
 
 class AttachmentService extends Service
 {
-	public const ATTACHMENTS_DIR = PUBLIC_DIR . '/attachments/';
-
     public CDNService $CDNService;
 
 	/**
