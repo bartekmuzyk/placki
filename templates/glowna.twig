@@ -115,14 +115,14 @@
                 {% for event in nearest_events %}
                     <li class="d-flex">
                         <div class="d-flex flex-grow-0 align-items-center">
-                            <img src="/event_icons/{{ event.id }}" />
+                            <img src="/cdn/event_icons/{{ event.id }}" />
                         </div>
                         <div class="flex-grow-1">
                             <p>{{ event.title }}</p>
                             <p>{{ event.description }}</p>
                         </div>
                         <div class="d-flex flex-grow-0 align-items-center">
-                            <label class="form-label">{{ event.at|format_date("EEEE") }} o {{ event.at.format("G:i") }}</label>
+                            <label class="form-label">{{ event.at|format_date("EEEE 'o' H:mm") }}</label>
                         </div>
                     </li>
                 {% endfor %}
