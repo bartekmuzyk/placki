@@ -63,6 +63,8 @@ function handleExceptionOrError(object $exceptionOrError): void
             "
             :
             '';
+        $processOwnerUsername = posix_getpwuid(posix_geteuid())['name'];
+
         sendResponse("
 <body style='background-color: #EF5350; color: white; font-family: sans-serif;'>
 	<h1>Unhandled $className</h1>
@@ -72,6 +74,7 @@ function handleExceptionOrError(object $exceptionOrError): void
 	<div style='width: 100%; padding: 5px; background-color: #212121; color: #FAFAFA; box-sizing: border-box; border-radius: 10px; border: 3px dotted white;'>
 		<code style='font-size: 18px; line-height: 22px;'>$trace</code>
 	</div>
+	<span><b>Process owner:</b> $processOwnerUsername</span>
 </body>
 ", 500);
     } else {
@@ -188,8 +191,6 @@ try {
     }
 
     sendResponse($response->content, $response->code);
-} catch (SyntaxError $exception) {
-    handleExceptionOrError($exception);
 } catch (Exception|Error $exception) {
-	handleExceptionOrError($exception);
+    handleExceptionOrError($exception);
 }

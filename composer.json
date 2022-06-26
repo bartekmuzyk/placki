@@ -27,6 +27,7 @@
         "haydenpierce/class-finder": "^0.4.3",
         "guzzlehttp/guzzle": "^7.4",
         "ramsey/uuid": "^4.2",
-        "ramsey/uuid-doctrine": "^1.8"
+        "ramsey/uuid-doctrine": "^1.8",
+        "ext-posix": "*"
     }
 }
