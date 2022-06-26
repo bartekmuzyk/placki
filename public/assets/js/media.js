@@ -397,7 +397,7 @@ $(".file-actions > button").on("click", function() {
         case "download":
             Toast.show("rozpoczynanie pobierania...", "download");
 
-            fetch(`/media_sources/${fileId}`)
+            fetch(`/cdn/media_sources/${fileId}`)
                 .then(response => response.blob())
                 .then(blob => {
                     downloadBlob(blob, this.getAttribute("data-filename"));
