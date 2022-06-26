@@ -187,7 +187,7 @@
         </div>
         <input id="photos-upload-input" type="file" multiple hidden accept="image/png, image/jpeg, image/gif, image/webp" />
         {% for photo in shared_photos.photo_list %}
-            {% set image_src_url = "/media_sources/" ~ photo.id %}
+            {% set image_src_url = "/cdn/media_sources/" ~ photo.id %}
             <div class="media-photo-item" data-album="{{ photo.album }}" data-photoid="{{ photo.id }}">
                 <div
                         style='background: url("{{ image_src_url }}") center / cover no-repeat;'
