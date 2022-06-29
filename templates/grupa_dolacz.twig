@@ -22,7 +22,7 @@
 <div class="content d-flex justify-content-center align-items-center">
     <form method="post" class="text-center">
         <p style="position: relative; font-family: 'DM Sans', sans-serif; margin-left: 10px;">dołącz do grupy</p>
-        <img width="120" height="120" src="/group_pics/{{ group.picFilename }}" style="border-radius: 120px; border: 1px solid gray;" />
+        <img width="120" height="120" src="/cdn/group_pics/{{ group.picFilename }}" style="border-radius: 120px; border: 1px solid gray;" />
         <h1 style="position: relative; font-family: 'Josefin Sans', sans-serif; font-weight: 900; margin: 0;">{{ group.name }}</h1>
         <p>i uzyskaj dostęp do postów oraz... innych rzeczy!</p>
         <button type="submit" class="btn btn-lg btn-primary" {{ request_sent ? "disabled" : "" }}>
