@@ -19,7 +19,7 @@ class CDNController extends Controller
     public function getFile(CDNService $CDNService): Response
     {
         $req = $this->getRequest();
-        $filePath = str_replace('/cdn/', '', $req->route);
+        $filePath = urldecode(str_replace('/cdn/', '', $req->route));
         $dirName = preg_split('/\//', $filePath, 2)[0];
         $includeContentType = in_array($dirName, self::INCLUDE_CONTENT_TYPE_FOR);
 
