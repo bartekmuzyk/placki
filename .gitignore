@@ -4,3 +4,4 @@ config/config.yaml
 .idea
 cdn
 last_error.txt
+sessions

@@ -171,6 +171,7 @@ if (!$reflectedController->hasMethod($controllerMethodName)) {
 }
 
 try {
+    session_save_path(PROJECT_ROOT . '/sessions');
     session_start();
 
     /** @var Response $response */
