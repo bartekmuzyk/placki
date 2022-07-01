@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>placki</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/fonts/fonts.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="/assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="/assets/css/Black-Navbar.css" />
+    <link rel="stylesheet" href="/assets/css/File-Manager.css" />
+    <link rel="stylesheet" href="/assets/css/Table-With-Search.css" />
+    <link rel="stylesheet" href="/assets/css/aos/aos.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/media.css" />
+    <link rel="stylesheet" href="/assets/css/file-icons/file-icons.css" />
+    <link rel="stylesheet" href="/assets/css/profil.css" />
+</head>
+
+<body>
+<script>
+    const PROFILE_USERNAME = "{{ user.username }}";
+</script>
+{% include "snippets/navbar.twig" %}
+{% include "snippets/toast.twig" %}
+<h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+    </svg>
+    profil użytkownika {{ user.username }}
+</h1>
+<div class="d-flex flex-row content">
+    <div class="side-menu">
+        <div class="menu-option menu-option-active" data-optionid="details">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                   <circle cx="12" cy="12" r="9"></circle>
+                   <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                   <polyline points="11 12 12 12 12 16 13 16"></polyline>
+                </svg>
+                szczegóły
+            </span>
+        </div>
+        <label class="menu-subcategory">moje rzeczy</label>
+        <div class="menu-option" data-optionid="my-videos">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-movie" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                   <line x1="8" y1="4" x2="8" y2="20"></line>
+                   <line x1="16" y1="4" x2="16" y2="20"></line>
+                   <line x1="4" y1="8" x2="8" y2="8"></line>
+                   <line x1="4" y1="16" x2="8" y2="16"></line>
+                   <line x1="4" y1="12" x2="20" y2="12"></line>
+                   <line x1="16" y1="8" x2="20" y2="8"></line>
+                   <line x1="16" y1="16" x2="20" y2="16"></line>
+                </svg>
+                moje filmy
+            </span>
+        </div>
+        <div class="menu-option" data-optionid="my-photos">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-photo">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <line x1="15" y1="8" x2="15.01" y2="8"></line>
+                    <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+                    <path d="M4 15l4 -4a3 5 0 0 1 3 0l5 5"></path>
+                    <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path>
+                </svg>
+                moje zdjęcia
+            </span>
+        </div>
+        <div class="menu-option" data-optionid="my-files">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-file">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                </svg>
+                moje pliki
+            </span>
+        </div>
+        <label class="menu-subcategory">polubione</label>
+        <div class="menu-option" data-optionid="liked-posts">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M12 20l-3 -3h-2a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-2l-3 3"></path>
+                    <line x1="8" y1="9" x2="16" y2="9"></line>
+                    <line x1="8" y1="13" x2="14" y2="13"></line>
+                </svg>
+                polubione posty
+            </span>
+        </div>
+        <div class="menu-option" data-optionid="liked-videos">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-movie" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                    <line x1="8" y1="4" x2="8" y2="20"></line>
+                    <line x1="16" y1="4" x2="16" y2="20"></line>
+                    <line x1="4" y1="8" x2="8" y2="8"></line>
+                    <line x1="4" y1="16" x2="8" y2="16"></line>
+                    <line x1="4" y1="12" x2="20" y2="12"></line>
+                    <line x1="16" y1="8" x2="20" y2="8"></line>
+                    <line x1="16" y1="16" x2="20" y2="16"></line>
+                </svg>
+                polubione filmy
+            </span>
+        </div>
+    </div>
+    <div class="flex-grow-1">
+        <div id="details-tab" class="profile-tab-content d-flex flex-column align-items-center">
+            <img src="{{ user.profilePic }}" style="border-radius: 6px;" width="120" height="120" />
+            <h1 style="font-family: 'DM Sans', sans-serif; font-weight: 900;">{{ user.username }}</h1>
+            <iframe src="/posty?uzytkownik={{ user.username }}" style="flex: 1 0 auto;"></iframe>
+        </div>
+        <div id="my-videos-tab" class="profile-tab-content d-none">
+            <placeholder id="my-videos-list"></placeholder>
+        </div>
+        <div id="my-photos-tab" class="profile-tab-content d-none">
+            <placeholder id="my-photos-list"></placeholder>
+        </div>
+        <div id="my-files-tab" class="profile-tab-content d-none">
+            <placeholder id="my-file-list"></placeholder>
+        </div>
+        <div id="liked-posts-tab" class="profile-tab-content d-none">
+            <placeholder id="liked-posts-list"></placeholder>
+        </div>
+        <div id="liked-videos-tab" class="profile-tab-content d-none">
+            <placeholder id="liked-videos-list"></placeholder>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="comments-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">komentarze</h4>
+                <span id="comments-modal-subtitle">ładowanie komentarzy...</span><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"><iframe src="about:blank" id="post-comments-iframe"></iframe></div>
+        </div>
+    </div>
+</div>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/js/bs-init.js"></script>
+<script src="/assets/js/aos/aos.js"></script>
+<script src="/assets/js/lottie/lottie-player.js"></script>
+<script src="/assets/js/moment/moment.min.js"></script>
+<script src="/assets/js/moment/locale-pl.min.js"></script>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/stateful_components/main.js"></script>
+<script src="/assets/js/table.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/side_menu.js"></script>
+<script src="/assets/js/tabs.js"></script>
+<script src="/assets/js/toast.js"></script>
+<script src="/assets/js/common/chat.js"></script>
+<script src="/assets/js/profil.js"></script>
+</body>
+</html>

@@ -51,6 +51,8 @@ class ProfileController extends Controller
 
     public function myVideos(AccountService $accountService, MediaService $mediaService, DateFormatterService $dateFormatterService): Response
     {
+        $req = $this->getRequest();
+
         return $this->json(
             array_map(
                 fn(MediaElement $mediaElement) => [
@@ -60,26 +62,36 @@ class ProfileController extends Controller
                     'uploadedAt' => $dateFormatterService->format($mediaElement->uploadedAt, DateFormatterService::FORMAT_DATE_AND_TIME),
                     'isPrivate' => $mediaElement->visibility === MediaService::VIDEO_VISIBILITY_PRIVATE
                 ],
-                $mediaService->getMediaByAuthorAndMediaType($accountService->currentLoggedInUser, MediaService::MEDIATYPE_VIDEO)
+                $mediaService->getMediaByAuthorAndMediaType(
+                    $req->hasQuery('uzytkownik') ? $req->query['uzytkownik'] : $accountService->currentLoggedInUser,
+                    MediaService::MEDIATYPE_VIDEO
+                )
             )
         );
     }
 
     public function myPhotos(AccountService $accountService, MediaService $mediaService): Response
     {
+        $req = $this->getRequest();
+
         return $this->json(
             array_map(
                 fn(MediaElement $mediaElement) => [
                     'id' => $mediaElement->id,
                     'album' => $mediaElement->album
                 ],
-                $mediaService->getMediaByAuthorAndMediaType($accountService->currentLoggedInUser, MediaService::MEDIATYPE_PHOTO)
+                $mediaService->getMediaByAuthorAndMediaType(
+                    $req->hasQuery('uzytkownik') ? $req->query['uzytkownik'] : $accountService->currentLoggedInUser,
+                    MediaService::MEDIATYPE_PHOTO
+                )
             )
         );
     }
 
     public function myFiles(AccountService $accountService, MediaService $mediaService, DateFormatterService $dateFormatterService): Response
     {
+        $req = $this->getRequest();
+
         return $this->json(
             array_map(
                 fn(MediaElement $mediaElement) => [
@@ -89,13 +101,23 @@ class ProfileController extends Controller
                     'uploadedAt' => $dateFormatterService->format($mediaElement->uploadedAt, DateFormatterService::FORMAT_DATE_AND_TIME),
                     'isShared' => $mediaElement->shared instanceof SharedMedia
                 ],
-                $mediaService->getMediaByAuthorAndMediaType($accountService->currentLoggedInUser, MediaService::MEDIATYPE_FILE)
+                $mediaService->getMediaByAuthorAndMediaType(
+                    $req->hasQuery('uzytkownik') ? $req->query['uzytkownik'] : $accountService->currentLoggedInUser,
+                    MediaService::MEDIATYPE_FILE
+                )
             )
         );
     }
 
     public function likedPosts(AccountService $accountService, DateFormatterService $dateFormatterService): Response
     {
+        $req = $this->getRequest();
+
+        $targetUser = $req->hasQuery('uzytkownik') ?
+            $accountService->getUser($req->query['uzytkownik'])
+            :
+            $accountService->currentLoggedInUser;
+
         return $this->json(
             array_map(
                 fn(Post $post) => [
@@ -104,13 +126,20 @@ class ProfileController extends Controller
                     'content' => $post->content,
                     'at' => $dateFormatterService->format($post->at, DateFormatterService::FORMAT_HUMAN)
                 ],
-                $accountService->currentLoggedInUser->likedPosts->toArray()
+                $targetUser->likedPosts->toArray()
             )
         );
     }
 
     public function likedVideos(AccountService $accountService, DateFormatterService $dateFormatterService): Response
     {
+        $req = $this->getRequest();
+
+        $targetUser = $req->hasQuery('uzytkownik') ?
+            $accountService->getUser($req->query['uzytkownik'])
+            :
+            $accountService->currentLoggedInUser;
+
         return $this->json(
             array_map(
                 fn(MediaElement $mediaElement) => [
@@ -119,7 +148,7 @@ class ProfileController extends Controller
                     'name' => $mediaElement->name,
                     'isPrivate' => $mediaElement->visibility === MediaService::VIDEO_VISIBILITY_PRIVATE
                 ],
-                $accountService->currentLoggedInUser->likedMedia->filter(
+                $targetUser->likedMedia->filter(
                     fn(MediaElement $mediaElement) => $mediaElement->mediaType === MediaService::MEDIATYPE_VIDEO
                 )->toArray()
             )

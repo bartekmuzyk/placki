@@ -71,6 +71,27 @@ class PostService extends Service
 		return $posts;
 	}
 
+    /**
+     * @param string $username
+     * @param int $limit
+     * @return Post[]
+     */
+    public function getUserPosts(string $username, int $limit): array
+    {
+        $db = $this->getApp()->getDBManager();
+
+        /** @var Post[] $posts */
+        $posts = $db->query('p', Post::class)
+            ->andWhere('p.author = :username')
+            ->orderBy('p.at', 'DESC')
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->setMaxResults($limit)
+            ->getResult();
+
+        return $posts;
+    }
+
 	/**
 	 * @param int $postId
 	 * @return Post|null

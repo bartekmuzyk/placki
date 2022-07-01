@@ -86,11 +86,11 @@ class MediaService extends Service
 	}
 
     /**
-     * @param User $author
+     * @param User|string $author User object or username string
      * @param int $mediaType
      * @return MediaElement[]
      */
-    public function getMediaByAuthorAndMediaType(User $author, int $mediaType): array
+    public function getMediaByAuthorAndMediaType(User|string $author, int $mediaType): array
     {
         $db = $this->getApp()->getDBManager();
 
@@ -98,7 +98,7 @@ class MediaService extends Service
             ->andWhere('m.uploadedBy = :authorUsername')
             ->andWhere('m.mediaType = :mediaType')
             ->setParameters([
-                'authorUsername' => $author->username,
+                'authorUsername' => $author instanceof User ? $author->username : $author,
                 'mediaType' => $mediaType
             ])
             ->getQuery()

@@ -11,6 +11,7 @@ use App\Controllers\MediaController;
 use App\Controllers\PostController;
 use App\Controllers\ProfileController;
 use App\Entities\Post;
+use App\Entities\User;
 use App\Exceptions\AttachmentTooLargeException;
 use App\Exceptions\CannotWriteAttachmentToDiskException;
 use App\Middleware\App\CheckAuth;
@@ -55,6 +56,8 @@ class App extends BaseApp
         $this->get('/ludzie', 'people');
 
         $this->useController('/ja', ProfileController::class);
+
+        $this->get('/profil', 'profile');
 	}
 
 	public function index(AccountService $accountService): Response
@@ -138,18 +141,15 @@ class App extends BaseApp
 		$req = $this->getRequest();
 
 		$limit = $req->hasQuery('limit') ? (int)$req->query['limit'] : 100;
-		$posts = $postService->getPosts($limit, $accountService->currentLoggedInUser);
-		$attachmentSources = [];
 
-		foreach ($posts as $post) {
-			foreach ($post->attachments as $attachment) {
-				$attachmentSources[$attachment->id] = $attachmentService->getAttachmentFilePath($attachment);
-			}
-		}
+        if ($req->hasQuery('uzytkownik')) {
+            $posts = $postService->getUserPosts($req->query['uzytkownik'], $limit);
+        } else {
+            $posts = $postService->getPosts($limit, $accountService->currentLoggedInUser);
+        }
 
 		return $this->template('posty.twig', [
-			'posts' => $posts,
-			'attachmentSources' => $attachmentSources
+			'posts' => $posts
 		]);
 	}
 
@@ -225,5 +225,32 @@ class App extends BaseApp
         return $this->template('ludzie.twig', [
             'people' => $accountService->getAllUsers()
         ]);
+    }
+
+    /**
+     * @param AccountService $accountService
+     * @return Response
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws TransactionRequiredException
+     */
+    public function profile(AccountService $accountService): Response
+    {
+        $req = $this->getRequest();
+
+        if (!$req->hasQuery('uzytkownik')) {
+            return Response::code(404);
+        } else if ($req->query['uzytkownik'] === $accountService->currentLoggedInUser->username) {
+            return $this->redirect('/ja');
+        }
+
+        $user = $accountService->getUser($req->query['uzytkownik']);
+
+        return $user instanceof User ?
+            $this->template('profil.twig', [
+                'user' => $user
+            ])
+            :
+            $this->template('profil_nie_istnieje.twig');
     }
 }

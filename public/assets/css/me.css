@@ -1,3 +1,7 @@
 .profile-tab-content > placeholder {
     width: 100%;
 }
+
+#details-tab {
+    height: 100%;
+}
