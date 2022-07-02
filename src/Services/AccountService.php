@@ -80,6 +80,7 @@ class AccountService extends Service
     {
         $db = $this->getApp()->getDBManager();
         $user->password = $this->hashPassword($newPassword);
+        $user->recoveryCode = $this->generateRecoveryCode();
         $db->persistAndFlush($user);
     }
 
@@ -182,19 +183,6 @@ class AccountService extends Service
         $this->CDNService->deleteFile("pfp/$user->username");
         $user->profilePic = self::DEFAULT_PROFILE_PICTURE;
 
-        $db->persistAndFlush($user);
-    }
-
-    /**
-     * @param User $user
-     * @return void
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function regenerateRecoveryCode(User $user): void
-    {
-        $db = $this->getApp()->getDBManager();
-        $user->recoveryCode = $this->generateRecoveryCode();
         $db->persistAndFlush($user);
     }
 }
