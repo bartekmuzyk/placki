@@ -36,7 +36,7 @@ class CheckAuth implements AppMiddlewareInterface
 		$req = $app->getRequest();
 		$session = $app->getSessionManager();
 
-		$ignore = in_array($req->route, self::$blacklist) || str_starts_with($req->route, '/api');
+		$ignore = in_array($req->route, self::$blacklist) || str_starts_with($req->route, '/api') || str_starts_with($req->route, '/cdn');
 
 		if ($session->has('user')) {
 			$username = $session->get('user')['username'];
