@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 const $commentsModal = $("#comments-modal");
 const $commentsModalSubtitle = $("#comments-modal-subtitle");
 const $commentsFrame = $("#post-comments-iframe");
@@ -18,7 +20,7 @@ class PostBrowser {
     static currentLimit = 100;
 
     static refresh() {
-        this.$postsFrame.attr("src", `/posty?limit=${this.currentLimit}`);
+        this.$postsFrame.attr("src", `/posty?limit=${this.currentLimit}&uzytkownik=${PROFILE_USERNAME}`);
     }
 
     static nextPage() {
@@ -48,15 +50,6 @@ function postBrowserNextPage(lastPostId) {
         PostBrowser.scrollToPostWithId(lastPostId);
     });
 }
-
-/**
- * @typedef {Object} PlackiVideo
- * @property {string} id
- * @property {string} name
- * @property {string} thumbnail
- * @property {string} uploadedAt
- * @property {boolean} isPrivate
- */
 
 const myVideosList = new SearchTableComponent("my-videos-list", {
     loadingText: "ładowanie filmów...",
@@ -110,12 +103,6 @@ const myVideosList = new SearchTableComponent("my-videos-list", {
 });
 myVideosList.reRender();
 
-/**
- * @typedef {Object} PlackiPhoto
- * @property {string} id
- * @property {string} album
- */
-
 class PhotoListComponent extends StatefulComponent {
     render() {
         /** @type {?{data: PlackiPhoto[], filterAlbum: ?string}} */
@@ -152,15 +139,6 @@ class PhotoListComponent extends StatefulComponent {
 
 const myPhotosList = new PhotoListComponent("my-photos-list");
 myPhotosList.reRender();
-
-/**
- * @typedef {Object} PlackiFile
- * @property {string} id
- * @property {string} name
- * @property {string} size
- * @property {string} uploadedAt
- * @property {boolean} isShared
- */
 
 const myFileList = new SearchTableComponent("my-file-list", {
     loadingText: "ładowanie plików...",
@@ -266,14 +244,6 @@ const myFileList = new SearchTableComponent("my-file-list", {
 });
 myFileList.reRender();
 
-/**
- * @typedef {Object} LikedPost
- * @property {number} id
- * @property {string} author author's username
- * @property {string} content
- * @property {string} at formatted date of creation
- */
-
 const likedPostsList = new SearchTableComponent("liked-posts-list", {
     loadingText: "ładowanie postów...",
     searchPlaceholder: "szukaj w polubionych postach",
@@ -317,14 +287,6 @@ const likedPostsList = new SearchTableComponent("liked-posts-list", {
     tableName: "liked-posts-table"
 });
 likedPostsList.reRender();
-
-/**
- * @typedef {Object} LikedVideo
- * @property {string} id
- * @property {string} thumbnail
- * @property {string} name
- * @property {boolean} isPrivate
- */
 
 const likedVideosList = new SearchTableComponent("liked-videos-list", {
     loadingText: "ładowanie filmów...",
