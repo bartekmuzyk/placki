@@ -1,6 +1,2 @@
 @import "me.css";
 @import "common/comment_modal.css";
-
-#details-tab > iframe {
-    width: calc(100% - 10px);
-}

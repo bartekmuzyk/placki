@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
 	/**
-	 * @ORM\Id()@var User
+	 * @ORM\Id()
 	 * @ORM\Column(length=40)
 	 */
 	public string $username;
@@ -92,6 +92,11 @@ class User
      * @ORM\ManyToMany(targetEntity="Event", mappedBy="partakingUsers")
      */
     public $partakingInEvents;
+
+    /**
+     * @ORM\Column(length=8, unique=true)
+     */
+    public string $recoveryCode;
 
 	public function __construct()
 	{

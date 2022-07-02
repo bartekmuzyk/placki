@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpUnused */
 
 namespace App;
@@ -19,6 +19,7 @@ use App\Services\AccountService;
 use App\Services\AttachmentService;
 use App\Services\EventsService;
 use App\Services\PostService;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
@@ -58,6 +59,9 @@ class App extends BaseApp
         $this->useController('/ja', ProfileController::class);
 
         $this->get('/profil', 'profile');
+
+        $this->get('/weryfikuj_kod_odzyskiwania', 'verifyRecoveryCode');
+        $this->post('/zmien_haslo', 'changePassword');
 	}
 
 	public function index(AccountService $accountService): Response
@@ -98,10 +102,6 @@ class App extends BaseApp
 		]);
 	}
 
-	/**
-	 * @throws OptimisticLockException
-	 * @throws ORMException
-	 */
 	public function postRegister(AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -153,13 +153,6 @@ class App extends BaseApp
 		]);
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 */
 	public function postPost(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -191,14 +184,6 @@ class App extends BaseApp
 		return new Response();
 	}
 
-	/**
-	 * @param PostService $postService
-	 * @param AccountService $accountService
-	 * @return Response
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 */
 	public function deletePost(PostService $postService, AccountService $accountService): Response
 	{
 		$req = $this->getRequest();
@@ -227,13 +212,6 @@ class App extends BaseApp
         ]);
     }
 
-    /**
-     * @param AccountService $accountService
-     * @return Response
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws TransactionRequiredException
-     */
     public function profile(AccountService $accountService): Response
     {
         $req = $this->getRequest();
@@ -252,5 +230,48 @@ class App extends BaseApp
             ])
             :
             $this->template('profil_nie_istnieje.twig');
+    }
+
+    public function verifyRecoveryCode(AccountService $accountService): Response
+    {
+        $req = $this->getRequest();
+
+        if (!$req->hasQuery('kod')) {
+            return Response::code(400);
+        }
+
+        $user = $accountService->getUserByRecoveryCode($req->query['kod']);
+
+        if (!($user instanceof User)) {
+            return Response::code(404);
+        }
+
+        return $this->json([
+            'username' => $user->username,
+            'profilePic' => $user->profilePic
+        ]);
+    }
+
+    public function changePassword(AccountService $accountService): Response
+    {
+        $req = $this->getRequest();
+
+        if (
+            !$req->hasPayload('code')
+            || !$req->hasPayload('pass')
+            || trim($req->payload['pass']) === ''
+        ) {
+            return Response::code(400);
+        }
+
+        $user = $accountService->getUserByRecoveryCode($req->payload['code']);
+
+        if (!($user instanceof User)) {
+            return Response::code(404);
+        }
+
+        $accountService->changePassword($user, $req->payload['pass']);
+
+        return new Response();
     }
 }

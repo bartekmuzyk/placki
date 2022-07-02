@@ -14,7 +14,14 @@ use Framework\Middleware\AppMiddlewareInterface;
 
 class CheckAuth implements AppMiddlewareInterface
 {
-	private static array $blacklist = ['/', '/rejestracja', '/login', '/media/plik/udostepnione'];
+	private static array $blacklist = [
+        '/',
+        '/rejestracja',
+        '/login',
+        '/media/plik/udostepnione',
+        '/weryfikuj_kod_odzyskiwania',
+        '/zmien_haslo'
+    ];
 
 	/**
 	 * @param App $app

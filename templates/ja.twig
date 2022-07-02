@@ -21,6 +21,9 @@
 </head>
 
 <body>
+<script>
+    const PROFILE_USERNAME = "{{ self.username }}";
+</script>
 {% include "snippets/navbar.twig" %}
 {% include "snippets/toast.twig" %}
 <h1 data-aos="fade" data-aos-duration="1000" data-aos-once="true" class="page-heading" style="margin: 10px;">
@@ -127,6 +130,13 @@
                 <input id="pfp-input" type="file" hidden />
             </div>
             <h1 style="font-family: 'DM Sans', sans-serif; font-weight: 900;">{{ self.username }}</h1>
+            <div class="text-center">
+                <span class="fw-bold">kod odzyskiwania:&nbsp;</span>
+                <code>{{ self.recoveryCode }}</code>
+                <br/>
+                <p>użyj tego kodu do uwierzytelnienia resetu hasła. po każdej zmianie hasła zostanie wygenerowany nowy kod.</p>
+            </div>
+            <iframe src="about:blank" style="flex: 1 0 auto;"></iframe>
         </div>
         <div id="my-videos-tab" class="profile-tab-content d-none">
             <placeholder id="my-videos-list"></placeholder>

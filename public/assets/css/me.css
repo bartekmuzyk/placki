@@ -5,3 +5,7 @@
 #details-tab {
     height: 100%;
 }
+
+#details-tab > iframe {
+    width: calc(100% - 10px);
+}

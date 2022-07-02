@@ -1,3 +1,54 @@
+const $commentsModal = $("#comments-modal");
+const $commentsModalSubtitle = $("#comments-modal-subtitle");
+const $commentsFrame = $("#post-comments-iframe");
+
+$commentsFrame.on("load", () => {
+    $commentsModalSubtitle.text("");
+});
+
+function openComments(postId) {
+    $commentsModalSubtitle.text("ładowanie komentarzy...");
+    $commentsFrame.attr("src", `/post/komentarze?id=${postId}`);
+    $commentsModal.modal("show");
+}
+
+class PostBrowser {
+    /** @type {JQuery<HTMLIFrameElement>} */
+    static $postsFrame = $("#details-tab > iframe");
+    static currentLimit = 100;
+
+    static refresh() {
+        this.$postsFrame.attr("src", `/posty?limit=${this.currentLimit}&uzytkownik=${PROFILE_USERNAME}`);
+    }
+
+    static nextPage() {
+        this.currentLimit += 100;
+
+        return new Promise(resolve => {
+            this.$postsFrame.on("load", resolve);
+            this.refresh();
+        });
+    }
+
+    /**
+     * @param postId {number}
+     */
+    static scrollToPostWithId(postId) {
+        this.$postsFrame.get(0).contentWindow.scrollToPostWithId(postId);
+    }
+}
+
+PostBrowser.refresh();
+
+/**
+ * @param lastPostId {number}
+ */
+function postBrowserNextPage(lastPostId) {
+    PostBrowser.nextPage().then(() => {
+        PostBrowser.scrollToPostWithId(lastPostId);
+    });
+}
+
 /**
  * @typedef {Object} PlackiVideo
  * @property {string} id

@@ -31,6 +31,14 @@ label, p, a, textarea, input, span, td, th, small, li, .modal-title {
   font-family: "DM Sans", 'Roboto', sans-serif;
 }
 
+code {
+  background-color: #eee;
+  padding: 2px 5px;
+  border: 1px #ccc solid;
+  border-radius: 6px;
+  color: var(--primary);
+}
+
 .btn {
   font-family: "Josefin Sans", sans-serif;
 }
