@@ -235,16 +235,18 @@ class PostService extends Service
 	 * @param Post $post
 	 * @param string $content
 	 * @param User $as
-	 * @return void
+	 * @return PostComment
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 */
-	public function postComment(Post $post, string $content, User $as): void
+	public function postComment(Post $post, string $content, User $as): PostComment
     {
 		$db = $this->getApp()->getDBManager();
 		$comment = $this->createComment($content, $as, $post);
 
 		$db->persistAndFlush($comment);
+
+        return $comment;
 	}
 
 	/**

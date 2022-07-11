@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -52,11 +53,13 @@ class User
 	public $likedPosts;
 
 	/**
+     * @var Collection<Group>
 	 * @ORM\ManyToMany(targetEntity="Group", mappedBy="members")
 	 */
 	public $joinedGroups;
 
 	/**
+     * @var Collection<Group>
 	 * @ORM\OneToMany(targetEntity="Group", mappedBy="owner")
 	 */
 	public $ownedGroups;
@@ -97,6 +100,11 @@ class User
      * @ORM\Column(length=8, unique=true)
      */
     public string $recoveryCode;
+
+    /**
+     * @ORM\Column(length=36, nullable=true)
+     */
+    public ?string $apiLoginToken;
 
 	public function __construct()
 	{

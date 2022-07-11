@@ -8,14 +8,32 @@ define('PROJECT_ROOT', dirname(PUBLIC_DIR));
 require_once PROJECT_ROOT . '/vendor/autoload.php';
 
 use App\App;
-use Doctrine\ORM\Query\QueryException;
+use Dotenv\Dotenv;
 use Framework\BaseApp;
 use Framework\Exception\InvalidInjectionParameter;
 use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
 use Framework\Http\Response;
-use JetBrains\PhpStorm\NoReturn;
 use Twig\Error\SyntaxError;
+
+if (!function_exists('getallheaders'))
+{
+    function getallheaders(): array
+    {
+        $headers = [];
+        foreach ($_SERVER as $name => $value)
+        {
+            if (str_starts_with($name, 'HTTP_'))
+            {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+        }
+        return $headers;
+    }
+}
+
+$dotenv = Dotenv::createImmutable(PROJECT_ROOT);
+$dotenv->safeLoad();
 
 /**
  * @internal

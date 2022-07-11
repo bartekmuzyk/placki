@@ -28,10 +28,32 @@ class StatefulComponent {
     }
 
     /**
-     * @param modifier {(currentState: any) => void}
+     * @param modifier {(currentState: any) => any}
      */
     modifyState(modifier) {
         this.state = modifier(this.state);
+    }
+
+    /**
+     * @param field {string}
+     * @param value {any}
+     */
+    setStateField(field, value) {
+        this.modifyState(currentState => ({
+            ...currentState,
+            [field]: value
+        }));
+    }
+
+    /**
+     * @param field {string}
+     * @param modifier {(currentValue: any) => any}
+     */
+    modifyStateField(field, modifier) {
+        this.modifyState(currentState => ({
+            ...currentState,
+            [field]: modifier(currentState[field])
+        }));
     }
 
     get state() {

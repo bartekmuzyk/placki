@@ -1,0 +1,105 @@
+#messenger-placeholder {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    padding: 3px 15px 15px 15px;
+}
+
+#voice-channel-user-list-panel {
+    flex: 0 0 254px;
+    border-radius: 20px;
+    margin-left: 15px;
+    background-color: var(--primary-lighter);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+#voice-channel-user-list-panel > h3 {
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+#voice-channel-user-list-panel > h3 > svg {
+    position: relative;
+    top: -3px;
+}
+
+#voice-channel-user-list-panel > ul {
+    flex-grow: 1;
+}
+
+#voice-channel-state-display {
+    background-color: white;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+#voice-channel-disconnect-btn {
+    width: 40px;
+    height: 40px;
+}
+
+#text-channel-panel {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 50%;
+    }
+}
+
+#voice-channel-main-panel {
+    flex: 1 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#choose-stream-source-modal-sources-list > li {
+    margin-bottom: 5px;
+    border-radius: 6px;
+    transition: background-color 250ms;
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+    animation: slide-right 250ms forwards;
+    flex-direction: row;
+    align-items: center;
+}
+
+#choose-stream-source-modal-sources-list > li:hover {
+    background-color: var(--bs-gray-200);
+}
+
+#choose-stream-source-modal-sources-list > li > img {
+    width: 32px;
+    height: 32px;
+    vertical-align: top;
+}
+
+#choose-stream-source-modal-sources-list > li > p {
+    margin-bottom: 0;
+    font-weight: bolder;
+    margin-left: 5px;
+}
+
+.voice-channel-user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 3px 0;
+    padding: 5px;
+    cursor: default;
+}
+
+.voice-channel-user > img {
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    margin-right: 5px;
+}

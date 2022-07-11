@@ -492,3 +492,10 @@ $deleteGroupBtn.on("click", function() {
             self.text("jestem pewien");
         });
 });
+
+const messengerComponent = new MessengerComponent("messenger-placeholder", GROUP_ID);
+messengerComponent.reRender();
+
+fetch("/api/login/cookie", {method: "POST"})
+    .then(response => response.text())
+    .then(token => messengerComponent.login(token));

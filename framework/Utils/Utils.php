@@ -3,9 +3,14 @@
 namespace Framework\Utils;
 
 use Exception;
+use HaydenPierce\ClassFinder\ClassFinder;
+use ReflectionClass;
+use ReflectionException;
 
 class Utils
 {
+    private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
 	/**
 	 * @param int $bytes
 	 * @return string a file size string in a human-readable format from the number of bytes
@@ -243,5 +248,42 @@ class Utils
     public static function isRunningOnWindows(): bool
     {
         return strcasecmp(substr(PHP_OS, 0, 3), 'WIN') == 0;
+    }
+
+
+    /**
+     * @param string $namespace
+     * @param class-string $derivingFrom
+     * @return string[]
+     * @throws ReflectionException
+     * @noinspection PhpUnhandledExceptionInspection
+     */
+    public static function getAllDerivingClassesInNamespace(string $namespace, string $derivingFrom): array
+    {
+        return array_filter(
+            ClassFinder::getClassesInNamespace($namespace),
+            function (string $className) use ($derivingFrom) {
+                $reflection = new ReflectionClass($className);
+
+                return $reflection->isSubclassOf($derivingFrom);
+            }
+        );
+    }
+
+    public static function representValue(mixed $value): string
+    {
+        if ($value === null) return 'NULL';
+        if (is_scalar($value)) return (string)$value;
+        if (is_array($value)) return sprintf(
+            'array(%d) { %s }', $count = count($value), $count > 0 ? '...' : ''
+        );
+        if (is_resource($value)) return sprintf('resource(%d)', get_resource_id($value));
+
+        return sprintf('object(%s)', get_class($value));
+    }
+
+    public static function isExtensionImage(string $extension): bool
+    {
+        return in_array($extension, self::IMAGE_EXTENSIONS);
     }
 }

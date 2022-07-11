@@ -9,6 +9,8 @@ class Request {
 
 	public array $files;
 
+    public array $headers;
+
 	public string $route;
 
 	public static function createFromGlobals(): self
@@ -18,9 +20,15 @@ class Request {
 		$instance->query = $_GET;
 		$instance->payload = $_POST;
 		$instance->files = $_FILES;
+        $instance->headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
 		return $instance;
 	}
+
+    public function getAuthorization(): ?string
+    {
+        return array_key_exists('authorization', $this->headers) ? $this->headers['authorization'] : null;
+    }
 
 	public function getFile(string $key): ?UploadedFile
 	{

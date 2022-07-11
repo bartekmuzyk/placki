@@ -9,12 +9,18 @@ use Framework\Exception\NoSuchServiceException;
 use Framework\Http\Request;
 use Framework\Http\Response;
 use Framework\Middleware\AppMiddlewareInterface;
+use Framework\Serializer\Exception\SerializerException;
+use Framework\Serializer\Serializer;
+use Framework\Serializer\SerializerManager;
 use Framework\Service\Service;
 use Framework\Session\SessionManager;
 use Framework\TempFileUtil\TempFileUtil;
+use Framework\Utils\Utils;
 use HaydenPierce\ClassFinder\ClassFinder;
+use JetBrains\PhpStorm\ArrayShape;
 use ReflectionClass;
 use ReflectionNamedType;
+use ReflectionObject;
 use ReflectionProperty;
 use Framework\Twig\TwigRenderer;
 
@@ -35,6 +41,9 @@ abstract class BaseApp {
 
 	private TempFileUtil $tempFileUtil;
 
+    private SerializerManager $serializerManager;
+
+    #[ArrayShape(['database' => 'array', 'run' => 'array', 'serializer' => 'array'])]
 	private array $config;
 
 	/** @var AppMiddlewareInterface[] */
@@ -67,42 +76,52 @@ abstract class BaseApp {
 			$this->setup();
 		}
 
+        $this->serializerManager = new SerializerManager($this, $this->config['serializer']['converters']);
+        $this->autoRegisterSerializers();
 		$this->databaseManager = DatabaseManager::fromConfig($this->config['database']);
 	}
 
-	/**
-	 * @noinspection PhpUnhandledExceptionInspection
-	 */
+    /**
+     * @internal
+     * @noinspection PhpUnhandledExceptionInspection
+     */
+    public function injectServicesIntoInstance(object $instance): void
+    {
+        $reflectedServiceClass = new ReflectionObject($instance);
+
+        foreach ($reflectedServiceClass->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            $propertyType = $property->getType();
+
+            if ($propertyType instanceof ReflectionNamedType && !$propertyType->allowsNull() && !$propertyType->isBuiltin()) {
+                $propertyName = $property->getName();
+                $instance->$propertyName = $this->getService($propertyType->getName());
+            }
+        }
+    }
+
+	/** @noinspection PhpUnhandledExceptionInspection */
 	private function autoRegisterServices(): void
     {
-		$serviceClasses = array_filter(
-			ClassFinder::getClassesInNamespace('App\\Services'),
-			function (string $serviceClass) {
-				$reflection = new ReflectionClass($serviceClass);
-
-				return $reflection->isSubclassOf(Service::class);
-			}
-		);
+		$serviceClasses = Utils::getAllDerivingClassesInNamespace('App\\Services', Service::class);
 
 		foreach ($serviceClasses as $serviceClass) {
 			$this->serviceMap[$serviceClass] = new $serviceClass($this);
 		}
 
 		foreach ($this->serviceMap as $parentServiceClass => $parentServiceInstance) {
-			/** @var class-string<Service> $parentServiceClass */
-
-			$reflectedServiceClass = new ReflectionClass($parentServiceClass);
-
-			foreach ($reflectedServiceClass->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-				$propertyType = $property->getType();
-
-				if ($propertyType instanceof ReflectionNamedType && !$propertyType->allowsNull() && !$propertyType->isBuiltin()) {
-					$propertyName = $property->getName();
-					$parentServiceInstance->$propertyName = $this->getService($propertyType->getName());
-				}
-			}
+			$this->injectServicesIntoInstance($parentServiceInstance);
 		}
 	}
+
+    /** @noinspection PhpUnhandledExceptionInspection */
+    private function autoRegisterSerializers(): void
+    {
+        $serializerClasses = Utils::getAllDerivingClassesInNamespace('App\\Serializers', Serializer::class);
+
+        foreach ($serializerClasses as $serializerClass) {
+            $this->serializerManager->registerSerializer($serializerClass);
+        }
+    }
 
     public function getRuntimeConfig(): array
     {
@@ -194,6 +213,27 @@ abstract class BaseApp {
 	{
 		return new Response(json_encode($data), $code);
 	}
+
+    /**
+     * @param array|object|null $data
+     * @param string|null $serializerVariant
+     * @param bool $toPrimitive
+     * @param int $code
+     * @return Response
+     * @throws SerializerException
+     */
+    public function serialize(
+        array|object|null $data,
+        ?string $serializerVariant = null,
+        bool $toPrimitive = false,
+        int $code = 200
+    ): Response
+    {
+        return new Response(
+            $this->serializerManager->encode($data, $serializerVariant, $toPrimitive, $this->config['serializer']['encoder']),
+            $code
+        );
+    }
 
 	public function redirect(string $path, array $queryParams = []): Response
 	{

@@ -10,11 +10,13 @@ use App\Controllers\GroupController;
 use App\Controllers\MediaController;
 use App\Controllers\PostController;
 use App\Controllers\ProfileController;
+use App\Controllers\SocketAPIController;
 use App\Entities\Post;
 use App\Entities\User;
 use App\Exceptions\AttachmentTooLargeException;
 use App\Exceptions\CannotWriteAttachmentToDiskException;
 use App\Middleware\App\CheckAuth;
+use App\Middleware\App\CheckSocketAPISecret;
 use App\Services\AccountService;
 use App\Services\AttachmentService;
 use App\Services\EventsService;
@@ -31,7 +33,10 @@ class App extends BaseApp
 	public function setup()
 	{
         $this->addMiddleware(new CheckAuth());
+        $this->addMiddleware(new CheckSocketAPISecret());
+
         $this->useController('/api', APIController::class);
+        $this->useController('/socket_api', SocketAPIController::class);
         $this->useController('/cdn', CDNController::class);
 
 		$this->get('/', 'index');
@@ -80,7 +85,7 @@ class App extends BaseApp
 	{
 		$req = $this->getRequest();
 		$session = $this->getSessionManager();
-		$userSessionData = $accountService->login($req->payload['username'], $req->payload['password']);
+		$userSessionData = $accountService->loginToSession($req->payload['username'], $req->payload['password']);
 
 		if (is_array($userSessionData)) {
 			$session->set('user', $userSessionData);

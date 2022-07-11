@@ -5,3 +5,4 @@ config/config.yaml
 cdn
 last_error.txt
 sessions
+.env

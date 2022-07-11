@@ -16,9 +16,11 @@
     <link rel="stylesheet" href="/assets/css/aos/aos.css" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
     <link rel="stylesheet" href="/assets/css/groups.css" />
+    <link rel="stylesheet" href="/assets/css/messenger/messenger.css" />
 </head>
 
 <body>
+{% include "snippets/is_electron_app.twig" %}
 {% include "snippets/navbar.twig" %}
 {% include "snippets/toast.twig" %}
 <script>
@@ -54,48 +56,59 @@
 <div class="d-flex flex-row content">
     <div class="side-menu">
         <div class="menu-option menu-option-active" data-optionid="wall">
-                    <span>
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="icon icon-tabler icon-tabler-layout-list"
-                        >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <rect x="4" y="4" width="16" height="6" rx="2"></rect>
-                            <rect x="4" y="14" width="16" height="6" rx="2"></rect>
-                        </svg>
-                        tablica
-                    </span>
+            <span>
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icon-tabler-layout-list"
+                >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <rect x="4" y="4" width="16" height="6" rx="2"></rect>
+                    <rect x="4" y="14" width="16" height="6" rx="2"></rect>
+                </svg>
+                tablica
+            </span>
         </div>
         <div class="menu-option" data-optionid="members">
-                    <span>
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="icon icon-tabler icon-tabler-users"
-                        >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
-                        </svg>
-                        członkowie
-                    </span>
+            <span>
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icon-tabler-users"
+                >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
+                </svg>
+                członkowie
+            </span>
+        </div>
+        <div class="menu-option" data-optionid="messenger">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone-call" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                   <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
+                   <path d="M15 7a2 2 0 0 1 2 2"></path>
+                   <path d="M15 3a6 6 0 0 1 6 6"></path>
+                </svg>
+                komunikator
+            </span>
         </div>
         {# TODO #}
 {#        <div class="menu-option" data-optionid="safe">#}
@@ -283,6 +296,9 @@
         </div>
         <iframe src="about:blank" id="group-safe-iframe" data-safeid="{{ group.safe_id }}" style="height: 100%;"></iframe>
     </div>
+    <div class="flex-grow-1 group-panel-tab-content" id="messenger-tab" style="display: none; flex-direction: row;">
+        <placeholder id="messenger-placeholder"></placeholder>
+    </div>
     {% if group.owner == self %}
         <div class="flex-grow-1 group-panel-tab-content" id="manage-tab" style="display: none; flex-direction: column;">
             <div style="max-height: 100%;">
@@ -380,7 +396,7 @@
                             <ul style="margin: 0;">
                                 <li>usunięcie postów</li>
                                 <li>usunięcie komentarzy</li>
-                                <li>usnięcie plików z sejfu</li>
+{#                                <li>usnięcie plików z sejfu</li>#}
                             </ul>
                         </div>
                         <h4>ta akcja jest nieodwracalna!</h4>
@@ -490,6 +506,9 @@
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/common/post_editor.js"></script>
 <script src="/assets/js/common/chat.js"></script>
+<script src="/assets/js/stateful_components/main.js"></script>
+<script src="/assets/js/socket.io/socket.io.min.js"></script>
+<script src="/assets/js/messenger/messenger.js"></script>
 <script src="/assets/js/panel_grupy.js"></script>
 </body>
 </html>

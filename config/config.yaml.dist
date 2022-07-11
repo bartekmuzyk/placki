@@ -11,3 +11,8 @@ run:
       - \App\Middleware\Twig\UserInfo
       - \App\Middleware\Twig\DateFormatter
       - \App\Middleware\Twig\AttachmentSource
+      - \App\Middleware\Twig\IsElectronApp
+serializer:
+  encoder: json_encode
+  converters:
+    - \App\Serializers\Converters\DateTimeConverter

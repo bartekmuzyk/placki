@@ -20,7 +20,9 @@ class CheckAuth implements AppMiddlewareInterface
         '/login',
         '/media/plik/udostepnione',
         '/weryfikuj_kod_odzyskiwania',
-        '/zmien_haslo'
+        '/zmien_haslo',
+
+        '/api/login'
     ];
 
 	/**
@@ -35,14 +37,13 @@ class CheckAuth implements AppMiddlewareInterface
 	{
 		$req = $app->getRequest();
 		$session = $app->getSessionManager();
+        /** @var AccountService $accountService */
+        $accountService = $app->getService(AccountService::class);
 
-		$ignore = in_array($req->route, self::$blacklist) || str_starts_with($req->route, '/api') || str_starts_with($req->route, '/cdn');
+		$ignore = in_array($req->route, self::$blacklist) || str_starts_with($req->route, '/cdn') || str_starts_with($req->route, '/socket_api');
 
 		if ($session->has('user')) {
 			$username = $session->get('user')['username'];
-
-			/** @var AccountService $accountService */
-			$accountService = $app->getService(AccountService::class);
 			$user = $accountService->getUser($username);
 
 			if ($user instanceof User) {
@@ -56,8 +57,21 @@ class CheckAuth implements AppMiddlewareInterface
 			}
 
 			return null;
-		}
+		} else if ($authorization = $req->getAuthorization()) {
+            $token = str_replace('Bearer ', '', $authorization);
+            $user = $accountService->getUserByApiToken($token);
 
-		return $ignore ? null : $app->redirect('/');
+            if ($user instanceof User) {
+                $accountService->currentLoggedInUser = $user;
+                return null;
+            }
+        }
+
+		return $ignore ? null : (
+            str_starts_with($req->route, '/api') ?
+                Response::code(401)
+                :
+                $app->redirect('/')
+        );
 	}
 }

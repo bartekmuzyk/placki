@@ -13,6 +13,7 @@ use Doctrine\ORM\TransactionRequiredException;
 use Framework\Http\UploadedFile;
 use Framework\Service\Service;
 use Framework\TempFileUtil\Exception\TempFileReadException;
+use Ramsey\Uuid\Uuid;
 
 class AccountService extends Service
 {
@@ -32,24 +33,75 @@ class AccountService extends Service
 		return hash('sha256', $password);
 	}
 
-	public function login(string $username, string $password): ?array
-	{
-		$hashedPassword = $this->hashPassword($password);
-		$db = $this->getApp()->getDBManager();
+    /**
+     * @param string $username
+     * @param string $password
+     * @return User|null
+     * @throws NonUniqueResultException
+     */
+    private function login(string $username, string $password): ?User
+    {
+        $hashedPassword = $this->hashPassword($password);
+        $db = $this->getApp()->getDBManager();
 
-		/** @noinspection PhpUnhandledExceptionInspection */
-		$user = $db->query('u', User::class)
-			->andWhere('u.username = :username')
-			->andWhere('u.password = :password')
-			->setParameters([
-				'username' => $username,
-				'password' => $hashedPassword
-			])
-			->getQuery()
-			->getOneOrNullResult();
+        return $db->query('u', User::class)
+            ->andWhere('u.username = :username')
+            ->andWhere('u.password = :password')
+            ->setParameters([
+                'username' => $username,
+                'password' => $hashedPassword
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @return array|null
+     * @throws NonUniqueResultException
+     */
+	public function loginToSession(string $username, string $password): ?array
+	{
+		$user = $this->login($username, $password);
 
 		return $user instanceof User ? ['username' => $user->username] : null;
 	}
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @return string|null
+     * @throws NonUniqueResultException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function loginToApi(string $username, string $password): ?string
+    {
+        $user = $this->login($username, $password);
+
+        if (!($user instanceof User)) return null;
+
+        return $this->loginUserToApi($user);
+    }
+
+    /**
+     * @param User $user
+     * @return string
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function loginUserToApi(User $user): string
+    {
+        $db = $this->getApp()->getDBManager();
+
+        if ($user->apiLoginToken === null) {
+            $user->apiLoginToken = Uuid::uuid4();
+            $db->persistAndFlush($user);
+        }
+
+        return $user->apiLoginToken;
+    }
 
     private function generateRecoveryCode(): string
     {
@@ -121,6 +173,22 @@ class AccountService extends Service
 
 		return $user;
 	}
+
+    /**
+     * @param string $token
+     * @return User|null
+     * @throws NonUniqueResultException
+     */
+    public function getUserByApiToken(string $token): ?User
+    {
+        $db = $this->getApp()->getDBManager();
+
+        return $db->query('u', User::class)
+            ->andWhere('u.apiLoginToken = :token')
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
     /**
      * @param string $recoveryCode

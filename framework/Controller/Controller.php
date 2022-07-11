@@ -12,6 +12,7 @@ use Framework\TempFileUtil\TempFileUtil;
 /**
  * @method Response template(string $template, array $variables = [], int $code = 200)
  * @method Response json(array $data, int $code = 200)
+ * @method Response serialize(array|object|null $data, ?string $serializerVariant = null, bool $toPrimitive = false, int $code = 200)
  * @method Response redirect(string $path, array $queryParams = [])
  * @method Response file(string $path, ?string $customFilename = null)
  * @method Request getRequest()

@@ -29,6 +29,8 @@
         "ramsey/uuid": "^4.2",
         "ramsey/uuid-doctrine": "^1.8",
         "ext-posix": "*",
-        "ext-exif": "*"
+        "ext-exif": "*",
+      "ext-fileinfo": "*",
+        "vlucas/phpdotenv": "^5.4"
     }
 }
