@@ -24,6 +24,7 @@
 {% include "snippets/navbar.twig" %}
 {% include "snippets/toast.twig" %}
 <script>
+    const SOCKET_URL = "{{ _ENV["SOCKET_URL"] }}";
     const GROUP_ID = parseInt("{{ group.id }}");
     let GROUP_ACCESS_LEVEL = parseInt("{{ group.accessLevel }}");
     let joinRequestsCount = parseInt("{{ group.joinRequests|length }}");

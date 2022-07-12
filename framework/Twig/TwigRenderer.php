@@ -42,6 +42,8 @@ class TwigRenderer {
             $middlewareInstance->run($this->app, $this->environment);
         }
 
+        $this->environment->addGlobal('_ENV', $_ENV);
+
 		return $this->environment->render($templateFile, $variables);
 	}
 }

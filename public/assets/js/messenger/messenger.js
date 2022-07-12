@@ -148,7 +148,7 @@ class MessengerComponent extends StatefulComponent {
      * @param token {string}
      */
     login(token) {
-        this.realtimeConnection = io("https://placki-socket.herokuapp.com", {
+        this.realtimeConnection = io(SOCKET_URL, {
             auth: { token }
         });
         this.realtimeConnection.on("vc:userJoined", username => {
@@ -284,6 +284,10 @@ class MessengerComponent extends StatefulComponent {
                     });
 
                     this.realtimeConnection.emit(`vc:RTCOffer`, socketId, offer);
+                }
+
+                if (!RTCPeerConnection.prototype.onconnectionstatechange) {
+                    this.changeVoiceChannelState(VoiceChannelState.Connected);
                 }
             } else {
                 this.changeVoiceChannelState(VoiceChannelState.Connected);
