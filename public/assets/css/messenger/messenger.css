@@ -41,23 +41,133 @@
     height: 40px;
 }
 
-#text-channel-panel {
+#messenger-left-panel {
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
+    width: 0;
+}
+
+#text-channel-panel {
+    flex: 1 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#voice-channel-panel-users {
+    flex: 0 0 150px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#voice-channel-panel-users > div {
+    text-align: center;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 20px;
+    transition: background-color 250ms;
+}
+
+#voice-channel-panel-users > div:hover {
+    background-color: #f0f0f0;
+}
+
+#voice-channel-panel-users > div > img {
+    width: 70px;
+    height: 70px;
+    border-radius: 70px;
+}
+
+#voice-channel-panel-stage {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.stream-preview {
+    margin: 5px;
+    border-radius: 10px;
+    height: 300px;
+    position: relative;
+    cursor: pointer;
+}
+
+.stream-preview > video {
+    aspect-ratio: 16/9;
+    border-radius: inherit;
+    height: inherit;
+}
+
+.stream-preview > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #0009;
+    color: white;
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 125ms;
+}
+
+.stream-preview > span {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    color: white;
+    opacity: 0;
+    transition: opacity 125ms;
+}
+
+.stream-preview > span > img {
+    border-radius: 100vw;
+}
+
+.stream-preview:hover > div {
+    opacity: 1;
+}
+
+.stream-preview:hover > span {
+    opacity: 1;
+}
+
+#voice-channel-panel-toolbar {
+    display: flex;
+    flex: 0 0 30px;
+    flex-direction: row;
+    background-color: var(--primary-lighter);
+    border-radius: 20px;
+    padding-left: 5px;
+}
+
+#voice-channel-panel-toolbar > div {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+#voice-channel-panel-toolbar > div:nth-child(2) {
+    justify-content: flex-end;
 }
 
 @keyframes blinker {
     50% {
         opacity: 50%;
     }
-}
-
-#voice-channel-main-panel {
-    flex: 1 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #choose-stream-source-modal-sources-list > li {

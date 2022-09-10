@@ -15,6 +15,7 @@ const $headingName = $("#heading-name");
 const $joinRequestsCountBadge = $("#join-requests-count-badge");
 const $joinRequestsMenuOption = $('.menu-option[data-optionid="join-requests"]');
 const $deleteGroupBtn = $("#delete-group-btn");
+const $sideMenu = $(".side-menu");
 
 $(".group-panel-tab-content").css("display", "none");
 $("#wall-tab").css("display", "flex");
@@ -25,6 +26,12 @@ setSideMenuOptionCallback(optionId => {
     
     if (optionId === "safe" && !SafeBrowser.loaded) {
         SafeBrowser.load();
+    }
+
+    if (optionId === "messenger") {
+        $sideMenu.addClass("thin");
+    } else {
+        $sideMenu.removeClass("thin");
     }
 });
 

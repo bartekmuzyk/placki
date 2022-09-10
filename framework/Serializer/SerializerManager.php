@@ -161,7 +161,7 @@ class SerializerManager
                     $value = call_user_func($behavior->generator, $object);
                 }
 
-                if (!$propertyExists && $value === null) {
+                if (!$propertyExists && $value === null && !($behavior instanceof GeneratedValueBehavior)) {
                     throw new InvalidBehaviorException(
                         get_class($behavior), get_class($object), $propertyName,
                         'The property does not exist on the object currently being serialized. To add 

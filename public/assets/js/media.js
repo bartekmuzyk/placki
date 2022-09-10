@@ -178,7 +178,7 @@ $confirmPhotosUploadBtn.on("click", async () => {
             } else {
                 error = true;
 
-                /** @type {{error: "cannot write to disk"|"too large"}} */
+                /** @type {{error: "cannot write to disk"|"too large"|"illegal format"}} */
                 const data = await response.json();
 
                 switch (data.error) {
@@ -187,6 +187,9 @@ $confirmPhotosUploadBtn.on("click", async () => {
                         break;
                     case "too large":
                         reportError("za duży");
+                        break;
+                    case "illegal format":
+                        reportError("niepoprawny format");
                         break;
                     default:
                         // noinspection ExceptionCaughtLocallyJS

@@ -28,6 +28,11 @@ class UploadedFile
 		return strlen($ext) > 0 ? $ext : null;
 	}
 
+    public function getMimeType(): string
+    {
+        return mime_content_type($this->data['tmp_name']);
+    }
+
 	public function getSize(): int
 	{
 		return $this->data['size'];

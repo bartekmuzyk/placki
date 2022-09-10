@@ -12,6 +12,7 @@ use App\Exceptions\CannotOpenVideoStreamException;
 use App\Exceptions\CannotWriteMediaToDiskException;
 use App\Exceptions\CDNFileCreationFailureException;
 use App\Exceptions\CDNFileDeletionFailureException;
+use App\Exceptions\IllegalPhotoFormatException;
 use App\Exceptions\MediaUploadCancellationFailureException;
 use App\Exceptions\MediaTooLargeException;
 use App\Exceptions\MimeTypeNotProvidedException;
@@ -329,16 +330,17 @@ class MediaService extends Service
 		return $comment;
 	}
 
-	/**
-	 * @param User $as
-	 * @param UploadedFile $file
-	 * @param string $album
-	 * @return void
-	 * @throws CannotWriteMediaToDiskException
-	 * @throws MediaTooLargeException
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 */
+    /**
+     * @param User $as
+     * @param UploadedFile $file
+     * @param string $album
+     * @return void
+     * @throws CannotWriteMediaToDiskException
+     * @throws IllegalPhotoFormatException
+     * @throws MediaTooLargeException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
 	public function postPhoto(User $as, UploadedFile $file, string $album): void
     {
 		switch ($file->getError()) {
@@ -352,11 +354,15 @@ class MediaService extends Service
 
 		$mediaElement = $this->createMediaElement($as, self::MEDIATYPE_PHOTO);
 		$mediaElement->album = $album;
-        $mediaElement->mimeType = $file->getExtension();
+        $mediaElement->mimeType = $file->getMimeType();
 
-		$this->applySizeTextAutomatically($mediaElement);
+        if (!str_starts_with($mediaElement->mimeType, 'image/')) {
+            throw new IllegalPhotoFormatException();
+        }
+
+        $file->move($this->getFilePath($mediaElement));
+        $this->applySizeTextAutomatically($mediaElement);
 		$db->persistAndFlush($mediaElement);
-		$file->move($this->getFilePath($mediaElement));
 	}
 
 	/**

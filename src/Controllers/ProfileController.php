@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Entities\MediaElement;
 use App\Entities\Post;
 use App\Entities\SharedMedia;
+use App\Entities\User;
 use App\Services\AccountService;
 use App\Services\DateFormatterService;
 use App\Services\MediaService;

@@ -10,6 +10,7 @@ use App\Entities\MediaElement;
 use App\Entities\VideoComment;
 use App\Entities\VideoUploadToken;
 use App\Exceptions\CannotWriteMediaToDiskException;
+use App\Exceptions\IllegalPhotoFormatException;
 use App\Exceptions\MediaTooLargeException;
 use App\Interfaces\PostUploadMediaElementConfigurator;
 use App\Services\AccountService;
@@ -275,7 +276,9 @@ class MediaController extends Controller
 			return $this->json(['error' => 'cannot write to disk']);
 		} catch (MediaTooLargeException) {
 			return $this->json(['error' => 'too large']);
-		}
+		} catch (IllegalPhotoFormatException) {
+            return $this->json(['error' => 'illegal format']);
+        }
 
 		return new Response();
 	}

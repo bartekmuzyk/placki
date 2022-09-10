@@ -6,6 +6,10 @@
  */
 
 /**
+ * @typedef {{from: string, stream: MediaStream}} MessengerStreamInfo
+ */
+
+/**
  * @typedef {Object} MessengerState
  * @property {?string} userToken
  * @property {?number} voiceChannelState
@@ -26,6 +30,14 @@ function __messenger_playSoundEffect(name) {
     __messenger_sfxPlayer.play();
 }
 
+countdown.setLabels(
+    " milisekundę| sekundę| minutę| godzinę| tydzień| miesiąc| rok| dekadę| wiek| milenium",
+    " milisekund| sekund| minut| godzin| tygodni| miesięcy| lat| dekad| wieków| mileniów",
+    " i ",
+    ", ",
+    "mniej niż sekundę"
+);
+
 class VoiceChannelState {
     static Connecting = 1;
     static Connected = 2;
@@ -40,6 +52,15 @@ class MessengerComponent extends StatefulComponent {
     /** @type {Object<string, HTMLAudioElement>} */
     players = {};
 
+    /** @type {?number} */
+    callTimerId = null;
+
+    /** @type {string} */
+    callTimeString = "";
+
+    /** @type {Object<string, string>} */
+    _userInfo = {};
+
     /**
      * @param placeholderId {string}
      * @param groupId {number}
@@ -50,7 +71,8 @@ class MessengerComponent extends StatefulComponent {
             userToken: null,
             voiceChannelState: null,
             usersInVoiceChannel: new Set(),
-            messages: null
+            messages: null,
+            voiceChannelPanelExpanded: false
         };
         super(placeholderId, {groupId}, initialState);
         this.postRender = () => {
@@ -60,35 +82,6 @@ class MessengerComponent extends StatefulComponent {
 
             $("#voice-channel-disconnect-btn").on("click", async () => {
                 await this.disconnectFromVoiceChannel();
-            });
-
-            $("#share-screen-btn").on("click", async () => {
-                if (IS_ELECTRON_APP) {
-                    const $chooseStreamSourceModalSourcesList = $("#choose-stream-source-modal-sources-list");
-
-                    $chooseStreamSourceModalSourcesList.html("");
-                    $("#choose-stream-source-modal").modal("show");
-
-                    // this method is available by exposing an internal API from the Main process in electron to the
-                    // renderer process.
-                    // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                    /** @type {MessengerStreamSource[]} */
-                    const streamSources = await streamingApi.getStreamSources();
-
-                    $chooseStreamSourceModalSourcesList.html(this._getSourcesList(streamSources));
-                    $("#choose-stream-source-modal-sources-list li[data-sourceid]").on("click", event => {
-                        const self = $(event.currentTarget);
-                        const sourceId = self.attr("data-sourceid");
-                        $("#choose-stream-source-modal").modal("hide");
-                        Toast.show("twój stream zaraz się zacznie!", "clock", 2);
-                    });
-                } else {
-                    alert("udostępnianie ekranu nie jest jeszcze wspierane w przeglądarce.");
-                }
-            });
-
-            $(".voice-channel-user > img").on("error", function() {
-                this.src = "/assets/img/no-pic.png";
             });
         };
     }
@@ -102,8 +95,17 @@ class MessengerComponent extends StatefulComponent {
         }
 
         return [
-            this._getLeftPanel(),
             `
+                <div id="messenger-left-panel">
+            `,
+            ...this._getVoiceChannelPanel(),
+            `
+                    <div id="text-channel-panel" style="display: ${state.voiceChannelPanelExpanded ? 'none' : 'initial'};">
+                        <ul class="list-unstyled">
+                            
+                        </ul>
+                    </div>
+                </div>
                 <div id="voice-channel-user-list-panel">
                     <h3>
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-volume" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -118,27 +120,13 @@ class MessengerComponent extends StatefulComponent {
             `,
             ...[...state.usersInVoiceChannel].map(username => `
                         <li class="voice-channel-user">
-                            <img src="/cdn/pfp/${escapeHtml(username)}" />
-                            ${username}
+                            <img src="/api/pfp?uzytkownik=${escapeHtml(username)}" />
+                            ${escapeHtml(username)}
                         </li>
             `),
             `
                     </ul>
                     ${this._getVoiceChannelStateDisplay()}
-                </div>
-                <div class="modal fade" role="dialog" tabindex="-1" id="choose-stream-source-modal">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">udostępnianie ekranu</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>wybierz źródło obrazu, aby rozpocząć udostępnianie na tym kanale głosowym.</p>
-                                <ul id="choose-stream-source-modal-sources-list" class="list-unstyled"></ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             `
         ];
@@ -151,7 +139,9 @@ class MessengerComponent extends StatefulComponent {
         this.realtimeConnection = io(SOCKET_URL, {
             auth: { token }
         });
-        this.realtimeConnection.on("vc:userJoined", username => {
+        this.realtimeConnection.on("vc:userJoined", (socketId, username) => {
+            this._userInfo[socketId] = username;
+
             this.modifyStateField(
                 "usersInVoiceChannel",
                 currentValue => {
@@ -182,6 +172,22 @@ class MessengerComponent extends StatefulComponent {
                 }
             );
 
+            this.modifyStateField(
+                "videoStreams",
+                currentValue => {
+                    /** @type {MessengerStreamInfo[]} */
+                    const streams = currentValue;
+                    let streamIndex = streams.findIndex(streamInfo => streamInfo.from === this._userInfo[socketId]);
+
+                    while (streamIndex > -1) {
+                        streams.splice(streamIndex, 1);
+                        streamIndex = streams.findIndex(streamInfo => streamInfo.from === this._userInfo[socketId]);
+                    }
+
+                    return streams;
+                }
+            );
+
             if (this.state.voiceChannelState === VoiceChannelState.Connected) {
                 __messenger_playSoundEffect("vc_leave");
             }
@@ -197,6 +203,14 @@ class MessengerComponent extends StatefulComponent {
      */
     changeVoiceChannelState(state) {
         this.setStateField("voiceChannelState", state);
+    }
+
+    /**
+     * @param time {string}
+     */
+    setCallTimeString(time) {
+        this.callTimeString = time;
+        $("#call-time-display").text(time);
     }
 
     /**
@@ -216,10 +230,18 @@ class MessengerComponent extends StatefulComponent {
         });
         peerConnection.addEventListener("track", ev => {
             const [mediaStream] = ev.streams;
-            const audioPlayer = new Audio();
-            audioPlayer.srcObject = mediaStream;
-            audioPlayer.play();
-            this.players[socketId] = audioPlayer;
+
+            if (mediaStream.getAudioTracks().length > 0) {
+                const audioPlayer = new Audio();
+                audioPlayer.srcObject = mediaStream;
+                audioPlayer.play();
+                this.players[socketId] = audioPlayer;
+            } else if (mediaStream.getVideoTracks().length > 0) {
+                this.modifyStateField("videoStreams", currentValue => [
+                    ...currentValue,
+                    {from: this._userInfo[socketId], stream: mediaStream}
+                ]);
+            }
         });
 
         localStream.getTracks().forEach(track => void peerConnection.addTrack(track, localStream));
@@ -271,6 +293,8 @@ class MessengerComponent extends StatefulComponent {
                 await getPeer(socketId).addIceCandidate(candidate);
             });
 
+            this.setCallTimeString("");
+
             if (status.sockets.length > 0) {
                 for (const socketId of status.sockets) {
                     const peerConnection = this._handleNewUserInVoiceChannel(socketId, localStream);
@@ -293,6 +317,12 @@ class MessengerComponent extends StatefulComponent {
                 this.changeVoiceChannelState(VoiceChannelState.Connected);
             }
 
+            this.callTimerId = countdown(
+                new Date(),
+                timestamp => this.setCallTimeString(timestamp.toString()),
+                countdown.YEARS|countdown.MONTHS|countdown.DAYS|countdown.HOURS|countdown.MINUTES|countdown.SECONDS
+            );
+
             __messenger_playSoundEffect("vc_join");
         });
     }
@@ -313,35 +343,19 @@ class MessengerComponent extends StatefulComponent {
 
         this.realtimeConnection.emit("vc:leave");
         this.changeVoiceChannelState(null);
+        clearInterval(this.callTimerId);
         __messenger_playSoundEffect("vc_leave");
     }
 
     /**
-     * @param sourceId {string}
-     * @returns {Promise<void>}
      * @private
+     * @returns {string[]}
      */
-    async _stream(sourceId) {
-
-    }
-
-    /**
-     * @private
-     * @returns {string}
-     */
-    _getLeftPanel() {
+    _getVoiceChannelPanel() {
         switch (this.state.voiceChannelState) {
-            case null:
-                return `
-                    <div id="text-channel-panel">
-                        <ul class="list-unstyled">
-                        
-                        </ul>
-                    </div>
-                `;
             case VoiceChannelState.Connecting:
-                return `
-                    <div id="voice-channel-main-panel">
+                return [`
+                    <div id="voice-channel-panel-users">
                         <label style="font-family: 'Josefin Sans', sans-serif; font-weight: bold; font-size: 50px; margin-left: 25px; animation: blinker 2s linear infinite;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone-calling" width="60" height="60" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position: relative; top: -5px;">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -353,14 +367,32 @@ class MessengerComponent extends StatefulComponent {
                             łączenie z kanałem głosowym...
                         </label>
                     </div>
-                `
+                `];
             case VoiceChannelState.Connected:
-                return `
-                    <div id="voice-channel-main-panel">
-                        <span>foo bar</span>
-                        <video id="stream-preview"></video>
-                    </div>
-                `;
+                return [
+                    `
+                        <div id="voice-channel-panel-users">
+                    `,
+                    ...[...this.state.usersInVoiceChannel].map(username => `
+                            <div>
+                                <img src="/api/pfp?uzytkownik=${escapeHtml(username)}" />
+                                <br/>
+                                <label>${escapeHtml(username)}</label>
+                            </div>
+                    `),
+                    `
+                        </div>
+                        <div id="voice-channel-panel-toolbar">
+                            <div>
+                                <label style="font-family: 'Josefin Sans', sans-serif; font-weight: bold;">
+                                    jesteś połączony już <span style="font: inherit;" id="call-time-display"></span>
+                                </label>
+                            </div>
+                        </div>
+                    `
+                ];
+            default:
+                return [``];
         }
     }
 
@@ -371,9 +403,9 @@ class MessengerComponent extends StatefulComponent {
     _getVoiceChannelStateDisplay() {
         switch (this.state.voiceChannelState) {
             case null:
-                return `<button id="join-voice-channel-btn" class="btn btn-primary">dołącz do kanału</button>`
+                return `<button id="join-voice-channel-btn" class="btn btn-primary">dołącz do kanału</button>`;
             case VoiceChannelState.Connecting:
-                return `<button class="btn btn-primary" disabled>łączenie...</button>`
+                return `<button class="btn btn-primary" disabled>łączenie...</button>`;
             case VoiceChannelState.Connected:
                 return `
                     <div id="voice-channel-state-display">
@@ -396,68 +428,8 @@ class MessengerComponent extends StatefulComponent {
                                 </svg>
                             </button>
                         </div>
-                        <div style="width: 100%; display: flex; flex-direction: row; margin-top: 5px;">
-                            <button class="btn btn-secondary" style="flex-grow: 1; margin-right: 3px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-computer-camera" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <circle cx="12" cy="10" r="7"></circle>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                    <path d="M8 16l-2.091 3.486a1 1 0 0 0 .857 1.514h10.468a1 1 0 0 0 .857 -1.514l-2.091 -3.486"></path>
-                                </svg>
-                                wideo
-                            </button>
-                            <button id="share-screen-btn" class="btn btn-secondary" style="flex-grow: 1; margin-left: 3px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-screen-share" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M21 12v3a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10a1 1 0 0 1 1 -1h9"></path>
-                                    <line x1="7" y1="20" x2="17" y2="20"></line>
-                                    <line x1="9" y1="16" x2="9" y2="20"></line>
-                                    <line x1="15" y1="16" x2="15" y2="20"></line>
-                                    <path d="M17 4h4v4"></path>
-                                    <path d="M16 9l5 -5"></path>
-                                </svg>
-                                ekran
-                            </button>
-                        </div>
                     </div>
-                `
+                `;
         }
-    }
-
-    /**
-     * @param {MessengerStreamSource[]} sources
-     * @returns {string}
-     * @private
-     */
-    _getSourcesList(sources) {
-        return sources.map(source => {
-            let imageElement = `<img src="${source.icon}" />`
-
-            if (source.id.startsWith("window:") && source.icon.endsWith("base64,")) {
-                imageElement = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-app-window" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                        <path d="M6 8h.01"></path>
-                        <path d="M9 8h.01"></path>
-                    </svg>
-                `;
-            } else if (source.id.startsWith("screen:")) {
-                imageElement = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-tv" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <rect x="3" y="7" width="18" height="13" rx="2"></rect>
-                        <polyline points="16 3 12 7 8 3"></polyline>
-                    </svg>
-                `;
-            }
-
-            return `
-                <li class="d-flex" data-sourceid="${source.id}">
-                    ${imageElement}
-                    <p>${escapeHtml(source.name)}</p>
-                </li>
-            `;
-        }).join("");
     }
 }

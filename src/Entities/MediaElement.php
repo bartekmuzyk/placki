@@ -25,12 +25,12 @@ class MediaElement
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    public string $mimeType;
+    public ?string $mimeType;
 
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 */
-	public string $name;
+	public ?string $name;
 
 	/**
 	 * @ORM\Column(length=10)
@@ -46,22 +46,22 @@ class MediaElement
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 */
-	public string $description;
+	public ?string $description;
 
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 */
-	public string $album;
+	public ?string $album;
 
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 */
-	public string $thumbnail;
+	public ?string $thumbnail;
 
 	/**
 	 * @ORM\Column(type="smallint", nullable=true)
 	 */
-	public int $visibility;
+	public ?int $visibility;
 
 	/**
 	 * @ORM\Column(type="datetime")

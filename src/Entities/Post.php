@@ -19,7 +19,7 @@ class Post
 	public int $id;
 
 	/**
-	 * @ORM\Column(length=1000)
+	 * @ORM\Column(length=100, options={"charset":"utf8mb4", "collation":"utf8mb4_unicode_ci"})
 	 */
 	public string $content;
 

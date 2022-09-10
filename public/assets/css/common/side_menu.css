@@ -46,3 +46,18 @@
     margin: 15px 0 0 10px;
     text-transform: uppercase;
 }
+
+.side-menu.thin {
+    flex-basis: 40px;
+    overflow: hidden;
+}
+
+.side-menu.thin > .menu-option > span {
+    width: 40px;
+    height: 27px;
+    overflow: hidden;
+}
+
+.side-menu.thin > .menu-subcategory {
+    visibility: hidden;
+}

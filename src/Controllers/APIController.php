@@ -3,15 +3,18 @@
 
 namespace App\Controllers;
 
+use App\Entities\MediaElement;
 use App\Entities\Post;
 use App\Entities\PostComment;
 use App\Entities\User;
 use App\Exceptions\AttachmentTooLargeException;
 use App\Exceptions\CannotWriteAttachmentToDiskException;
 use App\Services\AccountService;
+use App\Services\MediaService;
 use App\Services\PostService;
 use Framework\Controller\Controller;
 use Framework\Http\Response;
+use Framework\Http\UploadedFile;
 
 class APIController extends Controller
 {
@@ -30,6 +33,11 @@ class APIController extends Controller
         $this->get('/posts/comments', 'getPostComments');
         $this->post('/posts/comments', 'postPostComment');
         $this->delete('/posts/comments', 'deletePostComment');
+
+        $this->get('/pfp', 'getProfilePicture');
+
+        $this->get('/media', 'getMediaElements');
+        $this->get('/media/video/comments', 'getVideoComments');
     }
 
     public function login(AccountService $accountService): Response
@@ -84,9 +92,9 @@ class APIController extends Controller
     public function postPost(AccountService $accountService, PostService $postService): Response
     {
         $req = $this->getRequest();
-        $attachments = $req->getFilesArray('attachments');
+        $attachment = $req->getFile('attachment');
 
-        if (!$req->hasPayload('content') && count($attachments) === 0) {
+        if (!$req->hasPayload('content') && !($attachment instanceof UploadedFile)) {
             return Response::code(400);
         }
 
@@ -95,7 +103,7 @@ class APIController extends Controller
                 $req->payload['content'] ?? '',
                 null,
                 $accountService->currentLoggedInUser,
-                $attachments
+                $attachment instanceof UploadedFile ? [$attachment] : []
             );
         } catch (CannotWriteAttachmentToDiskException $e) {
             return $this->json([
@@ -216,5 +224,42 @@ class APIController extends Controller
         $this->getDBManager()->removeAndFlush($comment);
 
         return new Response();
+    }
+
+    public function getProfilePicture(AccountService $accountService): Response
+    {
+        $req = $this->getRequest();
+
+        if (!$req->hasQuery('uzytkownik')) {
+            return Response::code(404);
+        }
+
+        $user = $accountService->getUser($req->query['uzytkownik']);
+
+        if (!($user instanceof User)) {
+            return Response::code(404);
+        }
+
+        return $this->redirect($user->profilePic);
+    }
+
+    public function getMediaElements(AccountService $accountService, MediaService $mediaService): Response
+    {
+        $filteredMediaElements = array_filter(
+            $mediaService->getAllMedia(),
+            function (MediaElement $mediaElement) use ($accountService) {
+                if ($mediaElement->mediaType !== MediaService::MEDIATYPE_VIDEO) return true;
+
+                return $mediaElement->visibility === MediaService::VIDEO_VISIBILITY_PUBLIC || (
+                    (
+                        $mediaElement->visibility === MediaService::VIDEO_VISIBILITY_PRIVATE ||
+                        $mediaElement->visibility === MediaService::VIDEO_VISIBILITY_UNLISTED
+                    ) &&
+                    $mediaElement->uploadedBy === $accountService->currentLoggedInUser
+                );
+            }
+        );
+
+        return $this->serialize($filteredMediaElements);
     }
 }
